@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_first_boot_create_house"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/first_boot_menu_create_title" />
+
+    <item
+        android:id="@+id/navigation_first_boot_join_house"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/first_boot_menu_join_title" />
+
+
+</menu>
