@@ -10,7 +10,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.io.File;
+import java.io.IOException;
+
 import io.nirahtech.petvet.R;
+import io.nirahtech.petvet.core.base.Farm;
+import io.nirahtech.petvet.core.base.House;
+import io.nirahtech.petvet.services.storage.LocalStorageService;
+import io.nirahtech.petvet.services.storage.StorageService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,8 +43,21 @@ public class CreateNewHouseFragment extends Fragment {
 
         this.button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View view) {
+                final String name = houseName.getText().toString();
+                if (!name.isEmpty()) {
+                    final House house = new House(houseName.getText().toString());
+                    final Farm farm = new Farm();
+                    house.setFarm(farm);
 
+                    final StorageService storageService = new LocalStorageService();
+                    try {
+                        storageService.save(house, new File("petvet-house.txt"));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
             }
         });
 
