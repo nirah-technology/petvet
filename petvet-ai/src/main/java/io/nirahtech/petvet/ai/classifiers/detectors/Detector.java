@@ -2,7 +2,9 @@ package io.nirahtech.petvet.ai.classifiers.detectors;
 
 import java.util.Optional;
 
-public interface Detector {
-    String getClassification();
-    Optional<String> detect(byte[] image);
+import io.nirahtech.petvet.ai.classifiers.classification.Classification;
+import io.nirahtech.petvet.ai.classifiers.exceptions.ClassificationException;
+
+public interface Detector<T extends Classification> {
+    Optional<T> detect(byte[] image) throws ClassificationException;
 }

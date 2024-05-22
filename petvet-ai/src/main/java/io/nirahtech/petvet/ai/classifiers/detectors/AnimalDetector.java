@@ -1,5 +1,7 @@
 package io.nirahtech.petvet.ai.classifiers.detectors;
 
-public interface AnimalDetector extends Detector {
+import io.nirahtech.petvet.ai.classifiers.classification.AnimalClassification;
+
+public interface AnimalDetector extends Detector<AnimalClassification> {
     
 }

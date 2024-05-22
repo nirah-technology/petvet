@@ -1,5 +1,23 @@
 package io.nirahtech.petvet.core.clinic;
 
-public class Medication {
-    
+import java.util.Objects;
+
+abstract class Medication {
+    private final String name;
+    private final Prescription prescription;
+
+    protected Medication(
+        final String name,
+        final Prescription prescription
+    ) {
+        this.name = Objects.requireNonNull(name, "Name fo medication is required.");
+        this.prescription = Objects.requireNonNull(prescription, "Prescription fot medication is required.");
+    }
+    public final String getName() {
+        return this.name;
+    }
+    public final Prescription getPrescription() {
+        return this.prescription;
+    }
+
 }

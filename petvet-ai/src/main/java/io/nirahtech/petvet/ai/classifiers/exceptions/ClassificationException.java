@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.ai.classifiers;
+package io.nirahtech.petvet.ai.classifiers.exceptions;
 
 public class ClassificationException extends Exception {
     public ClassificationException(final String message) {

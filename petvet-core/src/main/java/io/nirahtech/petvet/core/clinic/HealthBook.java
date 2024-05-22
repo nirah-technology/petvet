@@ -8,7 +8,7 @@ import java.util.Set;
 
 import io.nirahtech.petvet.core.base.Pet;
 
-public class HealthBook {
+public final class HealthBook {
     private final Pet pet;
     private final Set<Consultation> consultations;
 
@@ -27,11 +27,11 @@ public class HealthBook {
     /**
      * @return the consultations
      */
-    public List<Consultation> getConsultations() {
+    public final List<Consultation> getConsultations() {
         return Collections.unmodifiableList(this.consultations.stream().toList());
     }
 
-    public void addConsultation(final Consultation consultation) {
+    public final void addConsultation(final Consultation consultation) {
         if (Objects.nonNull(consultation)) {
             this.consultations.add(consultation);
         }

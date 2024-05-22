@@ -1,8 +1,10 @@
-package io.nirahtech.petvet.ai.classifiers;
+package io.nirahtech.petvet.ai.classifiers.classifiers;
 
 import java.io.BufferedInputStream;
 import java.util.Objects;
 import java.util.Optional;
+
+import io.nirahtech.petvet.ai.classifiers.exceptions.ClassificationException;
 
 public final class DefaultPlantClassifierImpl implements PlantClassifier {
 

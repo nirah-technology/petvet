@@ -98,4 +98,61 @@ public final class Animal implements LifeCycle {
     public final void death(final LocalDate date) {
         this.deathDate = date;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((species == null) ? 0 : species.hashCode());
+        result = prime * result + ((breed == null) ? 0 : breed.hashCode());
+        result = prime * result + ((birthDate == null) ? 0 : birthDate.hashCode());
+        result = prime * result + ((deathDate == null) ? 0 : deathDate.hashCode());
+        result = prime * result + ((weight == null) ? 0 : weight.hashCode());
+        result = prime * result + ((picture == null) ? 0 : picture.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Animal other = (Animal) obj;
+        if (species == null) {
+            if (other.species != null)
+                return false;
+        } else if (!species.equals(other.species))
+            return false;
+        if (breed == null) {
+            if (other.breed != null)
+                return false;
+        } else if (!breed.equals(other.breed))
+            return false;
+        if (birthDate == null) {
+            if (other.birthDate != null)
+                return false;
+        } else if (!birthDate.equals(other.birthDate))
+            return false;
+        if (deathDate == null) {
+            if (other.deathDate != null)
+                return false;
+        } else if (!deathDate.equals(other.deathDate))
+            return false;
+        if (weight == null) {
+            if (other.weight != null)
+                return false;
+        } else if (!weight.equals(other.weight))
+            return false;
+        if (picture == null) {
+            if (other.picture != null)
+                return false;
+        } else if (!picture.equals(other.picture))
+            return false;
+        return true;
+    }
+
+    
 }

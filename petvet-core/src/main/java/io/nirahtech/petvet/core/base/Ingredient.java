@@ -9,7 +9,7 @@ public class Ingredient {
 
     private final String name;
 
-    public Ingredient(final String name) {
+    protected Ingredient(final String name) {
         this.name = Objects.requireNonNull(name, "Name for ingredient is required.");
     }
 
@@ -17,11 +17,11 @@ public class Ingredient {
         return this.name;
     }
 
-    private static final String sanitize(final String name) {
+    protected static final String sanitize(final String name) {
         return name.toLowerCase();
     }
 
-    public static final Ingredient of(final String name) {
+    public static Ingredient of(final String name) {
         final String key = sanitize(name);
         return INSTANCES.computeIfAbsent(key, Ingredient::new);
     }

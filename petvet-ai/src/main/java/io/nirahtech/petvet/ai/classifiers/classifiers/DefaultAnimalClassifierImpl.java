@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.ai.classifiers;
+package io.nirahtech.petvet.ai.classifiers.classifiers;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -6,8 +6,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import io.nirahtech.petvet.ai.classifiers.classification.AnimalClassification;
 import io.nirahtech.petvet.ai.classifiers.detectors.AnimalDetector;
 import io.nirahtech.petvet.ai.classifiers.detectors.CatAnimalDetector;
+import io.nirahtech.petvet.ai.classifiers.exceptions.ClassificationException;
 
 public final class DefaultAnimalClassifierImpl implements AnimalClassifier {
 
@@ -31,14 +33,23 @@ public final class DefaultAnimalClassifierImpl implements AnimalClassifier {
         );
     }
 
-    private Optional<String> detectAnimal(final byte[] image) throws IOException {
+    private Optional<AnimalClassification> detectAnimal(final byte[] image) throws IOException {
         return this.animalsDetectors.stream()
-                .flatMap(detector -> detector.detect(image).stream())
-                .findFirst();
+                .map(detector -> {
+                    Optional<AnimalClassification> classification = Optional.empty();
+                    try {
+                        classification = detector.detect(image);
+                    } catch (ClassificationException exception) {
+                        exception.printStackTrace();
+                    }
+                    return classification;
+                })
+                .filter(classification -> classification.isPresent())
+                .findFirst().get();
     }
 
     @Override
-    public Optional<String> classify(final BufferedInputStream sourceToClassify) throws ClassificationException {
+    public Optional<AnimalClassification> classify(final BufferedInputStream sourceToClassify) throws ClassificationException {
         try {
             final byte[] image = sourceToClassify.readAllBytes();
             return this.detectAnimal(image);

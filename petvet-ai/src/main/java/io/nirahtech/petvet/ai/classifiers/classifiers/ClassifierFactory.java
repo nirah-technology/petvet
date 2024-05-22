@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.ai.classifiers;
+package io.nirahtech.petvet.ai.classifiers.classifiers;
 
 public final class ClassifierFactory {
     private ClassifierFactory() { }

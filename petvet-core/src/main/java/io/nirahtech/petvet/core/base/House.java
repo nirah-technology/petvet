@@ -1,9 +1,13 @@
 package io.nirahtech.petvet.core.base;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class House {
+import io.nirahtech.petvet.core.animalpark.Animal;
+import io.nirahtech.petvet.core.clinic.HealthBook;
+
+public final class House implements Familly {
     private final String name;
     private Farm farm;
 
@@ -32,5 +36,17 @@ public final class House {
      */
     public final void setFarm(final Farm farm) {
         this.farm = farm;
+    }
+
+    @Override
+    public HealthBook adopt(final Animal animal, final String name, final LocalDate adoptionDate) {
+        Objects.requireNonNull(animal, "Animal for adoption is required.");
+        Objects.requireNonNull(name, "Animal's name for adoption is required.");
+        Objects.requireNonNull(adoptionDate, "Animal's adoption date for adoption is required.");
+
+        if (Objects.isNull(this.farm)) {
+            this.farm = new Farm();
+        }
+        return this.farm.adopt(animal, name, adoptionDate);
     }
 }
