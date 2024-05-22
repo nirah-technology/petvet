@@ -2,3 +2,8 @@
 plugins {
     alias(libs.plugins.android.application) apply false
 }
+
+allprojects {
+    version = 1.0
+    group = "io.nirahtech"
+}

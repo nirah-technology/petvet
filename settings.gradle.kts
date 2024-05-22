@@ -16,8 +16,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
     }
 }
 
 rootProject.name = "PetVet"
-include(":app")
+
+include("app", "petvet-core", "petvet-ai")
