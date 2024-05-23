@@ -3,12 +3,12 @@
 
     <item
         android:id="@+id/navigation_first_boot_create_house"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/baseline_add_home_24"
         android:title="@string/first_boot_menu_create_title" />
 
     <item
         android:id="@+id/navigation_first_boot_join_house"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/baseline_add_link_24"
         android:title="@string/first_boot_menu_join_title" />
 
 

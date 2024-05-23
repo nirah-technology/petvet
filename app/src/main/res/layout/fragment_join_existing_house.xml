@@ -1,27 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.JoinExistingHouseFragment">
+    android:orientation="vertical"
+    android:background="@color/grey_50"
+    android:padding="20dp"
+    tools:context=".ui.CreateNewHouseFragment">
 
-    <!-- Zone de texte (EditText) -->
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Première Utilisation"
+        android:textAllCaps="true"
+        android:layout_marginTop="100dp"
+        android:textSize="24sp"
+        android:paddingTop="20sp"
+        android:textColor="@color/green_800"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textViewSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rejoindre un habitat éxitant"
+        android:textColor="@color/green_800"
+        android:textAllCaps="true"
+        android:paddingBottom="20sp"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textViewNameLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:textColor="@color/green_500"
+        android:text="Code Habitat"
+        android:paddingTop="20sp"
+        android:paddingBottom="10sp"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
     <EditText
         android:id="@+id/editTextHouseName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter house name"
-        android:inputType="text"
-        android:padding="16dp" />
+        android:hint="Saissisez le code de l'habitat"
+        android:inputType="number"
+        android:paddingTop="20sp"
+        android:paddingBottom="20sp"
+        />
 
-    <!-- Bouton pour soumettre -->
-    <Button
-        android:id="@+id/buttonSubmit"
+    <TextView
+        android:id="@+id/codeError"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Rejoindre"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:padding="16dp" />
+        android:textColor="@color/red"
+        android:paddingTop="20sp"
+        android:paddingBottom="10sp"
+        android:textStyle="italic"
+        android:textSize="14sp" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/buttonSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="30dp"
+
+        android:padding="20dp"
+        android:text="Rejoindre" />
+
+</LinearLayout>

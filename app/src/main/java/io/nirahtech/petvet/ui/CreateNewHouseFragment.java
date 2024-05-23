@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 import io.nirahtech.petvet.R;
 import io.nirahtech.petvet.core.base.Farm;
@@ -26,38 +27,44 @@ import io.nirahtech.petvet.services.storage.StorageService;
  */
 public class CreateNewHouseFragment extends Fragment {
 
-    private EditText houseName;
-    private Button button;
+
+
+    private EditText houseNameEditText;
+    private Button createButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    private final void handleClick() {
+        final String houseName = this.houseNameEditText.getText().toString();
+        if (!houseName.isEmpty()) {
+
+            final House house = new House(houseName);
+            final Farm farm = new Farm();
+            house.setFarm(farm);
+
+            final StorageService storageService = new LocalStorageService();
+            try {
+                storageService.save(house, new File("petvet-house.txt"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        this.houseName = (EditText) getView().findViewById(R.id.editTextHouseName);
-        this.button = (Button) getView().findViewById(R.id.buttonSubmit);
+        this.houseNameEditText = (EditText) getView().findViewById(R.id.editTextHouseName);
+        this.createButton = (Button) getView().findViewById(R.id.buttonSubmit);
 
-        this.button.setOnClickListener(new View.OnClickListener() {
+        this.createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                final String name = houseName.getText().toString();
-                if (!name.isEmpty()) {
-                    final House house = new House(houseName.getText().toString());
-                    final Farm farm = new Farm();
-                    house.setFarm(farm);
-
-                    final StorageService storageService = new LocalStorageService();
-                    try {
-                        storageService.save(house, new File("petvet-house.txt"));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                }
+                handleClick();
             }
         });
 
