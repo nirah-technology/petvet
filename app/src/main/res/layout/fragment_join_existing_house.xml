@@ -45,17 +45,111 @@
         android:textSize="14sp"
         android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/editTextHouseCode"
+
+    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/montserrat_regular"
-        android:hint="Saissisez le code de l'habitat"
-        android:inputType="number"
-        android:paddingTop="20sp"
-        android:paddingBottom="20sp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/grey_400" />
+        android:rowCount="1"
+        android:columnCount="6"
+        >
+
+        <EditText
+            android:id="@+id/otpEditTextNumberCode1"
+            android:hint="0"
+            android:layout_width="30dp"
+            android:layout_height="50dp"
+            android:ems="10"
+            android:textAlignment="center"
+            android:fontFamily="@font/montserrat_bold"
+            android:maxLength="1"
+            android:layout_marginRight="5dp"
+            android:maxLines="1"
+            android:width="5dp"
+            android:background="@drawable/one_time_password_edit_number"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/otpEditTextNumberCode2"
+            android:hint="0"
+            android:layout_width="30dp"
+            android:layout_height="50dp"
+            android:ems="10"
+            android:textAlignment="center"
+            android:fontFamily="@font/montserrat_bold"
+            android:maxLength="1"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:maxLines="1"
+            android:width="5dp"
+            android:background="@drawable/one_time_password_edit_number"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/otpEditTextNumberCode3"
+            android:hint="0"
+            android:layout_width="30dp"
+            android:layout_height="50dp"
+            android:ems="10"
+            android:textAlignment="center"
+            android:fontFamily="@font/montserrat_bold"
+            android:maxLength="1"
+            android:maxLines="1"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:width="5dp"
+            android:background="@drawable/one_time_password_edit_number"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/otpEditTextNumberCode4"
+            android:hint="0"
+            android:layout_width="30dp"
+            android:layout_height="50dp"
+            android:ems="10"
+            android:textAlignment="center"
+            android:fontFamily="@font/montserrat_bold"
+            android:maxLength="1"
+            android:maxLines="1"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:width="5dp"
+            android:background="@drawable/one_time_password_edit_number"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/otpEditTextNumberCode5"
+            android:hint="0"
+            android:layout_width="30dp"
+            android:layout_height="50dp"
+            android:ems="10"
+            android:textAlignment="center"
+            android:fontFamily="@font/montserrat_bold"
+            android:maxLength="1"
+            android:maxLines="1"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:width="5dp"
+            android:background="@drawable/one_time_password_edit_number"
+            android:inputType="number" />
+
+
+        <EditText
+            android:id="@+id/otpEditTextNumberCode6"
+            android:hint="0"
+            android:layout_width="30dp"
+            android:layout_height="50dp"
+            android:ems="10"
+            android:textAlignment="center"
+            android:fontFamily="@font/montserrat_bold"
+            android:maxLength="1"
+            android:maxLines="1"
+            android:layout_marginLeft="5dp"
+            android:width="5dp"
+            android:background="@drawable/one_time_password_edit_number"
+            android:inputType="number" />
+
+    </GridLayout>
 
     <TextView
         android:id="@+id/codeError"
