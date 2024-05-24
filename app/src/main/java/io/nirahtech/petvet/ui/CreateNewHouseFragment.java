@@ -22,7 +22,7 @@ import io.nirahtech.petvet.services.storage.StorageService;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CreateNewHouseFragment#newInstance} factory method to
+ * Use the {@link CreateNewHouseFragment} factory method to
  * create an instance of this fragment.
  */
 public class CreateNewHouseFragment extends Fragment {
@@ -58,8 +58,11 @@ public class CreateNewHouseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        this.houseNameEditText = (EditText) getView().findViewById(R.id.editTextHouseName);
-        this.createButton = (Button) getView().findViewById(R.id.buttonSubmit);
+        View view = inflater.inflate(R.layout.fragment_create_new_house, container, false);
+
+        // Find views by ID using the inflated view
+        this.houseNameEditText = view.findViewById(R.id.editTextHouseName);
+        this.createButton = view.findViewById(R.id.buttonSubmit);
 
         this.createButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +71,6 @@ public class CreateNewHouseFragment extends Fragment {
             }
         });
 
-        return inflater.inflate(R.layout.fragment_create_new_house, container, false);
+        return view;
     }
 }

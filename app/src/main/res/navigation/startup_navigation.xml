@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/startup_navigation"
-    app:startDestination="@+id/navigation_first_boot_create_house">
+    app:startDestination="@id/navigation_first_boot_create_house">
 
     <fragment
         android:id="@+id/navigation_first_boot_create_house"
@@ -16,5 +16,4 @@
         android:name="io.nirahtech.petvet.ui.JoinExistingHouseFragment"
         android:label="Join House"
         tools:layout="@layout/fragment_join_existing_house" />
-
 </navigation>

@@ -44,7 +44,7 @@
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/editTextHouseName"
+        android:id="@+id/editTextHouseCode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Saissisez le code de l'habitat"

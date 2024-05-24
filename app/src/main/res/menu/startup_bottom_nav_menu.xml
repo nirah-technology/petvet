@@ -11,5 +11,4 @@
         android:icon="@drawable/baseline_add_link_24"
         android:title="@string/first_boot_menu_join_title" />
 
-
 </menu>

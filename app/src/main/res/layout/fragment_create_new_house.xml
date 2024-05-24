@@ -17,7 +17,7 @@
         android:layout_marginTop="100dp"
         android:textSize="24sp"
         android:paddingTop="20sp"
-        android:textColor="@color/green_800"
+        android:textColor="@color/green_900"
         android:textStyle="bold" />
 
     <TextView
@@ -49,6 +49,8 @@
         android:layout_height="wrap_content"
         android:hint="Donnez un nom à votre habitat"
         android:inputType="text"
+        android:textColorHint="@color/grey_400"
+        android:textColor="@color/black"
         android:paddingTop="20sp"
         android:paddingBottom="20sp"
         />

@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import io.nirahtech.petvet.R;
-import io.nirahtech.petvet.ai.classifiers.AnimalClassifier;
-import io.nirahtech.petvet.ai.classifiers.ClassifierFactory;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,7 +25,7 @@ public class FirstBootFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final AnimalClassifier animalClassifier = ClassifierFactory.animalClassifier();
+        // final AnimalClassifier animalClassifier = ClassifierFactory.animalClassifier();
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_first_boot, container, false);
     }

@@ -12,7 +12,7 @@ import io.nirahtech.petvet.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link JoinExistingHouseFragment#newInstance} factory method to
+ * Use the {@link JoinExistingHouseFragment} factory method to
  * create an instance of this fragment.
  */
 public class JoinExistingHouseFragment extends Fragment {
@@ -26,6 +26,7 @@ public class JoinExistingHouseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_join_existing_house, container, false);
+        View view = inflater.inflate(R.layout.fragment_join_existing_house, container, false);
+        return view;
     }
 }

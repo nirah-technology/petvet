@@ -37,6 +37,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.1.1"
     }
+    ndkVersion = "26.1.10909125"
 }
 
 dependencies {
@@ -56,6 +57,6 @@ dependencies {
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.0-beta01")
 
     implementation(libs.petvet.core)
-    implementation(libs.petvet.ai)
+    // implementation(libs.petvet.ai)
 
 }
