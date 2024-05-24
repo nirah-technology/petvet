@@ -1,12 +1,13 @@
 package io.nirahtech.petvet.core.animalpark;
 
 import java.io.File;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Optional;
 
 import io.nirahtech.petvet.core.util.Weight;
 
-public final class Animal implements LifeCycle {
+public final class Animal implements LifeCycle, Serializable {
     private Species species;
     private Breed breed;
     private LocalDate birthDate;

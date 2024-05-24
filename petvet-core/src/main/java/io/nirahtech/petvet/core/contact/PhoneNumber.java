@@ -1,6 +1,8 @@
 package io.nirahtech.petvet.core.contact;
 
-public final class PhoneNumber {
+import java.io.Serializable;
+
+public final class PhoneNumber implements Serializable {
     private final int countryCode;
     private final int phoneNumber;
 

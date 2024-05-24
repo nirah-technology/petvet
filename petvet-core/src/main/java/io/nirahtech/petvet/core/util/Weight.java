@@ -1,6 +1,8 @@
 package io.nirahtech.petvet.core.util;
 
-public final class Weight {
+import java.io.Serializable;
+
+public final class Weight implements Serializable {
     private final double weightInMilliGrams;
     
     private Weight(final double weightInMilliGrams) {

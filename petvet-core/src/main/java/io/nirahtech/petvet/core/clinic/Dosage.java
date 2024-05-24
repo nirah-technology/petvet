@@ -1,6 +1,8 @@
 package io.nirahtech.petvet.core.clinic;
 
-public final class Dosage {
+import java.io.Serializable;
+
+public final class Dosage implements Serializable {
     private final int timesPerDay;
     private final float quantityEachTime;
     private final String dosage;

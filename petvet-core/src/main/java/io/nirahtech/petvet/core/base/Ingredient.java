@@ -1,10 +1,11 @@
 package io.nirahtech.petvet.core.base;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Ingredient {
+public class Ingredient implements Serializable {
     private static final Map<String, Ingredient> INSTANCES = new HashMap<>();
 
     private final String name;

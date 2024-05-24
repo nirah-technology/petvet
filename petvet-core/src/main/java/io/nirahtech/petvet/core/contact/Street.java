@@ -1,8 +1,9 @@
 package io.nirahtech.petvet.core.contact;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public final class Street {
+public final class Street implements Serializable {
     private final String type;
     private final String name;
 

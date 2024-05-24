@@ -1,9 +1,11 @@
 package io.nirahtech.petvet.core.util;
 
+import java.io.Serializable;
+
 /**
  * Immutable class representing volume with various unit conversions.
  */
-public final class Volume {
+public final class Volume  implements Serializable {
     private final double volumeInMilliLiters;
     
     /**

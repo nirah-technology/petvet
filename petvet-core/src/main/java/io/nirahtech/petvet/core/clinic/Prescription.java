@@ -1,9 +1,10 @@
 package io.nirahtech.petvet.core.clinic;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDate;
 
-public class Prescription {
+public class Prescription implements Serializable {
     private final Dosage dosage;
     private final Duration durationInDays;
     private final LocalDate startDate;

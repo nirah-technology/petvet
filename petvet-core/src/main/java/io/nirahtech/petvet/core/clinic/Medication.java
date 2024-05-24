@@ -1,8 +1,9 @@
 package io.nirahtech.petvet.core.clinic;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-abstract class Medication {
+abstract class Medication  implements Serializable {
     private final String name;
     private final Prescription prescription;
 

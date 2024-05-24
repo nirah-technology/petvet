@@ -1,10 +1,11 @@
 package io.nirahtech.petvet.core.contact;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class Country {
+public final class Country implements Serializable {
     private static final Map<String, Country> INSTANCES = new HashMap<>();
 
     private final String name;

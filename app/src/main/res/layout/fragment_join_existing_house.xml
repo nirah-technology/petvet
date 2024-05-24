@@ -13,11 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Première Utilisation"
+        android:fontFamily="@font/montserrat_extra_bold"
         android:textAllCaps="true"
         android:layout_marginTop="100dp"
         android:textSize="24sp"
         android:paddingTop="20sp"
-        android:textColor="@color/green_800"
+        android:textColor="@color/green_900"
         android:textStyle="bold" />
 
     <TextView
@@ -25,6 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Rejoindre un habitat éxitant"
+        android:fontFamily="@font/montserrat_bold"
         android:textColor="@color/green_800"
         android:textAllCaps="true"
         android:paddingBottom="20sp"
@@ -47,11 +49,13 @@
         android:id="@+id/editTextHouseCode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_regular"
         android:hint="Saissisez le code de l'habitat"
         android:inputType="number"
         android:paddingTop="20sp"
         android:paddingBottom="20sp"
-        />
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey_400" />
 
     <TextView
         android:id="@+id/codeError"

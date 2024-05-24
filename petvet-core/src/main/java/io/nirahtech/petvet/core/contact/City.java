@@ -1,8 +1,9 @@
 package io.nirahtech.petvet.core.contact;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public final class City {
+public final class City implements Serializable {
     private final int zipCode;
     private final String name;
 

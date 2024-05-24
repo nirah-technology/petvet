@@ -1,8 +1,9 @@
 package io.nirahtech.petvet.core.contact;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Province {
+public class Province implements Serializable {
     private final int departmentNumber;
     private final String name;
 

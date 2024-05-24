@@ -1,8 +1,9 @@
 package io.nirahtech.petvet.core.contact;
 
+import java.io.Serializable;
 import java.util.Optional;
 
-public final class Contact {
+public final class Contact implements Serializable {
     private Email email;
     private Mail mail;
     private PhoneNumber phoneNumber;

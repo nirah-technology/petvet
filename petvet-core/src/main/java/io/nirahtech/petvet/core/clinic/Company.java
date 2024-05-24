@@ -1,10 +1,11 @@
 package io.nirahtech.petvet.core.clinic;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import io.nirahtech.petvet.core.contact.Contact;
 
-public final class Company {
+public final class Company implements Serializable {
     private final String name;
     private final Contact contact;
 

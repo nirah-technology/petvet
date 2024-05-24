@@ -1,11 +1,12 @@
 package io.nirahtech.petvet.core.base;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
 import io.nirahtech.petvet.core.animalpark.Animal;
 
-public final class Pet {
+public final class Pet implements Serializable {
     private final Animal animal;
     private final String name;
     private final LocalDate adoptionDate;

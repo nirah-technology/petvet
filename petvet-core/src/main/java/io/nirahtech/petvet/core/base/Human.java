@@ -1,12 +1,13 @@
 package io.nirahtech.petvet.core.base;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
 import io.nirahtech.petvet.core.contact.Contact;
 
-public class Human {
+public class Human implements Serializable {
     private final String firstName;
     private final String lastName;
     private final LocalDate birthDate;

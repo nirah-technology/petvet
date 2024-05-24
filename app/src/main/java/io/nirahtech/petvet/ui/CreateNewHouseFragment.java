@@ -1,5 +1,9 @@
 package io.nirahtech.petvet.ui;
 
+import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
+import io.nirahtech.petvet.MainActivity;
 import io.nirahtech.petvet.R;
 import io.nirahtech.petvet.core.base.Farm;
 import io.nirahtech.petvet.core.base.House;
@@ -27,14 +32,29 @@ import io.nirahtech.petvet.services.storage.StorageService;
  */
 public class CreateNewHouseFragment extends Fragment {
 
-
+    private static final String DATABASE_FILE_NAME = "house.db";
 
     private EditText houseNameEditText;
     private Button createButton;
 
+    private final StorageService storageService = new LocalStorageService();;
+
+
+    private final void redirectoToMainActivuty() {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setComponent(new ComponentName("io.nirahtech.petvet", MainActivity.class.getName()));
+        getActivity().finish();
+        startActivity(intent);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final File databaseFile = new File( storageService.getMediaStore(this.getContext()), DATABASE_FILE_NAME);
+        if (storageService.exists(databaseFile)) {
+            this.redirectoToMainActivuty();
+        }
     }
 
     private final void handleClick() {
@@ -45,11 +65,39 @@ public class CreateNewHouseFragment extends Fragment {
             final Farm farm = new Farm();
             house.setFarm(farm);
 
-            final StorageService storageService = new LocalStorageService();
             try {
-                storageService.save(house, new File("petvet-house.txt"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                storageService.save(house, new File( storageService.getMediaStore(this.getContext()), DATABASE_FILE_NAME));
+
+                new AlertDialog.Builder(this.getContext())
+                        .setTitle("Parfait!")
+                        .setMessage("Votre habitat a bien été sauvegardé.")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                redirectoToMainActivuty();
+                            }
+
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .show();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+                new AlertDialog.Builder(this.getContext())
+                        .setTitle("Failure")
+                        .setMessage(exception.getMessage())
+
+                        // Specifying a listener allows you to take an action before dismissing the dialog.
+                        // The dialog is automatically dismissed when a dialog button is clicked.
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface  dialog, int which) {
+                                // Continue with delete operation
+                            }
+                        })
+
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
             }
         }
     }

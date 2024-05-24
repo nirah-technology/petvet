@@ -1,5 +1,7 @@
 package io.nirahtech.petvet.core.planning;
 
-public class Event {
+import java.io.Serializable;
+
+public class Event implements Serializable {
     
 }

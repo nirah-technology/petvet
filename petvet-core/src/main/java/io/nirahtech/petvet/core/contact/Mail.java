@@ -1,8 +1,9 @@
 package io.nirahtech.petvet.core.contact;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public final class Mail {
+public final class Mail implements Serializable {
     private final int streetNumber;
     private final boolean isBis;
     private final Street street;

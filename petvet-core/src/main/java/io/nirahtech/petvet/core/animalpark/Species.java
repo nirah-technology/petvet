@@ -1,10 +1,11 @@
 package io.nirahtech.petvet.core.animalpark;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class Species {
+public final class Species implements Serializable {
 
     private static final Map<String, Species> INSTANCES = new HashMap<>();
 

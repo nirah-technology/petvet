@@ -1,5 +1,6 @@
 package io.nirahtech.petvet.core.clinic;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Set;
 
 import io.nirahtech.petvet.core.base.Pet;
 
-public final class HealthBook {
+public final class HealthBook implements Serializable {
     private final Pet pet;
     private final Set<Consultation> consultations;
 

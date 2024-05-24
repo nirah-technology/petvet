@@ -1,5 +1,6 @@
 package io.nirahtech.petvet.core.clinic;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
@@ -8,7 +9,7 @@ import java.util.Set;
 
 import io.nirahtech.petvet.core.util.Weight;
 
-public final class Consultation {
+public final class Consultation implements Serializable {
     private final LocalDateTime dateTime;
     private final Weight weight;
     private final Set<String> observations;
