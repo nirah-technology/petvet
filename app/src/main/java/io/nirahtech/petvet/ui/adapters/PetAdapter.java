@@ -27,7 +27,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
         }
     }
 
-    private PetAdapter(final List<Pet> Pets) {
+    public PetAdapter(final List<Pet> Pets) {
         this.pets = Pets;
     }
 

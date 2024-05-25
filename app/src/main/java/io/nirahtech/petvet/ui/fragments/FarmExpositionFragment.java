@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -78,7 +79,7 @@ public class FarmExpositionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_farm_exposition, container, false);
 
         // Initialiser la liste des espèces et des animaux
         try {
@@ -91,7 +92,7 @@ public class FarmExpositionFragment extends Fragment {
 
         speciesRecyclerView = view.findViewById(R.id.speciesRecyclerView);
         speciesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        speciesAdapter = new SpeciesAdapter(new ArrayList<>(this.getAllSpecies()));
+        speciesAdapter = new SpeciesAdapter(this.petsBySpecies);
         speciesRecyclerView.setAdapter(speciesAdapter);
 
         return view;
