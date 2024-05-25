@@ -60,12 +60,14 @@
             android:layout_width="30dp"
             android:layout_height="50dp"
             android:ems="10"
+            android:focusedByDefault="true"
             android:textAlignment="center"
             android:fontFamily="@font/montserrat_bold"
             android:maxLength="1"
             android:layout_marginRight="5dp"
             android:maxLines="1"
             android:width="5dp"
+            android:textColor="@color/black"
             android:background="@drawable/one_time_password_edit_number"
             android:inputType="number" />
 
@@ -82,6 +84,7 @@
             android:layout_marginLeft="5dp"
             android:maxLines="1"
             android:width="5dp"
+            android:textColor="@color/black"
             android:background="@drawable/one_time_password_edit_number"
             android:inputType="number" />
 
@@ -98,6 +101,7 @@
             android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
             android:width="5dp"
+            android:textColor="@color/black"
             android:background="@drawable/one_time_password_edit_number"
             android:inputType="number" />
 
@@ -114,6 +118,7 @@
             android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
             android:width="5dp"
+            android:textColor="@color/black"
             android:background="@drawable/one_time_password_edit_number"
             android:inputType="number" />
 
@@ -130,6 +135,7 @@
             android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
             android:width="5dp"
+            android:textColor="@color/black"
             android:background="@drawable/one_time_password_edit_number"
             android:inputType="number" />
 
@@ -146,6 +152,7 @@
             android:maxLines="1"
             android:layout_marginLeft="5dp"
             android:width="5dp"
+            android:textColor="@color/black"
             android:background="@drawable/one_time_password_edit_number"
             android:inputType="number" />
 

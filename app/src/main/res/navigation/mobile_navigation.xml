@@ -11,6 +11,13 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
+
+    <fragment
+        android:id="@+id/navigation_farm_exposition"
+        android:name="io.nirahtech.petvet.ui.fragments.FarmExpositionFragment"
+        android:label="Animaux"
+        tools:layout="@layout/fragment_farm_exposition" />
+
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="io.nirahtech.petvet.ui.dashboard.DashboardFragment"

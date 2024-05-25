@@ -22,6 +22,7 @@ public class LocalStorageService implements StorageService {
 
     @Override
     public <T> T load(File file) throws IOException, ClassNotFoundException {
+        System.out.println(file);
         if (!file.exists()) {
             throw new IOException(String.format("%s doesn't exists.", file.getAbsolutePath()));
         }

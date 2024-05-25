@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import io.nirahtech.petvet.ui.adapters.SpeciesAdapter;
 public class FarmExpositionFragment extends Fragment {
 
     private static final StorageService STORAGE_SERVICE = new LocalStorageService();
+    private static final String DATABASE_FILE_NAME = "house.db";
 
     private RecyclerView speciesRecyclerView;
     private SpeciesAdapter speciesAdapter;
@@ -65,15 +67,26 @@ public class FarmExpositionFragment extends Fragment {
 
     }
 
+    private final void preventErrorOnLoadFailure() {
+        if (Objects.isNull(this.petsBySpecies)) {
+            this.petsBySpecies = new HashMap<>();
+            final Set<Pet> cats = new HashSet<>();
+            this.petsBySpecies.put(Species.of("Chat"), cats);
+        }
+    }
+
     private final void loadHouse() throws IOException, ClassNotFoundException {
-        final File databaseFile = null;
-        final House house = STORAGE_SERVICE.load(databaseFile);
-        house.getFarm().ifPresent(farm -> {
-            for (Pet pet : farm.getPets()) {
-                Species species = pet.getAnimal().getSpecies();
-                this.petsBySpecies.computeIfAbsent(species, k -> new HashSet<>()).add(pet);
-            }
-        });
+        final File databaseFile = new File( STORAGE_SERVICE.getMediaStore(this.getContext()), DATABASE_FILE_NAME);
+        if (STORAGE_SERVICE.exists(databaseFile)) {
+            final House house = STORAGE_SERVICE.load(databaseFile);
+            house.getFarm().ifPresent(farm -> {
+                for (Pet pet : farm.getPets()) {
+                    Species species = pet.getAnimal().getSpecies();
+                    this.petsBySpecies.computeIfAbsent(species, k -> new HashSet<>()).add(pet);
+                }
+            });
+        }
+        this.preventErrorOnLoadFailure();
     }
 
     @Override
