@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,10 +22,13 @@ import java.util.Objects;
 import java.util.Set;
 
 import io.nirahtech.petvet.R;
+import io.nirahtech.petvet.core.animalpark.Animal;
+import io.nirahtech.petvet.core.animalpark.Breed;
 import io.nirahtech.petvet.core.animalpark.Species;
 import io.nirahtech.petvet.core.base.Farm;
 import io.nirahtech.petvet.core.base.House;
 import io.nirahtech.petvet.core.base.Pet;
+import io.nirahtech.petvet.core.util.Weight;
 import io.nirahtech.petvet.services.storage.LocalStorageService;
 import io.nirahtech.petvet.services.storage.StorageService;
 import io.nirahtech.petvet.ui.adapters.SpeciesAdapter;
@@ -67,11 +71,56 @@ public class FarmExpositionFragment extends Fragment {
 
     }
 
+
     private final void preventErrorOnLoadFailure() {
         if (Objects.isNull(this.petsBySpecies)) {
             this.petsBySpecies = new HashMap<>();
+
             final Set<Pet> cats = new HashSet<>();
-            this.petsBySpecies.put(Species.of("Chat"), cats);
+            final Species cat = Species.of("Chat");
+            final Breed european = Breed.of("European Cat");
+            final Animal nitroAsAnimal = new Animal();
+            this.petsBySpecies.put(cat, cats);
+            nitroAsAnimal.setSpecies(cat);
+            nitroAsAnimal.setBreed(european);
+            nitroAsAnimal.setWeight(Weight.kg(7.2D));
+            Pet nitroAsPet = new Pet(nitroAsAnimal, "Nitro", LocalDate.of(2017, 3, 17));
+            cats.add(nitroAsPet);
+
+            final Set<Pet> dogs = new HashSet<>();
+            final Species dog = Species.of("Chien");
+            final Breed yorkshire = Breed.of("Yorkshire");
+            final Animal yumaAsAnimal = new Animal();
+            this.petsBySpecies.put(dog, dogs);
+            yumaAsAnimal.setSpecies(dog);
+            yumaAsAnimal.setBreed(yorkshire);
+            yumaAsAnimal.setWeight(Weight.kg(4.7D));
+            Pet yumaAsPet = new Pet(yumaAsAnimal, "Yuma", LocalDate.of(2017, 3, 17));
+            dogs.add(yumaAsPet);
+
+            final Set<Pet> galinaceas = new HashSet<>();
+            final Species galinacea = Species.of("Galinacée");
+            final Breed couNu = Breed.of("Cou Nu");
+            final Animal picsouAsAnimal = new Animal();
+            this.petsBySpecies.put(galinacea, galinaceas);
+            picsouAsAnimal.setSpecies(galinacea);
+            picsouAsAnimal.setBreed(couNu);
+            picsouAsAnimal.setWeight(Weight.kg(4.2D));
+            Pet picsouAsPet = new Pet(picsouAsAnimal, "Picsou", LocalDate.of(2023, 9, 9));
+            galinaceas.add(picsouAsPet);
+
+
+            final Set<Pet> bovids = new HashSet<>();
+            final Species bovid = Species.of("Bovidés");
+            final Breed dwarfGoat = Breed.of("Naine");
+            final Animal djaliAsAnimal = new Animal();
+            this.petsBySpecies.put(bovid, bovids);
+            djaliAsAnimal.setSpecies(bovid);
+            djaliAsAnimal.setBreed(dwarfGoat);
+            djaliAsAnimal.setWeight(Weight.kg(14.24D));
+            Pet djaliAsPet = new Pet(djaliAsAnimal, "DJali", LocalDate.of(2024, 9, 9));
+            bovids.add(djaliAsPet);
+
         }
     }
 

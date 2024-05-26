@@ -44,7 +44,7 @@ public final class SpeciesAdapter extends RecyclerView.Adapter<SpeciesAdapter.Sp
     @Override
     public void onBindViewHolder(SpeciesViewHolder holder, int position) {
         final Species species = new ArrayList<>(this.sortedPetsBySpecies.keySet()).get(position);
-        holder.speciesName.setText(species.getName());
+        holder.speciesName.setText(species.getName().toUpperCase());
 
         // Set up the horizontal RecyclerView for animals
         final List<Pet> petsOfSpecies = new ArrayList<>(this.sortedPetsBySpecies.get(species));

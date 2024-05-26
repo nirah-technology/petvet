@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/grey_50"
     android:padding="20dp"
     tools:context=".ui.CreateNewHouseFragment">
 
@@ -51,9 +50,7 @@
         android:layout_height="wrap_content"
         android:hint="Donnez un nom à votre habitat"
         android:inputType="text"
-        android:textColorHint="@color/grey_400"
         android:fontFamily="@font/montserrat_regular"
-        android:textColor="@color/black"
         android:paddingTop="20sp"
         android:paddingBottom="20sp"
         />
