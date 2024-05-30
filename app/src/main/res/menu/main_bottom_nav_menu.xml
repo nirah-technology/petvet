@@ -2,23 +2,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_home" />
-
-    <item
         android:id="@+id/navigation_farm_exposition"
-        android:icon="@drawable/baseline_pets_24"
+        android:icon="@drawable/foundation_24dp_fill0_wght400_grad0_opsz24"
         android:title="Animaux" />
 
     <item
-        android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_dashboard" />
+        android:id="@+id/navigation_planner"
+        android:icon="@drawable/calendar_month_24dp_fill0_wght400_grad0_opsz24"
+        android:title="Agenda" />
 
     <item
-        android:id="@+id/navigation_notifications"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_notifications" />
+        android:id="@+id/navigation_pharmacy"
+        android:icon="@drawable/medication_24dp_fill0_wght400_grad0_opsz24"
+        android:title="Pharmacie" />
+
+
+    <item
+        android:id="@+id/navigation_emergency"
+        android:icon="@drawable/emergency_24dp_fill0_wght400_grad0_opsz24"
+        android:title="Urgence" />
 
 </menu>

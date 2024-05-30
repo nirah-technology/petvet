@@ -68,9 +68,7 @@ public class FarmExpositionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
-
 
     private final void preventErrorOnLoadFailure() {
         if (Objects.isNull(this.petsBySpecies)) {
@@ -79,13 +77,41 @@ public class FarmExpositionFragment extends Fragment {
             final Set<Pet> cats = new HashSet<>();
             final Species cat = Species.of("Chat");
             final Breed european = Breed.of("European Cat");
-            final Animal nitroAsAnimal = new Animal();
+            final Breed chartreux = Breed.of("Chartreux");
+            final Breed manx = Breed.of("Manx");
             this.petsBySpecies.put(cat, cats);
+
+            // Nitro
+            final Animal nitroAsAnimal = new Animal();
             nitroAsAnimal.setSpecies(cat);
             nitroAsAnimal.setBreed(european);
             nitroAsAnimal.setWeight(Weight.kg(7.2D));
             Pet nitroAsPet = new Pet(nitroAsAnimal, "Nitro", LocalDate.of(2017, 3, 17));
             cats.add(nitroAsPet);
+
+            // Nala
+            final Animal nalaAsAnimal = new Animal();
+            nalaAsAnimal.setSpecies(cat);
+            nalaAsAnimal.setBreed(european);
+            nalaAsAnimal.setWeight(Weight.kg(7.2D));
+            Pet nalaAsPet = new Pet(nalaAsAnimal, "Nala", LocalDate.of(2017, 3, 17));
+            cats.add(nalaAsPet);
+
+            // Simba
+            final Animal simbaAsAnimal = new Animal();
+            simbaAsAnimal.setSpecies(cat);
+            simbaAsAnimal.setBreed(european);
+            simbaAsAnimal.setWeight(Weight.kg(7.2D));
+            Pet simbaAsPet = new Pet(simbaAsAnimal, "Simba", LocalDate.of(2017, 3, 17));
+            cats.add(simbaAsPet);
+
+            // Ed
+            final Animal edAsAnimal = new Animal();
+            edAsAnimal.setSpecies(cat);
+            edAsAnimal.setBreed(european);
+            edAsAnimal.setWeight(Weight.kg(7.2D));
+            Pet edAsPet = new Pet(edAsAnimal, "Simba", LocalDate.of(2017, 3, 17));
+            cats.add(edAsPet);
 
             final Set<Pet> dogs = new HashSet<>();
             final Species dog = Species.of("Chien");
@@ -101,14 +127,75 @@ public class FarmExpositionFragment extends Fragment {
             final Set<Pet> galinaceas = new HashSet<>();
             final Species galinacea = Species.of("Galinacée");
             final Breed couNu = Breed.of("Cou Nu");
+            final Breed sussex = Breed.of("Sussex");
+            final Breed greyCendre = Breed.of("Gris Cendré");
+
+            // Picsou
             final Animal picsouAsAnimal = new Animal();
             this.petsBySpecies.put(galinacea, galinaceas);
             picsouAsAnimal.setSpecies(galinacea);
             picsouAsAnimal.setBreed(couNu);
-            picsouAsAnimal.setWeight(Weight.kg(4.2D));
+            picsouAsAnimal.setWeight(Weight.kg(5.7D));
             Pet picsouAsPet = new Pet(picsouAsAnimal, "Picsou", LocalDate.of(2023, 9, 9));
             galinaceas.add(picsouAsPet);
 
+            // Riri
+            final Animal ririAsAnimal = new Animal();
+            ririAsAnimal.setSpecies(galinacea);
+            ririAsAnimal.setBreed(couNu);
+            ririAsAnimal.setWeight(Weight.kg(4.2D));
+            Pet ririAsPet = new Pet(ririAsAnimal, "Riri", LocalDate.of(2023, 9, 9));
+            galinaceas.add(ririAsPet);
+
+            // Fifi
+            final Animal fifiAsAnimal = new Animal();
+            fifiAsAnimal.setSpecies(galinacea);
+            fifiAsAnimal.setBreed(couNu);
+            fifiAsAnimal.setWeight(Weight.kg(4.2D));
+            Pet fifiAsPet = new Pet(fifiAsAnimal, "Fifi", LocalDate.of(2023, 9, 9));
+            galinaceas.add(fifiAsPet);
+
+            // Loulou
+            final Animal loulouAsAnimal = new Animal();
+            loulouAsAnimal.setSpecies(galinacea);
+            loulouAsAnimal.setBreed(couNu);
+            loulouAsAnimal.setWeight(Weight.kg(4.2D));
+            Pet loulouAsPet = new Pet(loulouAsAnimal, "Loulou", LocalDate.of(2023, 9, 9));
+            galinaceas.add(loulouAsPet);
+
+
+
+            // Solo
+            final Animal soloAnimal = new Animal();
+            soloAnimal.setSpecies(galinacea);
+            soloAnimal.setBreed(sussex);
+            soloAnimal.setWeight(Weight.kg(4.2D));
+            Pet soloAsPet = new Pet(soloAnimal, "Solo", LocalDate.of(2023, 9, 9));
+            galinaceas.add(soloAsPet);
+
+            // Séké
+            final Animal sekeAsAnimal = new Animal();
+            sekeAsAnimal.setSpecies(galinacea);
+            sekeAsAnimal.setBreed(sussex);
+            sekeAsAnimal.setWeight(Weight.kg(4.2D));
+            Pet sekeAsPet = new Pet(sekeAsAnimal, "Séké", LocalDate.of(2023, 9, 9));
+            galinaceas.add(sekeAsPet);
+
+            // Gaïa
+            final Animal gaiaAsAnimal = new Animal();
+            gaiaAsAnimal.setSpecies(galinacea);
+            gaiaAsAnimal.setBreed(greyCendre);
+            gaiaAsAnimal.setWeight(Weight.kg(4.2D));
+            Pet gaiaAsPet = new Pet(gaiaAsAnimal, "Gaïa", LocalDate.of(2023, 9, 9));
+            galinaceas.add(gaiaAsPet);
+
+            // Cargo
+            final Animal cargoAsAnimal = new Animal();
+            cargoAsAnimal.setSpecies(galinacea);
+            cargoAsAnimal.setBreed(greyCendre);
+            cargoAsAnimal.setWeight(Weight.kg(4.2D));
+            Pet cargoAsPet = new Pet(cargoAsAnimal, "Cargo", LocalDate.of(2023, 9, 9));
+            galinaceas.add(cargoAsPet);
 
             final Set<Pet> bovids = new HashSet<>();
             final Species bovid = Species.of("Bovidés");

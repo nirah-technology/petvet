@@ -1,6 +1,9 @@
 package io.nirahtech.petvet;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -27,14 +30,29 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home,
                 R.id.navigation_farm_exposition,
-                R.id.navigation_dashboard,
-                R.id.navigation_notifications)
+                R.id.navigation_planner,
+                R.id.navigation_pharmacy,
+                R.id.navigation_emergency
+                )
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.mainNavView, navController);
     }
 
+    public void displayPetIdentityCard(View view) {
+        new AlertDialog.Builder(view.getContext())
+                .setTitle("An animal")
+                .setMessage("Un animala été selectrionné !")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // redirectoToMainActivuty();
+                    }
+
+                })
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .show();
+    }
 }

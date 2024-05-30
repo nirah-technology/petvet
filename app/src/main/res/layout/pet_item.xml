@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/gray_400"
-    android:padding="8dp">
+    android:layout_margin="10dp"
+    android:background="@color/grey_900"
+    android:onClick="displayPetIdentityCard"
+    android:padding="8dp"
+    tools:ignore="OnClick">
 
     <ImageView
         android:id="@+id/petImage"
         android:layout_width="100dp"
+        android:src="@mipmap/ic_pets_foreground"
         android:layout_height="100dp"
         android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/petName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Animal Name" />
+        android:textAllCaps="true"
+        android:textColor="@color/green_200"
+        android:textAlignment="center"/>
 </LinearLayout>
