@@ -3,12 +3,15 @@ package io.nirahtech.petvet.ui.fragments.farm;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +46,8 @@ public class FarmExpositionFragment extends Fragment {
     private RecyclerView speciesRecyclerView;
     private SpeciesAdapter speciesAdapter;
     private Map<Species, Set<Pet>> petsBySpecies;
+
+    private Button adoptionButton;
 
 
 
@@ -240,6 +245,15 @@ public class FarmExpositionFragment extends Fragment {
         speciesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         speciesAdapter = new SpeciesAdapter(this.petsBySpecies);
         speciesRecyclerView.setAdapter(speciesAdapter);
+
+        this.adoptionButton = view.findViewById(R.id.adoptionButton);
+        this.adoptionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final NavController navController = Navigation.findNavController(v);
+                navController.navigate(R.id.navigation_pet_adoption);
+            }
+        });
 
         return view;
     }

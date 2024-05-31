@@ -13,7 +13,7 @@
     <ImageView
         android:id="@+id/petImage"
         android:layout_width="100dp"
-        android:src="@mipmap/ic_pets_foreground"
+        android:src="@drawable/avatar"
         android:layout_height="100dp"
         android:scaleType="centerCrop" />
 
@@ -22,6 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:fontFamily="@font/montserrat_bold"
         android:textAllCaps="true"
         android:textColor="@color/green_200"
         android:textAlignment="center"/>

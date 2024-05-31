@@ -1,9 +1,12 @@
-package io.nirahtech.petvet;
+package io.nirahtech.petvet.ui.adapters;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import io.nirahtech.petvet.NextEventsFragment;
+import io.nirahtech.petvet.PassedEventsFragment;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
 

@@ -15,9 +15,7 @@ import android.view.ViewGroup;
 
 import com.google.android.material.tabs.TabLayout;
 
-import io.nirahtech.petvet.R;
-import io.nirahtech.petvet.ViewPagerAdapter;
-import io.nirahtech.petvet.databinding.FragmentHomeBinding;
+import io.nirahtech.petvet.ui.adapters.ViewPagerAdapter;
 import io.nirahtech.petvet.databinding.FragmentPlannerBinding;
 
 public class PlannerFragment extends Fragment {

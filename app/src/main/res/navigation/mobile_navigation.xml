@@ -30,4 +30,10 @@
         android:label="Urgences"
         tools:layout="@layout/fragment_emergency" />
 
+    <fragment
+        android:id="@+id/navigation_pet_adoption"
+        android:name="io.nirahtech.petvet.ui.fragments.adoption.PetAdoptionFragment"
+        android:label="Adoption"
+        tools:layout="@layout/fragment_pet_adoption" />
+
 </navigation>
