@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
-    ViewPagerAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
         this.tabLayout = findViewById(R.id.tabLayout);
         this.viewPager2 = findViewById(R.id.viewPager);
-        this.viewPagerAdapter = new ViewPagerAdapter(this);
-        this.viewPager2.setAdapter(this.viewPagerAdapter);
+        final ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
+        this.viewPager2.setAdapter(viewPagerAdapter);
         this.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
