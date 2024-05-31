@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.ui.fragments;
+package io.nirahtech.petvet.ui.fragments.farm;
 
 import android.os.Bundle;
 
@@ -13,10 +13,8 @@ import android.view.ViewGroup;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -25,7 +23,6 @@ import io.nirahtech.petvet.R;
 import io.nirahtech.petvet.core.animalpark.Animal;
 import io.nirahtech.petvet.core.animalpark.Breed;
 import io.nirahtech.petvet.core.animalpark.Species;
-import io.nirahtech.petvet.core.base.Farm;
 import io.nirahtech.petvet.core.base.House;
 import io.nirahtech.petvet.core.base.Pet;
 import io.nirahtech.petvet.core.util.Weight;

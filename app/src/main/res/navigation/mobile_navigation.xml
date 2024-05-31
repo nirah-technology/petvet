@@ -8,25 +8,25 @@
 
     <fragment
         android:id="@+id/navigation_farm_exposition"
-        android:name="io.nirahtech.petvet.ui.fragments.FarmExpositionFragment"
+        android:name="io.nirahtech.petvet.ui.fragments.farm.FarmExpositionFragment"
         android:label="Animaux"
         tools:layout="@layout/fragment_farm_exposition" />
 
     <fragment
         android:id="@+id/navigation_planner"
-        android:name="io.nirahtech.petvet.ui.fragments.PlannerFragment"
+        android:name="io.nirahtech.petvet.ui.fragments.planner.PlannerFragment"
         android:label="Agenda"
         tools:layout="@layout/fragment_planner" />
 
     <fragment
         android:id="@+id/navigation_pharmacy"
-        android:name="io.nirahtech.petvet.ui.fragments.PharmacyFragment"
+        android:name="io.nirahtech.petvet.ui.fragments.pharmacy.PharmacyFragment"
         android:label="Pharmacie"
         tools:layout="@layout/fragment_pharmacy" />
 
     <fragment
         android:id="@+id/navigation_emergency"
-        android:name="io.nirahtech.petvet.ui.fragments.EmergencyFragment"
+        android:name="io.nirahtech.petvet.ui.fragments.emergency.EmergencyFragment"
         android:label="Urgences"
         tools:layout="@layout/fragment_emergency" />
 

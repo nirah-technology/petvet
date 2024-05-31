@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.ui.fragments;
+package io.nirahtech.petvet.ui.fragments.pharmacy;
 
 import androidx.lifecycle.ViewModel;
 

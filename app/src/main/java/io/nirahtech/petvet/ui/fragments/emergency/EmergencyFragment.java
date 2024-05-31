@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.ui.fragments;
+package io.nirahtech.petvet.ui.fragments.emergency;
 
 import androidx.lifecycle.ViewModelProvider;
 
@@ -14,24 +14,24 @@ import android.view.ViewGroup;
 
 import io.nirahtech.petvet.R;
 
-public class PharmacyFragment extends Fragment {
+public class EmergencyFragment extends Fragment {
 
-    private PharmacyViewModel mViewModel;
+    private EmergencyViewModel mViewModel;
 
-    public static PharmacyFragment newInstance() {
-        return new PharmacyFragment();
+    public static EmergencyFragment newInstance() {
+        return new EmergencyFragment();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_pharmacy, container, false);
+        return inflater.inflate(R.layout.fragment_emergency, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(PharmacyViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(EmergencyViewModel.class);
         // TODO: Use the ViewModel
     }
 
