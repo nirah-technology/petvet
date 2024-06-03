@@ -1,5 +1,11 @@
 package io.nirahtech.petvet.ui.fragments.adoption;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +14,7 @@ import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
@@ -22,7 +29,9 @@ import java.util.Objects;
 import java.util.TimeZone;
 
 import io.nirahtech.petvet.R;
+import io.nirahtech.petvet.core.base.Farm;
 import io.nirahtech.petvet.core.base.House;
+import io.nirahtech.petvet.persistance.repositories.HouseReaderDbHelper;
 
 public class PetAdoptionFragment extends Fragment {
 
@@ -36,14 +45,19 @@ public class PetAdoptionFragment extends Fragment {
     private LocalDate birthDate;
     private LocalDate adoptionDate;
 
+    private MaterialButtonToggleGroup gender;
+
     private MaterialDatePicker<Long> datePickerBirthDate;
     private MaterialDatePicker<Long> datePickerAdoptionDate;
 
     private Button confirmAdoptionButton;
 
     private final House createHouse() {
-        House house = new House(this.editTextName.getText().toString());
-        return null;
+        String name = this.editTextName.getText().toString();
+        House house = new House(name);
+        Farm farm = new Farm();
+        house.setFarm(farm);
+        return house;
     }
 
 
@@ -58,6 +72,7 @@ public class PetAdoptionFragment extends Fragment {
         this.editTextBirthDate = view.findViewById(R.id.editTextBirthDate);
         this.editTextAdoptionDate = view.findViewById(R.id.editTextAdoptionDate);
         this.confirmAdoptionButton = view.findViewById(R.id.confirmAdoptionButton);
+        this.gender = view.<MaterialButtonToggleGroup>findViewById(R.id.toggleButton);
 
         this.datePickerBirthDate = MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Sélectionnez la date de Naissance")
@@ -121,7 +136,20 @@ public class PetAdoptionFragment extends Fragment {
         this.confirmAdoptionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 House house = createHouse();
+                HouseReaderDbHelper dbHelper = new HouseReaderDbHelper(getContext());
+                SQLiteDatabase database = dbHelper.getWritableDatabase();
+                ContentValues values = new ContentValues();
+
+
+            }
+        });
+
+        this.gender.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
+            @Override
+            public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+
             }
         });
 

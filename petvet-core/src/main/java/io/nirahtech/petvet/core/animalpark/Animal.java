@@ -10,6 +10,7 @@ import io.nirahtech.petvet.core.util.Weight;
 public final class Animal implements LifeCycle, Serializable {
     private Species species;
     private Breed breed;
+    private Gender gender;
     private LocalDate birthDate;
     private LocalDate deathDate;
     private Weight weight;
@@ -99,6 +100,12 @@ public final class Animal implements LifeCycle, Serializable {
     public final void death(final LocalDate date) {
         this.deathDate = date;
     }
+    public final Gender getGender() {
+        return this.gender;
+    }
+    public final void setGender(final Gender gender) {
+        this.gender = gender;
+    }
 
     @Override
     public int hashCode() {
@@ -109,6 +116,7 @@ public final class Animal implements LifeCycle, Serializable {
         result = prime * result + ((birthDate == null) ? 0 : birthDate.hashCode());
         result = prime * result + ((deathDate == null) ? 0 : deathDate.hashCode());
         result = prime * result + ((weight == null) ? 0 : weight.hashCode());
+        result = prime * result + ((gender == null) ? 0 : gender.hashCode());
         result = prime * result + ((picture == null) ? 0 : picture.hashCode());
         return result;
     }
@@ -151,6 +159,11 @@ public final class Animal implements LifeCycle, Serializable {
             if (other.picture != null)
                 return false;
         } else if (!picture.equals(other.picture))
+            return false;
+        if (gender == null) {
+            if (other.gender != null)
+                return false;
+        } else if (!gender.equals(other.gender))
             return false;
         return true;
     }
