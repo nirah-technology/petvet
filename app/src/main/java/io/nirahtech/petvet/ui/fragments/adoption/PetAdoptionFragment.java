@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -156,6 +158,8 @@ public class PetAdoptionFragment extends Fragment {
             final Pet pet = createPet();
             final House house = HOUSE_SERVICE.get();
             final HealthBook healthBook = house.adopt(pet.getAnimal(), pet.getName(), pet.getAdoptionDate());
+            final NavController navController = Navigation.findNavController(view);
+            navController.navigateUp();
         }
 
     }

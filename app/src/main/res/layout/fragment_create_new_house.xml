@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="20dp"
     tools:context=".ui.CreateNewHouseFragment">
@@ -15,8 +16,8 @@
         android:fontFamily="@font/montserrat_extra_bold"
         android:textAllCaps="true"
         android:layout_marginTop="100dp"
-        android:textSize="24sp"
-        android:paddingTop="20sp"
+        android:textSize="36dp"
+        android:paddingTop="20dp"
         android:textColor="@color/green_900"
         android:textStyle="bold" />
 
@@ -28,51 +29,47 @@
         android:text="Création de votre habitat"
         android:textColor="@color/green_800"
         android:textAllCaps="true"
-        android:paddingBottom="20sp"
+        android:paddingBottom="20dp"
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/textViewNameLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:textColor="@color/green_500"
-        android:text="Nom"
-        android:paddingTop="20sp"
-        android:paddingBottom="10sp"
-        android:textSize="14sp"
-        android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/editTextHouseName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Donnez un nom à votre habitat"
-        android:inputType="text"
-        android:fontFamily="@font/montserrat_regular"
-        android:paddingTop="20sp"
-        android:paddingBottom="20sp"
-        />
 
-    <TextView
-        android:id="@+id/nameError"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutHouseName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/red"
-        android:paddingTop="20sp"
-        android:paddingBottom="10sp"
-        android:textStyle="italic"
-        android:textSize="14sp" />
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        app:helperText="Obligatoire*"
+        app:counterEnabled="true"
+        app:counterMaxLength="20"
+        app:endIconMode="clear_text"
+        app:helperTextTextColor="@color/red"
+        android:hint="Nom de l'habitation">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextHouseName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:maxLines="1"
+            android:maxLength="20"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <Button
         android:id="@+id/buttonSubmit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
+        android:layout_margin="20dp"
         android:layout_marginTop="30dp"
-
+        android:layout_marginBottom="70dp"
         android:padding="20dp"
+        android:drawableLeft="@drawable/create_house_24"
         android:text="Créer" />
 
 </LinearLayout>
