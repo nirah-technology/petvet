@@ -31,6 +31,8 @@ import io.nirahtech.petvet.core.base.Pet;
 import io.nirahtech.petvet.core.util.Weight;
 import io.nirahtech.petvet.services.storage.LocalStorageService;
 import io.nirahtech.petvet.services.storage.StorageService;
+import io.nirahtech.petvet.services.storage.house.HouseService;
+import io.nirahtech.petvet.services.storage.house.HouseServiceImpl;
 import io.nirahtech.petvet.ui.adapters.SpeciesAdapter;
 
 /**
@@ -41,6 +43,7 @@ import io.nirahtech.petvet.ui.adapters.SpeciesAdapter;
 public class FarmExpositionFragment extends Fragment {
 
     private static final StorageService STORAGE_SERVICE = new LocalStorageService();
+    private static final HouseService HOUSE_SERVICE = HouseServiceImpl.getInstance();
     private static final String DATABASE_FILE_NAME = "house.db";
 
     private RecyclerView speciesRecyclerView;
@@ -90,14 +93,16 @@ public class FarmExpositionFragment extends Fragment {
             nitroAsAnimal.setWeight(Weight.kg(7.2D));
             Pet nitroAsPet = new Pet(nitroAsAnimal, "Nitro", LocalDate.of(2017, 3, 17));
             cats.add(nitroAsPet);
+            HOUSE_SERVICE.get().adopt(nitroAsAnimal, nitroAsPet.getName(), nitroAsPet.getAdoptionDate());
 
             // Nala
             final Animal nalaAsAnimal = new Animal();
             nalaAsAnimal.setSpecies(cat);
-            nalaAsAnimal.setBreed(european);
+            nalaAsAnimal.setBreed(manx);
             nalaAsAnimal.setWeight(Weight.kg(7.2D));
             Pet nalaAsPet = new Pet(nalaAsAnimal, "Nala", LocalDate.of(2017, 3, 17));
             cats.add(nalaAsPet);
+            HOUSE_SERVICE.get().adopt(nalaAsAnimal, nalaAsPet.getName(), nalaAsPet.getAdoptionDate());
 
             // Simba
             final Animal simbaAsAnimal = new Animal();
@@ -106,14 +111,16 @@ public class FarmExpositionFragment extends Fragment {
             simbaAsAnimal.setWeight(Weight.kg(7.2D));
             Pet simbaAsPet = new Pet(simbaAsAnimal, "Simba", LocalDate.of(2017, 3, 17));
             cats.add(simbaAsPet);
+            HOUSE_SERVICE.get().adopt(simbaAsAnimal, simbaAsPet.getName(), simbaAsPet.getAdoptionDate());
 
             // Ed
             final Animal edAsAnimal = new Animal();
             edAsAnimal.setSpecies(cat);
-            edAsAnimal.setBreed(european);
+            edAsAnimal.setBreed(chartreux);
             edAsAnimal.setWeight(Weight.kg(7.2D));
             Pet edAsPet = new Pet(edAsAnimal, "Simba", LocalDate.of(2017, 3, 17));
             cats.add(edAsPet);
+            HOUSE_SERVICE.get().adopt(edAsAnimal, edAsPet.getName(), edAsPet.getAdoptionDate());
 
             final Set<Pet> dogs = new HashSet<>();
             final Species dog = Species.of("Chien");
@@ -125,6 +132,7 @@ public class FarmExpositionFragment extends Fragment {
             yumaAsAnimal.setWeight(Weight.kg(4.7D));
             Pet yumaAsPet = new Pet(yumaAsAnimal, "Yuma", LocalDate.of(2017, 3, 17));
             dogs.add(yumaAsPet);
+            HOUSE_SERVICE.get().adopt(yumaAsAnimal, yumaAsPet.getName(), yumaAsPet.getAdoptionDate());
 
             final Set<Pet> galinaceas = new HashSet<>();
             final Species galinacea = Species.of("Galinacée");
@@ -140,6 +148,7 @@ public class FarmExpositionFragment extends Fragment {
             picsouAsAnimal.setWeight(Weight.kg(5.7D));
             Pet picsouAsPet = new Pet(picsouAsAnimal, "Picsou", LocalDate.of(2023, 9, 9));
             galinaceas.add(picsouAsPet);
+            HOUSE_SERVICE.get().adopt(picsouAsAnimal, picsouAsPet.getName(), picsouAsPet.getAdoptionDate());
 
             // Riri
             final Animal ririAsAnimal = new Animal();
@@ -148,6 +157,7 @@ public class FarmExpositionFragment extends Fragment {
             ririAsAnimal.setWeight(Weight.kg(4.2D));
             Pet ririAsPet = new Pet(ririAsAnimal, "Riri", LocalDate.of(2023, 9, 9));
             galinaceas.add(ririAsPet);
+            HOUSE_SERVICE.get().adopt(ririAsAnimal, ririAsPet.getName(), ririAsPet.getAdoptionDate());
 
             // Fifi
             final Animal fifiAsAnimal = new Animal();
@@ -156,6 +166,7 @@ public class FarmExpositionFragment extends Fragment {
             fifiAsAnimal.setWeight(Weight.kg(4.2D));
             Pet fifiAsPet = new Pet(fifiAsAnimal, "Fifi", LocalDate.of(2023, 9, 9));
             galinaceas.add(fifiAsPet);
+            HOUSE_SERVICE.get().adopt(fifiAsAnimal, fifiAsPet.getName(), fifiAsPet.getAdoptionDate());
 
             // Loulou
             final Animal loulouAsAnimal = new Animal();
@@ -164,6 +175,7 @@ public class FarmExpositionFragment extends Fragment {
             loulouAsAnimal.setWeight(Weight.kg(4.2D));
             Pet loulouAsPet = new Pet(loulouAsAnimal, "Loulou", LocalDate.of(2023, 9, 9));
             galinaceas.add(loulouAsPet);
+            HOUSE_SERVICE.get().adopt(loulouAsAnimal, loulouAsPet.getName(), loulouAsPet.getAdoptionDate());
 
 
 
@@ -174,6 +186,7 @@ public class FarmExpositionFragment extends Fragment {
             soloAnimal.setWeight(Weight.kg(4.2D));
             Pet soloAsPet = new Pet(soloAnimal, "Solo", LocalDate.of(2023, 9, 9));
             galinaceas.add(soloAsPet);
+            HOUSE_SERVICE.get().adopt(soloAnimal, soloAsPet.getName(), soloAsPet.getAdoptionDate());
 
             // Séké
             final Animal sekeAsAnimal = new Animal();
@@ -182,6 +195,7 @@ public class FarmExpositionFragment extends Fragment {
             sekeAsAnimal.setWeight(Weight.kg(4.2D));
             Pet sekeAsPet = new Pet(sekeAsAnimal, "Séké", LocalDate.of(2023, 9, 9));
             galinaceas.add(sekeAsPet);
+            HOUSE_SERVICE.get().adopt(sekeAsAnimal, sekeAsPet.getName(), sekeAsPet.getAdoptionDate());
 
             // Gaïa
             final Animal gaiaAsAnimal = new Animal();
@@ -190,6 +204,7 @@ public class FarmExpositionFragment extends Fragment {
             gaiaAsAnimal.setWeight(Weight.kg(4.2D));
             Pet gaiaAsPet = new Pet(gaiaAsAnimal, "Gaïa", LocalDate.of(2023, 9, 9));
             galinaceas.add(gaiaAsPet);
+            HOUSE_SERVICE.get().adopt(gaiaAsAnimal, gaiaAsPet.getName(), gaiaAsPet.getAdoptionDate());
 
             // Cargo
             final Animal cargoAsAnimal = new Animal();
@@ -198,6 +213,7 @@ public class FarmExpositionFragment extends Fragment {
             cargoAsAnimal.setWeight(Weight.kg(4.2D));
             Pet cargoAsPet = new Pet(cargoAsAnimal, "Cargo", LocalDate.of(2023, 9, 9));
             galinaceas.add(cargoAsPet);
+            HOUSE_SERVICE.get().adopt(cargoAsAnimal, cargoAsPet.getName(), cargoAsPet.getAdoptionDate());
 
             final Set<Pet> bovids = new HashSet<>();
             final Species bovid = Species.of("Bovidés");
@@ -207,8 +223,9 @@ public class FarmExpositionFragment extends Fragment {
             djaliAsAnimal.setSpecies(bovid);
             djaliAsAnimal.setBreed(dwarfGoat);
             djaliAsAnimal.setWeight(Weight.kg(14.24D));
-            Pet djaliAsPet = new Pet(djaliAsAnimal, "DJali", LocalDate.of(2024, 9, 9));
+            Pet djaliAsPet = new Pet(djaliAsAnimal, "Djali", LocalDate.of(2024, 9, 9));
             bovids.add(djaliAsPet);
+            HOUSE_SERVICE.get().adopt(djaliAsAnimal, djaliAsPet.getName(), djaliAsPet.getAdoptionDate());
 
         }
     }
@@ -223,6 +240,7 @@ public class FarmExpositionFragment extends Fragment {
                     this.petsBySpecies.computeIfAbsent(species, k -> new HashSet<>()).add(pet);
                 }
             });
+            HOUSE_SERVICE.save(house);
         }
         this.preventErrorOnLoadFailure();
     }

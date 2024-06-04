@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -26,40 +27,138 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TimeZone;
 
 import io.nirahtech.petvet.R;
+import io.nirahtech.petvet.core.animalpark.Animal;
+import io.nirahtech.petvet.core.animalpark.Breed;
+import io.nirahtech.petvet.core.animalpark.Gender;
+import io.nirahtech.petvet.core.animalpark.Species;
 import io.nirahtech.petvet.core.base.Farm;
 import io.nirahtech.petvet.core.base.House;
+import io.nirahtech.petvet.core.base.Pet;
+import io.nirahtech.petvet.core.clinic.HealthBook;
 import io.nirahtech.petvet.persistance.repositories.HouseReaderDbHelper;
+import io.nirahtech.petvet.services.storage.house.HouseService;
+import io.nirahtech.petvet.services.storage.house.HouseServiceImpl;
 
 public class PetAdoptionFragment extends Fragment {
 
-    private TextInputEditText editTextBirthDate;
-    private TextInputEditText editTextAdoptionDate;
+    private static final HouseService HOUSE_SERVICE = HouseServiceImpl.getInstance();
 
+    // Name
     private TextInputEditText editTextName;
+
+    // Species
     private TextInputEditText editTextSpecies;
+
+    // Breed
     private TextInputEditText editTextBreed;
 
+    // Birth Date
+    private TextInputEditText editTextBirthDate;
+    private MaterialDatePicker<Long> datePickerBirthDate;
     private LocalDate birthDate;
+
+    // Adoption Date
+    private TextInputEditText editTextAdoptionDate;
+    private MaterialDatePicker<Long> datePickerAdoptionDate;
     private LocalDate adoptionDate;
 
-    private MaterialButtonToggleGroup gender;
+    // Gender
+    private MaterialButtonToggleGroup buttonToggleGroupGender;
+    private Gender gender;
 
-    private MaterialDatePicker<Long> datePickerBirthDate;
-    private MaterialDatePicker<Long> datePickerAdoptionDate;
 
     private Button confirmAdoptionButton;
 
-    private final House createHouse() {
-        String name = this.editTextName.getText().toString();
-        House house = new House(name);
-        Farm farm = new Farm();
-        house.setFarm(farm);
-        return house;
+    private final Pet createPet() {
+        final Animal animal = new Animal();
+        final Species species = Species.of(this.editTextSpecies.getText().toString().trim().toUpperCase());
+        final Breed breed = Breed.of(this.editTextBreed.getText().toString().trim().toUpperCase());
+        final String name = this.editTextName.getText().toString().trim().toUpperCase();
+        animal.setBreed(breed);
+        animal.setSpecies(species);
+        animal.setGender(this.gender);
+        animal.birth(this.birthDate);
+        Pet pet = new Pet(animal, name, this.adoptionDate);
+        return pet;
     }
 
+    private Optional<String> retrieveName(View view) {
+        Optional<String> value = Optional.empty();
+        if (Objects.isNull(this.editTextName)) {
+            this.editTextName = view.findViewById(R.id.editTextAnimalName);
+        }
+        if (Objects.nonNull(this.editTextName) && Objects.nonNull(this.editTextName.getText())) {
+            if (!this.editTextName.getText().toString().trim().isEmpty()) {
+                value = Optional.ofNullable(this.editTextName.getText().toString().toUpperCase());
+            }
+        }
+        return value;
+    }
+    private Optional<String> retrieveSpecies(View view) {
+        Optional<String> value = Optional.empty();
+        if (Objects.isNull(this.editTextSpecies)) {
+            this.editTextSpecies = view.findViewById(R.id.editTextAnimalSpecies);
+        }
+        if (Objects.nonNull(this.editTextSpecies) && Objects.nonNull(this.editTextSpecies.getText())) {
+            if (!this.editTextSpecies.getText().toString().trim().isEmpty()) {
+                value = Optional.ofNullable(this.editTextSpecies.getText().toString().toUpperCase());
+            }
+        }
+        return value;
+    }
+
+    private Optional<String> retrieveBreed(View view) {
+        Optional<String> value = Optional.empty();
+        if (Objects.isNull(this.editTextBreed)) {
+            this.editTextBreed = view.findViewById(R.id.editTextAnimalBreed);
+        }
+        if (Objects.nonNull(this.editTextBreed) && Objects.nonNull(this.editTextBreed.getText())) {
+            if (!this.editTextBreed.getText().toString().trim().isEmpty()) {
+                value = Optional.ofNullable(this.editTextBreed.getText().toString().toUpperCase());
+            }
+        }
+        return value;
+    }
+
+    private void handleAdoptionButtonOnClick(View view) {
+        final Optional<String> name = this.retrieveName(view);
+        final Optional<String> speciesName = this.retrieveSpecies(view);
+        final Optional<String> breedName = this.retrieveBreed(view);
+        if (!name.isPresent()) {
+            Toast.makeText(this.getContext(), "Le nom de l'animal est obligatoire.", Toast.LENGTH_LONG)
+                    .show();
+            this.editTextName.setSelected(true);
+        }
+        else if (!speciesName.isPresent()) {
+            Toast.makeText(this.getContext(), "L'espèce de "+name.get()+" est obligatoire.", Toast.LENGTH_LONG)
+                    .show();
+            this.editTextSpecies.setSelected(true);
+        } else if (!breedName.isPresent()) {
+            Toast.makeText(this.getContext(), "La race de "+name.get()+" est obligatoire.", Toast.LENGTH_LONG)
+                    .show();
+            this.editTextBreed.setSelected(true);
+        } else if (Objects.isNull(this.gender)) {
+            Toast.makeText(this.getContext(), "Le sexe de "+name.get()+" est obligatoire.", Toast.LENGTH_LONG)
+                    .show();
+        } else if (Objects.isNull(this.birthDate)) {
+            Toast.makeText(this.getContext(), "La date de naissance de "+name.get()+" est obligatoire.", Toast.LENGTH_LONG)
+                    .show();
+            this.editTextBirthDate.setSelected(true);
+        } else if (Objects.isNull(this.adoptionDate)) {
+            Toast.makeText(this.getContext(), "La date d'adoption de l'animal est obligatoire.", Toast.LENGTH_LONG)
+                    .show();
+            this.editTextAdoptionDate.setSelected(true);
+        } else {
+            final Pet pet = createPet();
+            final House house = HOUSE_SERVICE.get();
+            final HealthBook healthBook = house.adopt(pet.getAnimal(), pet.getName(), pet.getAdoptionDate());
+        }
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,7 +171,7 @@ public class PetAdoptionFragment extends Fragment {
         this.editTextBirthDate = view.findViewById(R.id.editTextBirthDate);
         this.editTextAdoptionDate = view.findViewById(R.id.editTextAdoptionDate);
         this.confirmAdoptionButton = view.findViewById(R.id.confirmAdoptionButton);
-        this.gender = view.<MaterialButtonToggleGroup>findViewById(R.id.toggleButton);
+        this.buttonToggleGroupGender = view.<MaterialButtonToggleGroup>findViewById(R.id.toggleButton);
 
         this.datePickerBirthDate = MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Sélectionnez la date de Naissance")
@@ -136,24 +235,30 @@ public class PetAdoptionFragment extends Fragment {
         this.confirmAdoptionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                House house = createHouse();
-                HouseReaderDbHelper dbHelper = new HouseReaderDbHelper(getContext());
-                SQLiteDatabase database = dbHelper.getWritableDatabase();
-                ContentValues values = new ContentValues();
-
-
+                handleAdoptionButtonOnClick(view);
             }
         });
 
-        this.gender.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
+        this.buttonToggleGroupGender.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
             @Override
             public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
 
+                if (isChecked) {
+                    if (checkedId == R.id.buttonGenderMale) {
+                        gender = Gender.MALE;
+                    }
+                    else if (checkedId == R.id.buttonGenderFemale) {
+                        gender = Gender.FEMALE;
+                    }
+                    else if (checkedId == R.id.buttonGenderHermaphodite) {
+                        gender = Gender.HERMAPHRODITE;
+                    } else {
+                        gender = Gender.HERMAPHRODITE;
+
+                    }
+                }
             }
         });
-
-
 
         return view;
     }
