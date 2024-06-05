@@ -24,6 +24,8 @@ import io.nirahtech.petvet.MainActivity;
 import io.nirahtech.petvet.R;
 import io.nirahtech.petvet.core.base.Farm;
 import io.nirahtech.petvet.core.base.House;
+import io.nirahtech.petvet.services.house.HouseService;
+import io.nirahtech.petvet.services.house.HouseServiceImpl;
 import io.nirahtech.petvet.services.storage.LocalStorageService;
 import io.nirahtech.petvet.services.storage.StorageService;
 
@@ -34,12 +36,12 @@ import io.nirahtech.petvet.services.storage.StorageService;
  */
 public class CreateNewHouseFragment extends Fragment {
 
-    private static final String DATABASE_FILE_NAME = "house.db";
+
 
     private TextInputEditText houseNameEditText;
     private Button createButton;
 
-    private final StorageService storageService = new LocalStorageService();;
+    private HouseService houseService;
 
 
     private final void redirectoToMainActivuty() {
@@ -53,10 +55,8 @@ public class CreateNewHouseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final File databaseFile = new File( storageService.getMediaStore(this.getContext()), DATABASE_FILE_NAME);
-        if (storageService.exists(databaseFile)) {
-            this.redirectoToMainActivuty();
-        }
+        this.houseService = HouseServiceImpl.getInstance(this.getContext());
+        this.houseService.getHouse().ifPresent(house -> this.redirectoToMainActivuty());
     }
 
     private final void handleClick() {
@@ -66,41 +66,19 @@ public class CreateNewHouseFragment extends Fragment {
             final House house = new House(houseName);
             final Farm farm = new Farm();
             house.setFarm(farm);
+            this.houseService.save(house);
+            new AlertDialog.Builder(this.getContext())
+                    .setTitle("Parfait!")
+                    .setMessage("Votre habitat a bien été sauvegardé.")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            redirectoToMainActivuty();
+                        }
 
-            try {
-                storageService.save(house, new File( storageService.getMediaStore(this.getContext()), DATABASE_FILE_NAME));
-
-                new AlertDialog.Builder(this.getContext())
-                        .setTitle("Parfait!")
-                        .setMessage("Votre habitat a bien été sauvegardé.")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                redirectoToMainActivuty();
-                            }
-
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_info)
-                        .show();
-            } catch (IOException exception) {
-                exception.printStackTrace();
-                new AlertDialog.Builder(this.getContext())
-                        .setTitle("Failure")
-                        .setMessage(exception.getMessage())
-
-                        // Specifying a listener allows you to take an action before dismissing the dialog.
-                        // The dialog is automatically dismissed when a dialog button is clicked.
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface  dialog, int which) {
-                                // Continue with delete operation
-                            }
-                        })
-
-                        // A null listener allows the button to dismiss the dialog and take no further action.
-                        .setNegativeButton(android.R.string.no, null)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-            }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .show();
         }
     }
 

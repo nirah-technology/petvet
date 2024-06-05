@@ -1,10 +1,13 @@
 package io.nirahtech.petvet.ui.adapters;
 
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Objects;
 
 import io.nirahtech.petvet.R;
 import io.nirahtech.petvet.core.base.Pet;
@@ -20,7 +23,10 @@ public class PetViewHolder extends RecyclerView.ViewHolder {
         this.petName = itemView.findViewById(R.id.petName);
     }
     public void bind(final Pet pet, final OnPetClickEventListener listener) {
-        petName.setText(pet.getName());
+        this.petName.setText(pet.getName());
+        if (Objects.nonNull(pet.getAnimal().getPicture())) {
+            this.petImage.setImageBitmap(BitmapFactory.decodeFile(pet.getAnimal().getPicture().getAbsolutePath()));
+        }
         itemView.setOnClickListener(v -> listener.onPetClick(pet));
     }
 

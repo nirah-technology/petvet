@@ -1,18 +1,12 @@
 package io.nirahtech.petvet.ui.fragments.adoption;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -23,11 +17,9 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.temporal.TemporalField;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -39,18 +31,16 @@ import io.nirahtech.petvet.core.animalpark.Animal;
 import io.nirahtech.petvet.core.animalpark.Breed;
 import io.nirahtech.petvet.core.animalpark.Gender;
 import io.nirahtech.petvet.core.animalpark.Species;
-import io.nirahtech.petvet.core.base.Farm;
 import io.nirahtech.petvet.core.base.House;
 import io.nirahtech.petvet.core.base.Pet;
 import io.nirahtech.petvet.core.clinic.HealthBook;
-import io.nirahtech.petvet.persistance.repositories.HouseReaderDbHelper;
-import io.nirahtech.petvet.services.storage.house.HouseService;
-import io.nirahtech.petvet.services.storage.house.HouseServiceImpl;
+import io.nirahtech.petvet.services.house.HouseService;
+import io.nirahtech.petvet.services.house.HouseServiceImpl;
 import io.nirahtech.petvet.ui.validators.AdoptionDateValidator;
 
 public class PetAdoptionFragment extends Fragment {
 
-    private static final HouseService HOUSE_SERVICE = HouseServiceImpl.getInstance();
+    private HouseService houseService;
 
     // Name
     private TextInputEditText editTextName;
@@ -157,12 +147,18 @@ public class PetAdoptionFragment extends Fragment {
             this.editTextAdoptionDate.setSelected(true);
         } else {
             final Pet pet = createPet();
-            final House house = HOUSE_SERVICE.get();
+            final House house = this.houseService.getHouse().get();
             final HealthBook healthBook = house.adopt(pet.getAnimal(), pet.getName(), pet.getAdoptionDate());
             final NavController navController = Navigation.findNavController(view);
             navController.navigateUp();
         }
 
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.houseService = HouseServiceImpl.getInstance(this.getContext());
     }
 
     @Override

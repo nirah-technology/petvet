@@ -1,4 +1,6 @@
-package io.nirahtech.petvet.services.storage.house;
+package io.nirahtech.petvet.services.house;
+
+import java.util.Optional;
 
 import io.nirahtech.petvet.core.base.House;
 
@@ -8,13 +10,13 @@ public interface HouseService {
      * Load the house
      * @return The loaded house
      */
-    House load();
+    void load();
 
     /**
      * Get the loaded house
      * @return The house
      */
-    House get();
+    Optional<House> getHouse();
 
     /**
      * Save the house
