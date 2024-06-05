@@ -64,22 +64,34 @@ public class PetDetailFragment extends Fragment {
             this.petWweightDateTextView = rootView.findViewById(R.id.petWeight);
 
             if (Objects.nonNull(this.pet.getName())) {
-                this.petNameTextView.setText(this.pet.getName());
+                this.petNameTextView.setText(this.pet.getName().toUpperCase());
+            } else {
+                this.petNameTextView.setText("");
             }
             if (Objects.nonNull(this.pet.getAnimal().getSpecies())) {
-                this.petSpeciesTextView.setText(this.pet.getAnimal().getSpecies().getName());
+                this.petSpeciesTextView.setText(this.pet.getAnimal().getSpecies().getName().toUpperCase());
+            } else {
+                this.petSpeciesTextView.setText("");
             }
             if (Objects.nonNull(this.pet.getAnimal().getBreed())) {
-                this.petBreedTextView.setText(this.pet.getAnimal().getBreed().getName());
+                this.petBreedTextView.setText(this.pet.getAnimal().getBreed().getName().toUpperCase());
+            } else {
+                this.petBreedTextView.setText("");
             }
             if (Objects.nonNull(this.pet.getAnimal().getGender())) {
                 this.petSexeTextView.setText(this.pet.getAnimal().getGender().name());
+            } else {
+                this.petSexeTextView.setText("");
             }
             if (Objects.nonNull(this.pet.getAnimal().getBirthDate())) {
                 this.petBirthDateTextView.setText(this.pet.getAnimal().getBirthDate().toString());
+            } else {
+                this.petBirthDateTextView.setText("");
             }
             if (Objects.nonNull(this.pet.getAdoptionDate())) {
                 this.petAdoptionDateTextView.setText(this.pet.getAdoptionDate().toString());
+            } else {
+                this.petAdoptionDateTextView.setText("");
             }
         }
 

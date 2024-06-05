@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -54,7 +56,8 @@ public class FarmExpositionFragment extends Fragment {
     private SpeciesAdapter speciesAdapter;
     private Map<Species, Set<Pet>> petsBySpecies;
 
-    private Button adoptionButton;
+    private FloatingActionButton adoptionButton;
+    private Button locationButton;
 
 
 
@@ -294,11 +297,20 @@ public class FarmExpositionFragment extends Fragment {
         speciesRecyclerView.setAdapter(speciesAdapter);
 
         this.adoptionButton = view.findViewById(R.id.adoptionButton);
+        this.locationButton = view.findViewById(R.id.locationButton);
         this.adoptionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final NavController navController = Navigation.findNavController(v);
                 navController.navigate(R.id.navigation_pet_adoption);
+            }
+        });
+
+        this.locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final NavController navController = Navigation.findNavController(v);
+                navController.navigate(R.id.navigation_animal_gps);
             }
         });
 

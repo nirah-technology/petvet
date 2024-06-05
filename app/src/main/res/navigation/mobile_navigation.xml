@@ -42,4 +42,10 @@
         android:label="Fiche Animal"
         tools:layout="@layout/fragment_pet_detail" />
 
+    <fragment
+        android:id="@+id/navigation_animal_gps"
+        android:name="io.nirahtech.petvet.ui.AnimalsGPSFragment"
+        android:label="Géo-Localisation"
+        tools:layout="@layout/fragment_animals_g_p_s" />
+
 </navigation>
