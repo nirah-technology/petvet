@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.android.material.textfield.TextInputEditText;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
@@ -34,7 +36,7 @@ public class CreateNewHouseFragment extends Fragment {
 
     private static final String DATABASE_FILE_NAME = "house.db";
 
-    private EditText houseNameEditText;
+    private TextInputEditText houseNameEditText;
     private Button createButton;
 
     private final StorageService storageService = new LocalStorageService();;

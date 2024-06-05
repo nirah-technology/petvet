@@ -159,7 +159,7 @@ public class PetAdoptionFragment extends Fragment {
             final Pet pet = createPet();
             final House house = HOUSE_SERVICE.get();
             final HealthBook healthBook = house.adopt(pet.getAnimal(), pet.getName(), pet.getAdoptionDate());
-            NavController navController = Navigation.findNavController(this.getActivity(), R.id.nav_host_fragment_activity_main);
+            final NavController navController = Navigation.findNavController(view);
             navController.navigateUp();
         }
 
