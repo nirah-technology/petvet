@@ -1,132 +1,238 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragmentPetDetail"
     android:layout_width="match_parent"
+    android:layout_marginBottom="40dp"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="20dp"
     tools:context=".ui.PetDetailFragment">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:src="@tools:sample/avatars" />
-
-    <TextView
-        android:id="@+id/petName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textSize="34dp"
-        android:fontFamily="@font/montserrat_extra_bold"
-        android:text="TextView" />
-
-    <TableLayout
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TableRow>
-            <TextView
-                android:text="Espèce"
-                android:textAllCaps="true"
-                android:fontFamily="@font/montserrat_bold"
-                android:padding="3dip" />
-            <TextView
-                android:text="Espèce de l'animal..."
-                android:id="@+id/petSpecies"
-                android:gravity="right"
-                android:padding="3dip" />
-        </TableRow>
-
-        <TableRow>
-            <TextView
-                android:textAllCaps="true"
-                android:fontFamily="@font/montserrat_bold"
-                android:text="Race"
-                android:padding="3dip" />
-            <TextView
-                android:id="@+id/petBreed"
-                android:text="Race de l'espèce animal..."
-                android:gravity="right"
-                android:padding="3dip" />
-        </TableRow>
-
-        <TableRow>
-            <TextView
-                android:textAllCaps="true"
-                android:fontFamily="@font/montserrat_bold"
-                android:text="Sexe"
-                android:padding="3dip" />
-            <TextView
-                android:id="@+id/petSexe"
-                android:text="Sexe animal..."
-                android:gravity="right"
-                android:padding="3dip" />
-        </TableRow>
-
-        <TableRow>
-            <TextView
-                android:textAllCaps="true"
-                android:fontFamily="@font/montserrat_bold"
-                android:text="Date de naissance"
-                android:padding="3dip" />
-            <TextView
-                android:id="@+id/petBirthDate"
-                android:text="Race de l'espèce animal..."
-                android:gravity="right"
-                android:padding="3dip" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:textAllCaps="true"
-                android:fontFamily="@font/montserrat_bold"
-                android:text="Date d'adoption"
-                android:padding="3dip" />
-            <TextView
-                android:id="@+id/petAdoptionDate"
-                android:text="Race de l'espèce animal..."
-                android:gravity="right"
-                android:padding="3dip" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:textAllCaps="true"
-                android:fontFamily="@font/montserrat_bold"
-                android:text="Poids (kg)"
-                android:padding="3dip" />
-            <TextView
-                android:id="@+id/petWeight"
-                android:text="Poids animal..."
-                android:gravity="right"
-                android:padding="3dip" />
-        </TableRow>
-    </TableLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-
-        <ImageButton
-            android:id="@+id/openHealthBookButton"
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:layout_margin="20dp"
-            android:src="@drawable/ic_health_book" />
+            android:minHeight="48dp"
+            android:maxHeight="48dp"
+            android:minWidth="48dp"
+            app:tint="@color/white"
+            android:maxWidth="48dp"
+            tools:src="@drawable/ic_avatar" />
 
-        <ImageButton
-            android:id="@+id/openPetCalendar"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/petName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:layout_margin="20dp"
-            android:src="@drawable/baseline_calendar_month_24" />
+            android:textAlignment="center"
+            android:textColor="@color/green_400"
+            android:textAllCaps="true"
+            android:textSize="34dp"
+            android:fontFamily="@font/montserrat_extra_bold"
+            android:text="TextView" />
+
+        <TableLayout
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TableRow>
+                <TextView
+                    android:text="Espèce"
+                    android:textAllCaps="true"
+                    android:gravity="end"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:padding="3dip" />
+                <TextView
+                    android:text="Espèce de l'animal..."
+                    android:id="@+id/petSpecies"
+                    android:gravity="start"
+                    android:padding="3dip" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Race"
+                    android:gravity="end"
+                    android:padding="3dip" />
+                <TextView
+                    android:id="@+id/petBreed"
+                    android:text="Race de l'espèce animal..."
+                    android:gravity="start"
+                    android:padding="3dip" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Sexe"
+                    android:gravity="end"
+                    android:padding="3dip" />
+                <TextView
+                    android:id="@+id/petSexe"
+                    android:text="Sexe animal..."
+                    android:gravity="start"
+                    android:padding="3dip" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Date de naissance"
+                    android:gravity="end"
+                    android:padding="3dip" />
+                <TextView
+                    android:id="@+id/petBirthDate"
+                    android:text="Race de l'espèce animal..."
+                    android:gravity="start"
+                    android:padding="3dip" />
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Date d'adoption"
+                    android:gravity="end"
+                    android:padding="3dip" />
+                <TextView
+                    android:id="@+id/petAdoptionDate"
+                    android:text="Race de l'espèce animal..."
+                    android:gravity="start"
+                    android:padding="3dip" />
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Poids (kg)"
+                    android:gravity="end"
+                    android:padding="3dip" />
+                <TextView
+                    android:id="@+id/petWeight"
+                    android:text="Poids animal..."
+                    android:gravity="start"
+                    android:padding="3dip" />
+            </TableRow>
+        </TableLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Edit -->
+            <ImageButton
+                android:id="@+id/imageButtonEditPet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:layout_margin="5dp"
+                android:src="@drawable/create_house_24" />
+
+            <!-- Events -->
+            <ImageButton
+                android:id="@+id/imageButtonDisplayCalendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:layout_margin="5dp"
+                android:src="@drawable/baseline_calendar_month_24" />
+
+            <!-- Health Book -->
+            <ImageButton
+                android:id="@+id/imageButtonOpenHealthBook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:layout_margin="5dp"
+                android:src="@drawable/ic_health_book" />
+
+
+            <!-- Pharmacy -->
+
+            <ImageButton
+                android:id="@+id/imageButtonDisplayPharmacySection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:padding="20dp"
+                android:src="@drawable/ic_pharmacy_section_inventory" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
-</LinearLayout>
+    <!-- Add something: Consultation to Healthbook, Event to calendar, Elixyr to Pharma -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabAddConsultationToHealthBook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="80dp"
+        android:text="Consulter"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"
+        android:backgroundTint="@color/green_200"
+        android:icon="@drawable/ic_eye_plus"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabAddEventToCalendar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="160dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"
+        android:text="Plannifier"
+        android:backgroundTint="@color/green_200"
+        app:icon="@drawable/ic_plannify"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabAddCureToPharmacy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="240dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"
+        android:backgroundTint="@color/green_200"
+        android:text="Approvisionner"
+        app:icon="@drawable/ic_medicine_bowl_pharmacy"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:id="@+id/fabClose"
+        android:visibility="gone"
+        android:src="@drawable/ic_close"
+        app:tint="@color/white"
+        android:layout_margin="16dp"
+        android:contentDescription="Close"
+        android:backgroundTint="@color/red"
+        android:layout_gravity="bottom|end"
+        android:layout_height="wrap_content" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:id="@+id/fabOpen"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:contentDescription="Open"
+        android:src="@drawable/ic_plus"
+        app:tint="@color/white"
+        android:backgroundTint="@color/green_400"
+        android:layout_gravity="bottom|end"
+        android:layout_height="wrap_content" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

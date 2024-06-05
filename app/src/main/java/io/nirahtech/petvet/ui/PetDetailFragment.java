@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.Objects;
 
 import io.nirahtech.petvet.R;
@@ -79,6 +82,42 @@ public class PetDetailFragment extends Fragment {
                 this.petAdoptionDateTextView.setText(this.pet.getAdoptionDate().toString());
             }
         }
+
+        FloatingActionButton fabOpen = rootView.findViewById(R.id.fabOpen);
+        FloatingActionButton fabClose = rootView.findViewById(R.id.fabClose);
+        ExtendedFloatingActionButton fabAddConsultationToHealthBook = rootView.findViewById(R.id.fabAddConsultationToHealthBook);
+        ExtendedFloatingActionButton fabAddEventToCalendar = rootView.findViewById(R.id.fabAddEventToCalendar);
+        ExtendedFloatingActionButton fabAddCureToPharmacy = rootView.findViewById(R.id.fabAddCureToPharmacy);
+
+        fabOpen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Toggle visibility of fab1, fab2, and fab3
+                if (fabOpen.getVisibility() == View.VISIBLE) {
+                    fabAddConsultationToHealthBook.show();
+                    fabAddEventToCalendar.show();
+                    fabAddCureToPharmacy.show();
+                    fabClose.show();
+                    fabOpen.hide();
+
+                }
+            }
+        });
+        fabClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Toggle visibility of fab1, fab2, and fab3
+                if (fabClose.getVisibility() == View.VISIBLE) {
+                    fabAddConsultationToHealthBook.hide();
+                    fabAddEventToCalendar.hide();
+                    fabAddCureToPharmacy.hide();
+                    fabOpen.show();
+                    fabClose.hide();
+
+                }
+            }
+        });
+
 
         return rootView;
 
