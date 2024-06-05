@@ -31,6 +31,7 @@
             android:id="@+id/editTextAnimalName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textPersonName|textCapWords"
             android:maxLines="1"
             android:maxLength="20"
             />
@@ -56,6 +57,7 @@
             android:layout_width="match_parent"
             android:maxLength="20"
             android:maxLines="1"
+            android:inputType="textPersonName|textCapWords"
             android:layout_height="wrap_content"
             />
 
@@ -80,6 +82,7 @@
             android:layout_width="match_parent"
             android:maxLength="20"
             android:maxLines="1"
+            android:inputType="textPersonName|textCapWords"
             android:layout_height="wrap_content"
             />
 

@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -21,9 +23,11 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.TemporalField;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -42,6 +46,7 @@ import io.nirahtech.petvet.core.clinic.HealthBook;
 import io.nirahtech.petvet.persistance.repositories.HouseReaderDbHelper;
 import io.nirahtech.petvet.services.storage.house.HouseService;
 import io.nirahtech.petvet.services.storage.house.HouseServiceImpl;
+import io.nirahtech.petvet.ui.validators.AdoptionDateValidator;
 
 public class PetAdoptionFragment extends Fragment {
 
@@ -129,33 +134,33 @@ public class PetAdoptionFragment extends Fragment {
         final Optional<String> speciesName = this.retrieveSpecies(view);
         final Optional<String> breedName = this.retrieveBreed(view);
         if (!name.isPresent()) {
-            Toast.makeText(this.getContext(), "Le nom de l'animal est obligatoire.", Toast.LENGTH_LONG)
-                    .show();
+            this.editTextName.setError("Le nom de l'animal est obligatoire.");
             this.editTextName.setSelected(true);
         }
         else if (!speciesName.isPresent()) {
-            Toast.makeText(this.getContext(), "L'espèce de "+name.get()+" est obligatoire.", Toast.LENGTH_LONG)
-                    .show();
+            this.editTextSpecies.setError("L'espèce de "+name.get()+" est obligatoire.");
             this.editTextSpecies.setSelected(true);
         } else if (!breedName.isPresent()) {
-            Toast.makeText(this.getContext(), "La race de "+name.get()+" est obligatoire.", Toast.LENGTH_LONG)
-                    .show();
+            this.editTextBreed.setError("La race de "+name.get()+" est obligatoire.");
             this.editTextBreed.setSelected(true);
         } else if (Objects.isNull(this.gender)) {
-            Toast.makeText(this.getContext(), "Le sexe de "+name.get()+" est obligatoire.", Toast.LENGTH_LONG)
-                    .show();
-        } else if (Objects.isNull(this.birthDate)) {
-            Toast.makeText(this.getContext(), "La date de naissance de "+name.get()+" est obligatoire.", Toast.LENGTH_LONG)
-                    .show();
+
+        }
+        else if (Objects.isNull(this.birthDate)) {
+            this.editTextBirthDate.setError("La date de naissance de "+name.get()+" est obligatoire..");
             this.editTextBirthDate.setSelected(true);
         } else if (Objects.isNull(this.adoptionDate)) {
-            Toast.makeText(this.getContext(), "La date d'adoption de l'animal est obligatoire.", Toast.LENGTH_LONG)
-                    .show();
+            this.editTextBirthDate.setError("La date d'adoption de " + name.get() + " est obligatoire..");
+            this.editTextAdoptionDate.setSelected(true);
+        } else if (this.adoptionDate.isBefore(this.birthDate)) {
+            this.editTextBirthDate.setError("La date d'adoption de " + name.get() + " ne peut pas être antérieur à la date de naissance.");
             this.editTextAdoptionDate.setSelected(true);
         } else {
             final Pet pet = createPet();
             final House house = HOUSE_SERVICE.get();
             final HealthBook healthBook = house.adopt(pet.getAnimal(), pet.getName(), pet.getAdoptionDate());
+            NavController navController = Navigation.findNavController(this.getActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigateUp();
         }
 
     }
@@ -192,6 +197,7 @@ public class PetAdoptionFragment extends Fragment {
                 // Set minimum date for adoption date picker
                 CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder();
                 constraintsBuilder.setStart(date.getTime());
+                constraintsBuilder.setValidator(new AdoptionDateValidator(birthDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond()));
                 datePickerAdoptionDate = MaterialDatePicker.Builder.datePicker()
                         .setTitleText("Sélectionnez la date d'adoption")
                         .setSelection(selection)
@@ -262,4 +268,6 @@ public class PetAdoptionFragment extends Fragment {
 
         return view;
     }
+
+
 }
