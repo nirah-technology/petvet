@@ -16,23 +16,16 @@ import java.util.Set;
 import io.nirahtech.petvet.R;
 import io.nirahtech.petvet.core.animalpark.Species;
 import io.nirahtech.petvet.core.base.Pet;
+import io.nirahtech.petvet.ui.adapters.listeners.OnPetClickEventListener;
 
-public final class SpeciesAdapter extends RecyclerView.Adapter<SpeciesAdapter.SpeciesViewHolder> {
+public final class SpeciesAdapter extends RecyclerView.Adapter<SpeciesViewHolder> {
     private final Map<Species, Set<Pet>> sortedPetsBySpecies;
+    private final OnPetClickEventListener onPetClickEventListener;
 
-    public static final class SpeciesViewHolder extends RecyclerView.ViewHolder {
-        private final TextView speciesName;
-        private final RecyclerView petRecyclerView;
 
-        public SpeciesViewHolder(View itemView) {
-            super(itemView);
-            this.speciesName = itemView.findViewById(R.id.speciesName);
-            this.petRecyclerView = itemView.findViewById(R.id.animalRecyclerView);
-        }
-    }
-
-    public SpeciesAdapter(final Map<Species, Set<Pet>> speciesList) {
+    public SpeciesAdapter(final Map<Species, Set<Pet>> speciesList, final OnPetClickEventListener onPetClickEventListener) {
         this.sortedPetsBySpecies = speciesList;
+        this.onPetClickEventListener = onPetClickEventListener;
     }
 
     @Override
@@ -48,7 +41,7 @@ public final class SpeciesAdapter extends RecyclerView.Adapter<SpeciesAdapter.Sp
 
         // Set up the horizontal RecyclerView for animals
         final List<Pet> petsOfSpecies = new ArrayList<>(this.sortedPetsBySpecies.get(species));
-        final PetAdapter petAdapter = new PetAdapter(petsOfSpecies);
+        final PetAdapter petAdapter = new PetAdapter(petsOfSpecies, this.onPetClickEventListener);
         holder.petRecyclerView.setLayoutManager(new LinearLayoutManager(holder.petRecyclerView.getContext(), LinearLayoutManager.HORIZONTAL, false));
         holder.petRecyclerView.setAdapter(petAdapter);
     }

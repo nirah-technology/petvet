@@ -27,6 +27,7 @@ import java.util.Set;
 import io.nirahtech.petvet.R;
 import io.nirahtech.petvet.core.animalpark.Animal;
 import io.nirahtech.petvet.core.animalpark.Breed;
+import io.nirahtech.petvet.core.animalpark.Gender;
 import io.nirahtech.petvet.core.animalpark.Species;
 import io.nirahtech.petvet.core.base.House;
 import io.nirahtech.petvet.core.base.Pet;
@@ -36,6 +37,7 @@ import io.nirahtech.petvet.services.storage.StorageService;
 import io.nirahtech.petvet.services.storage.house.HouseService;
 import io.nirahtech.petvet.services.storage.house.HouseServiceImpl;
 import io.nirahtech.petvet.ui.adapters.SpeciesAdapter;
+import io.nirahtech.petvet.ui.adapters.listeners.OnPetClickEventListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -92,6 +94,7 @@ public class FarmExpositionFragment extends Fragment {
             final Animal nitroAsAnimal = new Animal();
             nitroAsAnimal.setSpecies(cat);
             nitroAsAnimal.setBreed(european);
+            nitroAsAnimal.setGender(Gender.MALE);
             nitroAsAnimal.setWeight(Weight.kg(7.2D));
             Pet nitroAsPet = new Pet(nitroAsAnimal, "Nitro", LocalDate.of(2017, 3, 17));
             cats.add(nitroAsPet);
@@ -101,6 +104,7 @@ public class FarmExpositionFragment extends Fragment {
             final Animal nalaAsAnimal = new Animal();
             nalaAsAnimal.setSpecies(cat);
             nalaAsAnimal.setBreed(manx);
+            nalaAsAnimal.setGender(Gender.FEMALE);
             nalaAsAnimal.setWeight(Weight.kg(7.2D));
             Pet nalaAsPet = new Pet(nalaAsAnimal, "Nala", LocalDate.of(2017, 3, 17));
             cats.add(nalaAsPet);
@@ -110,6 +114,7 @@ public class FarmExpositionFragment extends Fragment {
             final Animal simbaAsAnimal = new Animal();
             simbaAsAnimal.setSpecies(cat);
             simbaAsAnimal.setBreed(european);
+            simbaAsAnimal.setGender(Gender.MALE);
             simbaAsAnimal.setWeight(Weight.kg(7.2D));
             Pet simbaAsPet = new Pet(simbaAsAnimal, "Simba", LocalDate.of(2017, 3, 17));
             cats.add(simbaAsPet);
@@ -119,6 +124,7 @@ public class FarmExpositionFragment extends Fragment {
             final Animal edAsAnimal = new Animal();
             edAsAnimal.setSpecies(cat);
             edAsAnimal.setBreed(chartreux);
+            edAsAnimal.setGender(Gender.MALE);
             edAsAnimal.setWeight(Weight.kg(7.2D));
             Pet edAsPet = new Pet(edAsAnimal, "Simba", LocalDate.of(2017, 3, 17));
             cats.add(edAsPet);
@@ -127,9 +133,11 @@ public class FarmExpositionFragment extends Fragment {
             final Set<Pet> dogs = new HashSet<>();
             final Species dog = Species.of("Chien");
             final Breed yorkshire = Breed.of("Yorkshire");
+
             final Animal yumaAsAnimal = new Animal();
             this.petsBySpecies.put(dog, dogs);
             yumaAsAnimal.setSpecies(dog);
+            yumaAsAnimal.setGender(Gender.FEMALE);
             yumaAsAnimal.setBreed(yorkshire);
             yumaAsAnimal.setWeight(Weight.kg(4.7D));
             Pet yumaAsPet = new Pet(yumaAsAnimal, "Yuma", LocalDate.of(2017, 3, 17));
@@ -147,6 +155,7 @@ public class FarmExpositionFragment extends Fragment {
             this.petsBySpecies.put(galinacea, galinaceas);
             picsouAsAnimal.setSpecies(galinacea);
             picsouAsAnimal.setBreed(couNu);
+            picsouAsAnimal.setGender(Gender.MALE);
             picsouAsAnimal.setWeight(Weight.kg(5.7D));
             Pet picsouAsPet = new Pet(picsouAsAnimal, "Picsou", LocalDate.of(2023, 9, 9));
             galinaceas.add(picsouAsPet);
@@ -156,6 +165,7 @@ public class FarmExpositionFragment extends Fragment {
             final Animal ririAsAnimal = new Animal();
             ririAsAnimal.setSpecies(galinacea);
             ririAsAnimal.setBreed(couNu);
+            ririAsAnimal.setGender(Gender.FEMALE);
             ririAsAnimal.setWeight(Weight.kg(4.2D));
             Pet ririAsPet = new Pet(ririAsAnimal, "Riri", LocalDate.of(2023, 9, 9));
             galinaceas.add(ririAsPet);
@@ -165,6 +175,7 @@ public class FarmExpositionFragment extends Fragment {
             final Animal fifiAsAnimal = new Animal();
             fifiAsAnimal.setSpecies(galinacea);
             fifiAsAnimal.setBreed(couNu);
+            fifiAsAnimal.setGender(Gender.FEMALE);
             fifiAsAnimal.setWeight(Weight.kg(4.2D));
             Pet fifiAsPet = new Pet(fifiAsAnimal, "Fifi", LocalDate.of(2023, 9, 9));
             galinaceas.add(fifiAsPet);
@@ -174,6 +185,7 @@ public class FarmExpositionFragment extends Fragment {
             final Animal loulouAsAnimal = new Animal();
             loulouAsAnimal.setSpecies(galinacea);
             loulouAsAnimal.setBreed(couNu);
+            loulouAsAnimal.setGender(Gender.FEMALE);
             loulouAsAnimal.setWeight(Weight.kg(4.2D));
             Pet loulouAsPet = new Pet(loulouAsAnimal, "Loulou", LocalDate.of(2023, 9, 9));
             galinaceas.add(loulouAsPet);
@@ -185,6 +197,7 @@ public class FarmExpositionFragment extends Fragment {
             final Animal soloAnimal = new Animal();
             soloAnimal.setSpecies(galinacea);
             soloAnimal.setBreed(sussex);
+            soloAnimal.setGender(Gender.FEMALE);
             soloAnimal.setWeight(Weight.kg(4.2D));
             Pet soloAsPet = new Pet(soloAnimal, "Solo", LocalDate.of(2023, 9, 9));
             galinaceas.add(soloAsPet);
@@ -194,6 +207,7 @@ public class FarmExpositionFragment extends Fragment {
             final Animal sekeAsAnimal = new Animal();
             sekeAsAnimal.setSpecies(galinacea);
             sekeAsAnimal.setBreed(sussex);
+            sekeAsAnimal.setGender(Gender.FEMALE);
             sekeAsAnimal.setWeight(Weight.kg(4.2D));
             Pet sekeAsPet = new Pet(sekeAsAnimal, "Séké", LocalDate.of(2023, 9, 9));
             galinaceas.add(sekeAsPet);
@@ -203,6 +217,7 @@ public class FarmExpositionFragment extends Fragment {
             final Animal gaiaAsAnimal = new Animal();
             gaiaAsAnimal.setSpecies(galinacea);
             gaiaAsAnimal.setBreed(greyCendre);
+            gaiaAsAnimal.setGender(Gender.FEMALE);
             gaiaAsAnimal.setWeight(Weight.kg(4.2D));
             Pet gaiaAsPet = new Pet(gaiaAsAnimal, "Gaïa", LocalDate.of(2023, 9, 9));
             galinaceas.add(gaiaAsPet);
@@ -212,17 +227,20 @@ public class FarmExpositionFragment extends Fragment {
             final Animal cargoAsAnimal = new Animal();
             cargoAsAnimal.setSpecies(galinacea);
             cargoAsAnimal.setBreed(greyCendre);
+            cargoAsAnimal.setGender(Gender.FEMALE);
             cargoAsAnimal.setWeight(Weight.kg(4.2D));
             Pet cargoAsPet = new Pet(cargoAsAnimal, "Cargo", LocalDate.of(2023, 9, 9));
             galinaceas.add(cargoAsPet);
             HOUSE_SERVICE.get().adopt(cargoAsAnimal, cargoAsPet.getName(), cargoAsPet.getAdoptionDate());
 
             final Set<Pet> bovids = new HashSet<>();
-            final Species bovid = Species.of("Bovidés");
+            final Species bovid = Species.of("Ovidés");
             final Breed dwarfGoat = Breed.of("Naine");
+
             final Animal djaliAsAnimal = new Animal();
             this.petsBySpecies.put(bovid, bovids);
             djaliAsAnimal.setSpecies(bovid);
+            djaliAsAnimal.setGender(Gender.FEMALE);
             djaliAsAnimal.setBreed(dwarfGoat);
             djaliAsAnimal.setWeight(Weight.kg(14.24D));
             Pet djaliAsPet = new Pet(djaliAsAnimal, "Djali", LocalDate.of(2024, 9, 9));
@@ -262,9 +280,17 @@ public class FarmExpositionFragment extends Fragment {
             throw new RuntimeException(e);
         }
 
+        OnPetClickEventListener onPetClickListener = pet -> {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("pet", pet);
+            NavController navController = Navigation.findNavController(view);
+            navController.navigate(R.id.navigation_pet_detail, bundle);
+        };
+
+
         speciesRecyclerView = view.findViewById(R.id.speciesRecyclerView);
         speciesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        speciesAdapter = new SpeciesAdapter(this.petsBySpecies);
+        speciesAdapter = new SpeciesAdapter(this.petsBySpecies, onPetClickListener);
         speciesRecyclerView.setAdapter(speciesAdapter);
 
         this.adoptionButton = view.findViewById(R.id.adoptionButton);

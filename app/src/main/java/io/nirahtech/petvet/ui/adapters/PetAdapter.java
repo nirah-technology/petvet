@@ -12,22 +12,15 @@ import java.util.List;
 
 import io.nirahtech.petvet.R;
 import io.nirahtech.petvet.core.base.Pet;
+import io.nirahtech.petvet.ui.adapters.listeners.OnPetClickEventListener;
 
-public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
-    private List<Pet> pets;
+public class PetAdapter extends RecyclerView.Adapter<PetViewHolder> {
+    private final List<Pet> pets;
+    private final OnPetClickEventListener onPetClickEventListener;
 
-    static class PetViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView petImage;
-        private final TextView petName;
 
-        public PetViewHolder(final View itemView) {
-            super(itemView);
-            this.petImage = itemView.findViewById(R.id.petImage);
-            this.petName = itemView.findViewById(R.id.petName);
-        }
-    }
-
-    public PetAdapter(final List<Pet> Pets) {
+    public PetAdapter(final List<Pet> Pets, final OnPetClickEventListener onPetClickEventListener) {
+        this.onPetClickEventListener = onPetClickEventListener;
         this.pets = Pets;
     }
 
@@ -39,10 +32,11 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
 
     @Override
     public void onBindViewHolder(PetViewHolder holder, int position) {
-        final Pet Pet = this.pets.get(position);
+        final Pet pet = this.pets.get(position);
         // Load image using a library like Glide or Picasso
         // Glide.with(holder.PetImage.getContext()).load(Pet.getImageUrl()).into(holder.PetImage);
-        holder.petName.setText(Pet.getName());
+        holder.petName.setText(pet.getName());
+        holder.bind(pet, this.onPetClickEventListener);
     }
 
     @Override

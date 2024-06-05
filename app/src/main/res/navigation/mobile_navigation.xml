@@ -36,4 +36,10 @@
         android:label="Adoption"
         tools:layout="@layout/fragment_pet_adoption" />
 
+    <fragment
+        android:id="@+id/navigation_pet_detail"
+        android:name="io.nirahtech.petvet.ui.PetDetailFragment"
+        android:label="Fiche Animal"
+        tools:layout="@layout/fragment_pet_detail" />
+
 </navigation>
