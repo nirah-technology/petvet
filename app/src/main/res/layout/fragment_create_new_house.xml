@@ -16,7 +16,7 @@
         android:fontFamily="@font/montserrat_extra_bold"
         android:textAllCaps="true"
         android:layout_marginTop="100dp"
-        android:textSize="36dp"
+        android:textSize="36sp"
         android:paddingTop="20dp"
         android:textColor="@color/green_900"
         android:textStyle="bold" />
