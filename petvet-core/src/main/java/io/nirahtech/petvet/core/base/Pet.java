@@ -3,6 +3,7 @@ package io.nirahtech.petvet.core.base;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 
 import io.nirahtech.petvet.core.animalpark.Animal;
 
@@ -10,6 +11,8 @@ public final class Pet implements Serializable {
     private final Animal animal;
     private final String name;
     private final LocalDate adoptionDate;
+    private boolean isTatooed;
+    private Microship microship;
 
     public Pet(
         final Animal animal,
@@ -19,6 +22,19 @@ public final class Pet implements Serializable {
         this.animal = Objects.requireNonNull(animal, "Animal for pet is required");
         this.name = Objects.requireNonNull(name, "Name for pet is required.");
         this.adoptionDate = Objects.requireNonNull(adoptionDate, "Adoption date for pet is required.");
+        this.isTatooed = false;
+    }
+    public Optional<Microship> getMicroship() {
+        return Optional.ofNullable(this.microship);
+    }
+    public void setMicroship(Microship microship) {
+        this.microship = microship;
+    }
+    public void setTatooed(boolean isTatooed) {
+        this.isTatooed = isTatooed;
+    }
+    public boolean isTatooed() {
+        return this.isTatooed;
     }
     /**
      * @return the animal
