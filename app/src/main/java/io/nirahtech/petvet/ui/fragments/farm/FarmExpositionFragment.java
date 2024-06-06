@@ -114,7 +114,7 @@ public class FarmExpositionFragment extends Fragment {
             edAsAnimal.setBreed(chartreux);
             edAsAnimal.setGender(Gender.MALE);
             edAsAnimal.setWeight(Weight.kg(7.2D));
-            Pet edAsPet = new Pet(edAsAnimal, "Simba", LocalDate.of(2017, 3, 17));
+            Pet edAsPet = new Pet(edAsAnimal, "Ed", LocalDate.of(2017, 3, 17));
             cats.add(edAsPet);
             this.houseService.getHouse().ifPresent((house) -> {
                 house.adopt(edAsAnimal, edAsPet.getName(), edAsPet.getAdoptionDate());
@@ -260,7 +260,9 @@ public class FarmExpositionFragment extends Fragment {
 
     private final void loadHouse() throws IOException, ClassNotFoundException {
         this.houseService.getHouse().flatMap(House::getFarm).ifPresent(farm -> {
+            System.out.println("There is/are " + farm.getPets().size() + " loaded animals from the backup file.");
             for (Pet pet : farm.getPets()) {
+                System.out.println("Loaded animal from backup: " + pet.getName());
                 Species species = pet.getAnimal().getSpecies();
                 this.petsBySpecies.computeIfAbsent(species, k -> new HashSet<>()).add(pet);
             }
