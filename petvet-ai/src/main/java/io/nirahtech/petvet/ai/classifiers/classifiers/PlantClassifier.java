@@ -1,5 +1,7 @@
 package io.nirahtech.petvet.ai.classifiers.classifiers;
 
-public interface PlantClassifier extends Classifier {
+import io.nirahtech.petvet.ai.classifiers.classification.PlantClassification;
+
+public interface PlantClassifier extends Classifier<PlantClassification> {
     
 }

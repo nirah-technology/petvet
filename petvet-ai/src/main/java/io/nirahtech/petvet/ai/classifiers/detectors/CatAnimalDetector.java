@@ -149,7 +149,7 @@ public final class CatAnimalDetector implements AnimalDetector {
             INDArray output = model.output(image);
             int predictedClass = output.argMax(1).getInt(0);
             
-            String predictedLabel = ""; // Déterminer le label basé sur `predictedClass`
+            String predictedLabel = "Chat;Manx"; // Déterminer le label basé sur `predictedClass`
             // Vous pourriez avoir une méthode pour mapper `predictedClass` à un label
 
             // AnimalClassification classification = new AnimalClassification(predictedLabel, output.toDoubleVector());

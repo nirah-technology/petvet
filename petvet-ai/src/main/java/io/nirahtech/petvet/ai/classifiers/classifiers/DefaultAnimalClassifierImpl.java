@@ -45,7 +45,8 @@ public final class DefaultAnimalClassifierImpl implements AnimalClassifier {
                     return classification;
                 })
                 .filter(classification -> classification.isPresent())
-                .findFirst().get();
+                .findFirst()
+                .get();
     }
 
     @Override
