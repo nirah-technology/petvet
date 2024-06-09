@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.util.Objects;
 import java.util.Optional;
 
+import io.nirahtech.petvet.ai.classifiers.classification.PlantClassification;
 import io.nirahtech.petvet.ai.classifiers.exceptions.ClassificationException;
 
 public final class DefaultPlantClassifierImpl implements PlantClassifier {
@@ -23,7 +24,7 @@ public final class DefaultPlantClassifierImpl implements PlantClassifier {
     private DefaultPlantClassifierImpl() { }
 
     @Override
-    public Optional<String> classify(final BufferedInputStream sourceToClassify) throws ClassificationException {
+    public Optional<PlantClassification> classify(final BufferedInputStream sourceToClassify) throws ClassificationException {
         // TODO Auto-generated method stub
         throw new ClassificationException("Unimplemented method 'classify'");
     }
