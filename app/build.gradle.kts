@@ -61,6 +61,7 @@ dependencies {
     implementation("org.osmdroid:osmdroid-android:6.1.10")
 
     implementation(libs.petvet.core)
+    implementation(libs.petvet.features)
     // implementation(libs.petvet.ai)
 
 }
