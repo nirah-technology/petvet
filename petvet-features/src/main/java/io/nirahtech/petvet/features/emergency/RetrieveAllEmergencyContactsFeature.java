@@ -1,9 +1,9 @@
 package io.nirahtech.petvet.features.emergency;
 
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import io.nirahtech.petvet.core.clinic.Company;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * <p>
@@ -40,6 +40,6 @@ import io.nirahtech.petvet.core.clinic.Company;
  * @see io.nirahtech.petvet.core.clinic.Company
  */
 @FunctionalInterface
-public interface DisplayAllEmergencyContactsFeature extends Supplier<Stream<Company>> {
-
+public interface RetrieveAllEmergencyContactsFeature {
+    Stream<Company> retrieveAllEmergencyContacts() throws FeatureExecutionException;
 }

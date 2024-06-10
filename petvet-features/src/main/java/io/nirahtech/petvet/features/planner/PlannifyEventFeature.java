@@ -1,9 +1,8 @@
 package io.nirahtech.petvet.features.planner;
 
-import java.util.function.Consumer;
-
 import io.nirahtech.petvet.core.planning.Event;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
-public interface PlannifyEventFeature extends Consumer<Event> {
-    
+public interface PlannifyEventFeature {
+    void plannifyEvent(final Event eventToPlannify) throws FeatureExecutionException;
 }

@@ -1,9 +1,9 @@
 package io.nirahtech.petvet.features.pets;
 
-import java.util.function.BiConsumer;
-
 import io.nirahtech.petvet.core.base.Pet;
 import io.nirahtech.petvet.core.clinic.Consultation;
+import io.nirahtech.petvet.core.clinic.HealthBook;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * <p>
@@ -45,6 +45,6 @@ import io.nirahtech.petvet.core.clinic.Consultation;
  * @see io.nirahtech.petvet.core.clinic.Consultation
  */
 @FunctionalInterface
-public interface AddNewVetConsultationFeature extends BiConsumer<Pet, Consultation> {
-
+public interface AddNewVetConsultationFeature{
+    HealthBook addNewVetConsultation(final Pet pet, final Consultation consultation) throws FeatureExecutionException;
 }

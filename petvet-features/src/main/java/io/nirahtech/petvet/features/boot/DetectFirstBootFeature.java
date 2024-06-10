@@ -1,6 +1,6 @@
 package io.nirahtech.petvet.features.boot;
 
-import java.util.function.Supplier;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * <p>
@@ -24,9 +24,8 @@ import java.util.function.Supplier;
  * @serial 202406101321
  * @version 1.0
  * 
- * @see java.util.function.Supplier
  */
 @FunctionalInterface
-public interface DetectFirstBootFeature extends Supplier<Boolean> {
-
+public interface DetectFirstBootFeature {
+    boolean isFirstBoot() throws FeatureExecutionException;
 }

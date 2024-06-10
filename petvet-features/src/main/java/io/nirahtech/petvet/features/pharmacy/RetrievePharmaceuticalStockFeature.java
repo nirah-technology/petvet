@@ -1,9 +1,9 @@
 package io.nirahtech.petvet.features.pharmacy;
 
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import io.nirahtech.petvet.core.pharmacy.Elixir;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * 
@@ -18,6 +18,6 @@ import io.nirahtech.petvet.core.pharmacy.Elixir;
  * @see io.nirahtech.petvet.core.pharmacy.Elixir
  */
 @FunctionalInterface
-public interface RetrievePharmaceuticalStockFeature extends Consumer<Stream<Elixir>> {
-    
+public interface RetrievePharmaceuticalStockFeature {
+    Stream<Elixir> retrievePharmaceuticalStock() throws FeatureExecutionException;
 }

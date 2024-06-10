@@ -1,9 +1,10 @@
 package io.nirahtech.petvet.features.pets;
 
-import java.util.function.Function;
+import java.time.LocalDate;
 
-import io.nirahtech.petvet.core.base.Pet;
+import io.nirahtech.petvet.core.animalpark.Animal;
 import io.nirahtech.petvet.core.clinic.HealthBook;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * <p>
@@ -49,7 +50,7 @@ import io.nirahtech.petvet.core.clinic.HealthBook;
  
  */
 @FunctionalInterface
-public interface AdoptAnimalFeature extends Function<Pet, HealthBook> {
-
+public interface AdoptAnimalFeature {
+    HealthBook adoptAnimal(final Animal animal, final String name, final LocalDate adoptionDate) throws FeatureExecutionException;
    
 }

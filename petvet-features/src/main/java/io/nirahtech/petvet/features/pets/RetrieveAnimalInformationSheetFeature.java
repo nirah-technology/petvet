@@ -1,9 +1,9 @@
 package io.nirahtech.petvet.features.pets;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import io.nirahtech.petvet.core.base.Pet;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * <p>
@@ -50,6 +50,6 @@ import io.nirahtech.petvet.core.base.Pet;
  
  */
 @FunctionalInterface
-public interface RetrieveAnimalInformationSheetFeature extends Function<String, Optional<Pet>> {
-    
+public interface RetrieveAnimalInformationSheetFeature {
+    Optional<Pet> retrieveAnimalInformationSheet(final String name) throws FeatureExecutionException;
 }

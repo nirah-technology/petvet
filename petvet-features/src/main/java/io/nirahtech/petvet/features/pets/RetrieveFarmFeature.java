@@ -1,6 +1,6 @@
 package io.nirahtech.petvet.features.pets;
 
-import java.util.function.Consumer;
+import java.util.Optional;
 
 import io.nirahtech.petvet.core.base.Farm;
 
@@ -16,6 +16,6 @@ import io.nirahtech.petvet.core.base.Farm;
  * @see io.nirahtech.petvet.core.base.Farm
  */
 @FunctionalInterface
-public interface RetrieveFarmFeature extends Consumer<Farm> {
-    
+public interface RetrieveFarmFeature {
+    Optional<Farm> retrieveFarm();
 }

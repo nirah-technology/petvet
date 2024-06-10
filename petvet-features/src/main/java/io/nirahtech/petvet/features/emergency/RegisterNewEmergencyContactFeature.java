@@ -1,8 +1,7 @@
 package io.nirahtech.petvet.features.emergency;
 
-import java.util.function.Consumer;
-
 import io.nirahtech.petvet.core.clinic.Company;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * <p>
@@ -34,6 +33,6 @@ import io.nirahtech.petvet.core.clinic.Company;
  * @see io.nirahtech.petvet.core.clinic.Company
  */
 @FunctionalInterface
-public interface RegisterNewEmergencyContactFeature extends Consumer<Company> {
-
+public interface RegisterNewEmergencyContactFeature {
+    void registerNewEmergencyContact(final Company emergencyCompanyContact) throws FeatureExecutionException;
 }

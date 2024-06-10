@@ -1,10 +1,9 @@
 package io.nirahtech.petvet.features.pharmacy;
 
-import java.util.function.BiFunction;
-
 import io.nirahtech.petvet.core.base.Pet;
 import io.nirahtech.petvet.core.clinic.Dosage;
 import io.nirahtech.petvet.core.pharmacy.Elixir;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * 
@@ -20,6 +19,6 @@ import io.nirahtech.petvet.core.pharmacy.Elixir;
  * @see io.nirahtech.petvet.core.pharmacy.Elixir
  */
 @FunctionalInterface
-public interface ComputeCureDosageForPetFeature extends BiFunction<Elixir, Pet, Dosage> {
-    
+public interface ComputeCureDosageForPetFeature {
+    Dosage compiteCureDosageForPet(final Elixir elixir, final Pet pet) throws FeatureExecutionException;
 }

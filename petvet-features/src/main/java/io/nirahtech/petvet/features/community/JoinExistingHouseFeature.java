@@ -1,9 +1,7 @@
 package io.nirahtech.petvet.features.community;
 
-import java.util.Optional;
-import java.util.function.Function;
-
 import io.nirahtech.petvet.core.base.House;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * <p>
@@ -42,6 +40,6 @@ import io.nirahtech.petvet.core.base.House;
  * @see io.nirahtech.petvet.core.base.House
  */
 @FunctionalInterface
-public interface JoinExistingHouseFeature extends Function<String, Optional<House>> {
-
+public interface JoinExistingHouseFeature {
+    House joinExistingHouse() throws FeatureExecutionException;
 }

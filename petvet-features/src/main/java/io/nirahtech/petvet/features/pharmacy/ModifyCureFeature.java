@@ -1,8 +1,7 @@
 package io.nirahtech.petvet.features.pharmacy;
 
-import java.util.function.Consumer;
-
 import io.nirahtech.petvet.core.pharmacy.Elixir;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 
 /**
@@ -17,6 +16,6 @@ import io.nirahtech.petvet.core.pharmacy.Elixir;
  * @see io.nirahtech.petvet.core.pharmacy.Elixir
  */
 @FunctionalInterface
-public interface ModifyCureFeature extends Consumer<Elixir> {
-    
+public interface ModifyCureFeature {
+    void modifyCure(final Elixir elixir) throws FeatureExecutionException;;
 }

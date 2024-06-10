@@ -1,10 +1,10 @@
 package io.nirahtech.petvet.features.planner;
 
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import io.nirahtech.petvet.core.planning.Event;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
-public interface RetrieveAllUpcommingEventsFeature extends Supplier<Stream<Event>> {
-    
+public interface RetrieveAllUpcommingEventsFeature {    
+    Stream<Event> retrieveAllUpcommingEvents() throws FeatureExecutionException;
 }

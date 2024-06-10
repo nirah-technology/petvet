@@ -1,8 +1,10 @@
 package io.nirahtech.petvet.features.pets;
 
-import java.util.function.Consumer;
+import java.util.Optional;
 
+import io.nirahtech.petvet.core.base.Pet;
 import io.nirahtech.petvet.core.clinic.HealthBook;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * 
@@ -16,6 +18,6 @@ import io.nirahtech.petvet.core.clinic.HealthBook;
  * @see io.nirahtech.petvet.core.clinic.HealthBook
  */
 @FunctionalInterface
-public interface RetrieveHealthBookFeature extends Consumer<HealthBook> {
-    
+public interface RetrieveHealthBookFeature {
+    Optional<HealthBook> retrieveHealthBook(final Pet pet) throws FeatureExecutionException;
 }

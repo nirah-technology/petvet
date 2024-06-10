@@ -1,8 +1,7 @@
 package io.nirahtech.petvet.features.pets;
 
-import java.util.function.Consumer;
-
 import io.nirahtech.petvet.core.base.Pet;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * 
@@ -16,6 +15,6 @@ import io.nirahtech.petvet.core.base.Pet;
  * @see io.nirahtech.petvet.core.base.Pet
  */
 @FunctionalInterface
-public interface ModifyAnimalInformationSheetFeature extends Consumer<Pet> {
-    
+public interface ModifyAnimalInformationSheetFeature {
+    void modifyAnimalInformationSheet(final Pet pet) throws FeatureExecutionException;
 }

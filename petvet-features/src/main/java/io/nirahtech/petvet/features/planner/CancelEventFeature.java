@@ -1,9 +1,8 @@
 package io.nirahtech.petvet.features.planner;
 
-import java.util.function.Consumer;
-
 import io.nirahtech.petvet.core.planning.Event;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
-public interface CancelEventFeature extends Consumer<Event> {
-    
+public interface CancelEventFeature {
+    void cancelEvent(final Event eventToCancel) throws FeatureExecutionException;
 }

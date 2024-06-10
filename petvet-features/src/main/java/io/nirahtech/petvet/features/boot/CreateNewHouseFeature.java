@@ -1,8 +1,7 @@
 package io.nirahtech.petvet.features.boot;
 
-import java.util.function.Function;
-
 import io.nirahtech.petvet.core.base.House;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * <p>
@@ -24,10 +23,9 @@ import io.nirahtech.petvet.core.base.House;
  * @serial 202406101321
  * @version 1.0
  * 
- * @see java.util.function.Function
  * @see io.nirahtech.petvet.core.base.House
  */
 @FunctionalInterface
-public interface CreateNewHouseFeature extends Function<String, House> {
-
+public interface CreateNewHouseFeature {
+    House createNewHouse(final String nameOfTheHouse) throws FeatureExecutionException;
 }
