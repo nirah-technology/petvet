@@ -18,8 +18,8 @@ public final class House implements Familly {
         final String name
     ) {
         this.name = Objects.requireNonNullElse(name, "Maison");
-        this.garden = new VegetableGarden();
-        this.pharmacy = new Pharmacy();
+        this.garden = VegetableGarden.getInstance();
+        this.pharmacy = Pharmacy.getInstance();
     }
 
     public HouseIdentifier getIdentifier() {

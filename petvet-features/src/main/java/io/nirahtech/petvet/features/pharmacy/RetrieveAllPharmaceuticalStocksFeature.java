@@ -2,6 +2,9 @@ package io.nirahtech.petvet.features.pharmacy;
 
 import java.util.stream.Stream;
 
+import io.nirahtech.petvet.core.clinic.ConventionalMedicine;
+import io.nirahtech.petvet.core.clinic.Medication;
+import io.nirahtech.petvet.core.clinic.NaturalMedicine;
 import io.nirahtech.petvet.core.pharmacy.Elixir;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
@@ -17,7 +20,9 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  * @see java.util.stream.Stream
  * @see io.nirahtech.petvet.core.pharmacy.Elixir
  */
-@FunctionalInterface
 public interface RetrieveAllPharmaceuticalStocksFeature {
-    Stream<Elixir> retrieveAllPharmaceuticalStocks() throws FeatureExecutionException;
+    Stream<Medication> retrieveAllMedicationStocks() throws FeatureExecutionException;
+    Stream<NaturalMedicine> retrieveOnlyAllNaturalMedicinesStocks() throws FeatureExecutionException;
+    Stream<ConventionalMedicine> retrieveOnlyAllConventionalMedicinesStocks() throws FeatureExecutionException;
+    Stream<Elixir> retrieveAllElixirsStocks() throws FeatureExecutionException;
 }

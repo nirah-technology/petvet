@@ -1,6 +1,12 @@
 package io.nirahtech.petvet.features.pharmacy;
 
+import java.util.Map;
+import java.util.Set;
+
+import io.nirahtech.petvet.core.base.Ingredient;
 import io.nirahtech.petvet.core.pharmacy.Elixir;
+import io.nirahtech.petvet.core.pharmacy.ElixirIdentifier;
+import io.nirahtech.petvet.core.util.Volume;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 
@@ -17,5 +23,10 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  */
 @FunctionalInterface
 public interface ModifyCureFeature {
-    void modifyCure(final Elixir elixir) throws FeatureExecutionException;;
+    Elixir modifyCure(
+        final ElixirIdentifier identifierOfTheElixirToModify,
+        final String name,
+        final Set<Ingredient> ingredientsToDelete,
+        final Map<Ingredient, Volume> ingredientToAdd
+        ) throws FeatureExecutionException;;
 }

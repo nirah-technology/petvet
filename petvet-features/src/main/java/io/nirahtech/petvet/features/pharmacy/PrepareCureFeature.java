@@ -3,8 +3,8 @@ package io.nirahtech.petvet.features.pharmacy;
 import java.util.Map;
 
 import io.nirahtech.petvet.core.base.Ingredient;
-import io.nirahtech.petvet.core.clinic.Dosage;
 import io.nirahtech.petvet.core.pharmacy.Elixir;
+import io.nirahtech.petvet.core.util.Volume;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 
@@ -23,5 +23,5 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  */
 @FunctionalInterface
 public interface PrepareCureFeature {
-    Elixir prepareCure(final String name, final Map<Ingredient, Dosage> composition) throws FeatureExecutionException;
+    Elixir prepareCure(final String name, final Map<Ingredient, Volume> composition) throws FeatureExecutionException;
 }

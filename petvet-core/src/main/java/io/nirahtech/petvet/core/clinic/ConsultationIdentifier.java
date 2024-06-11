@@ -4,7 +4,7 @@ import io.nirahtech.petvet.core.util.identifier.Identifier;
 
 public final class ConsultationIdentifier implements Identifier {
 
-    private static long lastGeneratedIdentifier = 0;
+    private static long lastGeneratedIdentifier = 0L;
     private final long id;
 
     private ConsultationIdentifier(final long id) {

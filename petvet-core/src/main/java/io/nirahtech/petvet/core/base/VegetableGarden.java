@@ -3,13 +3,23 @@ package io.nirahtech.petvet.core.base;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public final class VegetableGarden implements Serializable {
 
+    private static VegetableGarden instance;
+    public static VegetableGarden getInstance() {
+        if (Objects.isNull(instance)) {
+            instance = new VegetableGarden();
+        }
+        return instance;
+    }
+
+
     private final Set<Plant> plants;
     
-    public VegetableGarden() {
+    private VegetableGarden() {
         this.plants = new HashSet<>();
     }
 
