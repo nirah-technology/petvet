@@ -1,5 +1,8 @@
 package io.nirahtech.petvet.features.boot;
 
+import java.util.Optional;
+
+import io.nirahtech.petvet.core.base.House;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
@@ -27,5 +30,5 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  */
 @FunctionalInterface
 public interface DetectFirstBootFeature {
-    boolean isFirstBoot() throws FeatureExecutionException;
+    Optional<House> detectFirstBootTryingToRetrieveHouse() throws FeatureExecutionException;
 }

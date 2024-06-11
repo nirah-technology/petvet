@@ -2,7 +2,9 @@ package io.nirahtech.petvet.features.pets;
 
 import java.time.LocalDate;
 
-import io.nirahtech.petvet.core.animalpark.Animal;
+import io.nirahtech.petvet.core.animalpark.Breed;
+import io.nirahtech.petvet.core.animalpark.Gender;
+import io.nirahtech.petvet.core.animalpark.Species;
 import io.nirahtech.petvet.core.clinic.HealthBook;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
@@ -51,6 +53,13 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  */
 @FunctionalInterface
 public interface AdoptAnimalFeature {
-    HealthBook adoptAnimal(final Animal animal, final String name, final LocalDate adoptionDate) throws FeatureExecutionException;
+    HealthBook adoptAnimal(
+        final Species species,
+        final Breed breed,
+        final Gender gender,
+        final LocalDate birthDate,
+        final String name, 
+        final LocalDate adoptionDate
+        ) throws FeatureExecutionException;
    
 }

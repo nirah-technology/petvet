@@ -1,25 +1,66 @@
 package io.nirahtech.petvet.core.base;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import io.nirahtech.petvet.core.animalpark.Animal;
 import io.nirahtech.petvet.core.clinic.HealthBook;
+import io.nirahtech.petvet.core.planning.Calendar;
 
 public final class House implements Familly {
+
+    private static House instance;
+    public static House getInstance() {
+        if (Objects.isNull(instance)) {
+            instance = new House();
+        }
+        return instance;
+    }
+
     private HouseIdentifier identifier;
-    private final String name;
+    private String name;
     private Farm farm;
+    private final Calendar calendar;
     private final Pharmacy pharmacy;
     private final VegetableGarden garden;
+    private Human me;
+
+    private final Set<Human> famillyMembers;
+
+    public House() {
+        this.garden = VegetableGarden.getInstance();
+        this.pharmacy = Pharmacy.getInstance();
+        this.calendar = Calendar.getInstance();
+        this.famillyMembers = new HashSet<>();
+    }
 
     public House(
         final String name
     ) {
+        this();
         this.name = Objects.requireNonNullElse(name, "Maison");
-        this.garden = VegetableGarden.getInstance();
-        this.pharmacy = Pharmacy.getInstance();
+    }
+
+    public Human getMe() {
+        return me;
+    }
+    public void setMe(Human me) {
+        this.me = me;
+    }
+    public Stream<Human> getFamillyMembers() {
+        return this.famillyMembers.stream();
+    }
+
+    public void addFamillyMember(final Human human) {
+        this.famillyMembers.add(human);
+    }
+
+    public Calendar getCalendar() {
+        return calendar;
     }
 
     public HouseIdentifier getIdentifier() {
@@ -34,6 +75,9 @@ public final class House implements Familly {
      */
     public final String getName() {
         return this.name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**

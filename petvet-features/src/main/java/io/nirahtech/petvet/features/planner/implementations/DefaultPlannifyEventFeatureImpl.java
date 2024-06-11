@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import io.nirahtech.petvet.core.planning.Calendar;
 import io.nirahtech.petvet.core.planning.Event;
+import io.nirahtech.petvet.core.planning.EventIdentifier;
 import io.nirahtech.petvet.core.planning.EventType;
 import io.nirahtech.petvet.features.planner.PlannifyEventFeature;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
@@ -44,6 +45,7 @@ public class DefaultPlannifyEventFeatureImpl implements PlannifyEventFeature {
         Objects.requireNonNull(totalRepeatCycles, "Total repeat cycles is required for PlannifyEventFeature");
         Objects.requireNonNull(eventType, "Event type is required for PlannifyEventFeature");
         final Event event = new Event(dateTime, duration);
+        event.setIdentifier(EventIdentifier.generate());
         event.setName(name);
         event.setDescription(description);
         event.setRepeating(isRepeating);

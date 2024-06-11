@@ -10,8 +10,8 @@ import io.nirahtech.petvet.core.animalpark.Animal;
 public final class Pet implements Serializable {
     private PetIdentifier identifier;
     private final Animal animal;
-    private final String name;
-    private final LocalDate adoptionDate;
+    private String name;
+    private LocalDate adoptionDate;
     private boolean isTatooed;
     private Microship microship;
 
@@ -31,6 +31,13 @@ public final class Pet implements Serializable {
     }
     public void setIdentifier(PetIdentifier identifier) {
         this.identifier = identifier;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setAdoptionDate(LocalDate adoptionDate) {
+        this.adoptionDate = adoptionDate;
     }
     
     public Optional<Microship> getMicroship() {

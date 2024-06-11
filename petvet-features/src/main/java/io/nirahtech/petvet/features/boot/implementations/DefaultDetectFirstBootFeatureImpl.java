@@ -4,7 +4,9 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
+import io.nirahtech.petvet.core.base.House;
 import io.nirahtech.petvet.features.boot.DetectFirstBootFeature;
 import io.nirahtech.petvet.features.util.FeaturesConfiguration;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
@@ -33,8 +35,7 @@ public class DefaultDetectFirstBootFeatureImpl implements DetectFirstBootFeature
     }
 
     @Override
-    public boolean isFirstBoot() throws FeatureExecutionException {
-        boolean isFirstBoot = true;
+    public Optional<House> detectFirstBootTryingToRetrieveHouse() throws FeatureExecutionException {
         if (this.workingDirectory.exists()) {
             if (this.workingDirectory.isFile()) {
                 throw new FeatureExecutionException("");
@@ -44,13 +45,13 @@ public class DefaultDetectFirstBootFeatureImpl implements DetectFirstBootFeature
                     if (file.isDirectory()) {
                         throw new FeatureExecutionException("");
                     } else {
-                        isFirstBoot = true;
+                        // Load serialize House from file
                     }
                 }  
             }
         }
         
-        return isFirstBoot;
+        return Optional.empty();
     }
     
 }

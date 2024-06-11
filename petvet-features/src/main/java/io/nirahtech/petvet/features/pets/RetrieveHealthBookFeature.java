@@ -2,10 +2,8 @@ package io.nirahtech.petvet.features.pets;
 
 import java.util.Optional;
 
-import io.nirahtech.petvet.core.animalpark.Animal;
-import io.nirahtech.petvet.core.base.Pet;
+import io.nirahtech.petvet.core.base.PetIdentifier;
 import io.nirahtech.petvet.core.clinic.HealthBook;
-import io.nirahtech.petvet.core.clinic.HealthBookIdentifier;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
@@ -19,8 +17,7 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  * @see java.util.function.Consumer
  * @see io.nirahtech.petvet.core.clinic.HealthBook
  */
+@FunctionalInterface
 public interface RetrieveHealthBookFeature {
-    Optional<HealthBook> retrieveHealthBook(final Animal aniaml) throws FeatureExecutionException;
-    Optional<HealthBook> retrieveHealthBook(final Pet pet) throws FeatureExecutionException;
-    Optional<HealthBook> retrieveHealthBook(final HealthBookIdentifier healthBookIdentifier) throws FeatureExecutionException;
+    Optional<HealthBook> retrieveHealthBook(final PetIdentifier petIdentifier) throws FeatureExecutionException;
 }
