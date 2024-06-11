@@ -18,6 +18,6 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  * @see io.nirahtech.petvet.core.pharmacy.Elixir
  */
 @FunctionalInterface
-public interface RetrievePharmaceuticalStockFeature {
-    Stream<Elixir> retrievePharmaceuticalStock() throws FeatureExecutionException;
+public interface RetrieveAllPharmaceuticalStocksFeature {
+    Stream<Elixir> retrieveAllPharmaceuticalStocks() throws FeatureExecutionException;
 }

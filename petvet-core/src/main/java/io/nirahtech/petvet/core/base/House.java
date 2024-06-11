@@ -11,11 +11,15 @@ public final class House implements Familly {
     private HouseIdentifier identifier;
     private final String name;
     private Farm farm;
+    private final Pharmacy pharmacy;
+    private final VegetableGarden garden;
 
     public House(
         final String name
     ) {
         this.name = Objects.requireNonNullElse(name, "Maison");
+        this.garden = new VegetableGarden();
+        this.pharmacy = new Pharmacy();
     }
 
     public HouseIdentifier getIdentifier() {
@@ -37,6 +41,13 @@ public final class House implements Familly {
      */
     public final Optional<Farm> getFarm() {
         return Optional.ofNullable(this.farm);
+    }
+
+    public final VegetableGarden getGarden() {
+        return this.garden;
+    }
+    public final Pharmacy getPharmacy() {
+        return this.pharmacy;
     }
 
     /**
