@@ -11,12 +11,20 @@ import io.nirahtech.petvet.core.animalpark.Animal;
 import io.nirahtech.petvet.core.clinic.HealthBook;
 
 public class Farm implements Familly {
+    private FarmIdentifier identifier;
     private final Set<Pet> pets = new HashSet<>();
     private final Set<HealthBook> healthBooks = new HashSet<>();
 
     public Farm(
     ) {
         
+    }
+
+    public FarmIdentifier getIdentifier() {
+        return identifier;
+    }
+    public void setIdentifier(FarmIdentifier identifier) {
+        this.identifier = identifier;
     }
 
     /**

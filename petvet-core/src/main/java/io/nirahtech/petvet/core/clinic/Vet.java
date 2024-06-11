@@ -7,6 +7,7 @@ import io.nirahtech.petvet.core.base.Pet;
 import io.nirahtech.petvet.core.contact.Contact;
 
 public final class Vet implements Healer {
+    private VetIdentifier identifier;
     private final Human human;
     private final Company company;
     private final Contact contact;
@@ -19,6 +20,13 @@ public final class Vet implements Healer {
         this.human = Objects.requireNonNull(human, "Human for vet is required.");
         this.company = Objects.requireNonNull(company, "Company for vet is required.");
         this.contact = Objects.requireNonNull(contact, "Contact for vet is required.");
+    }
+
+    public VetIdentifier getIdentifier() {
+        return identifier;
+    }
+    public void setIdentifier(VetIdentifier identifier) {
+        this.identifier = identifier;
     }
 
     /**

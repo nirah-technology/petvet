@@ -6,6 +6,7 @@ import java.util.Objects;
 import io.nirahtech.petvet.core.contact.Contact;
 
 public final class Company implements Serializable {
+    private CompanyIdentifier identifier;
     private final String name;
     private final Contact contact;
 
@@ -17,6 +18,12 @@ public final class Company implements Serializable {
         this.contact = Objects.requireNonNull(contact, "Contact for company is required.");
     }
     
+    public CompanyIdentifier getIdentifier() {
+        return identifier;
+    }
+    public void setIdentifier(CompanyIdentifier identifier) {
+        this.identifier = identifier;
+    }
     /**
      * @return the name
      */

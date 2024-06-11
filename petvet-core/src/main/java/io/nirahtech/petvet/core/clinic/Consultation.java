@@ -10,6 +10,7 @@ import java.util.Set;
 import io.nirahtech.petvet.core.util.Weight;
 
 public final class Consultation implements Serializable {
+    private ConsultationIdentifier identifier;
     private final LocalDateTime dateTime;
     private final Weight weight;
     private final Set<String> observations;
@@ -25,6 +26,13 @@ public final class Consultation implements Serializable {
         this.weight = Objects.requireNonNull(weight, "Weight for consultation is required.");
         this.observations = Objects.requireNonNullElse(observations, new HashSet<>());
         this.prescribesMedications = new HashSet<>(Objects.requireNonNullElse(prescribesMedications, new HashSet<>()));
+    }
+
+    public ConsultationIdentifier getIdentifier() {
+        return identifier;
+    }
+    public void setIdentifier(ConsultationIdentifier identifier) {
+        this.identifier = identifier;
     }
 
     public final LocalDateTime getDateTime() {

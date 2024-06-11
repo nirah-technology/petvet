@@ -11,6 +11,7 @@ lifecycleViewmodelKtx = "2.8.0"
 navigationFragment = "2.7.7"
 navigationUi = "2.7.7"
 petvetCore = "1.0-SNAPSHOT"
+petvetFeatures = "1.0-SNAPSHOT"
 petvetAI = "1.0-SNAPSHOT"
 legacySupportV4 = "1.0.0"
 googleAndroidLibrariesMapsplatformSecretsGradlePlugin = "2.0.1"
@@ -28,6 +29,7 @@ lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-view
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
 petvet-core = {group = "io.nirahtech", name = "petvet-core", version.ref = "petvetCore"}
+petvet-features = {group = "io.nirahtech", name = "petvet-features", version.ref = "petvetFeatures"}
 petvet-ai = {group = "io.nirahtech", name = "petvet-ai", version.ref = "petvetAI"}
 legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }

@@ -2,7 +2,9 @@ package io.nirahtech.petvet.features.pets;
 
 import java.util.Optional;
 
+import io.nirahtech.petvet.core.animalpark.AnimalIdentifier;
 import io.nirahtech.petvet.core.base.Pet;
+import io.nirahtech.petvet.core.base.PetIdentifier;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
@@ -49,7 +51,7 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  * @see io.nirahtech.petvet.core.base.Pet
  
  */
-@FunctionalInterface
 public interface RetrieveAnimalInformationSheetFeature {
-    Optional<Pet> retrieveAnimalInformationSheet(final String name) throws FeatureExecutionException;
+    Optional<Pet> retrieveAnimalInformationSheet(final PetIdentifier petIdentifier) throws FeatureExecutionException;
+    Optional<Pet> retrieveAnimalInformationSheet(final AnimalIdentifier animalIdentifier) throws FeatureExecutionException;
 }

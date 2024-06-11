@@ -17,6 +17,7 @@ import io.nirahtech.petvet.core.base.Pet;
 import io.nirahtech.petvet.core.util.Weight;
 
 public final class HealthBook implements Serializable {
+    private HealthBookIdentifier identifier;
     private final Pet pet;
     private Human owner;
     private final Set<Consultation> consultations;
@@ -32,6 +33,13 @@ public final class HealthBook implements Serializable {
         this.surgeries = new HashSet<>();
         this.diseases = new HashSet<>();
         this.allergicReactions = new HashSet<>(); // Initialize allergic reactions
+    }
+
+    public HealthBookIdentifier getIdentifier() {
+        return identifier;
+    }
+    public void setIdentifier(HealthBookIdentifier identifier) {
+        this.identifier = identifier;
     }
 
     public final Pet getPet() {

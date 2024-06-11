@@ -12,6 +12,7 @@ import io.nirahtech.petvet.core.util.Volume;
  * Elixir
  */
 public final class Elixir implements Alchimy {
+    private ElixirIdentifier identifier;
     private final String name;
     private String description;
     private final Map<Ingredient, Volume> composition = new HashMap<>();
@@ -32,6 +33,13 @@ public final class Elixir implements Alchimy {
         this.name = name;
         this.description = description;
         this.composition.putAll(composition);
+    }
+
+    public ElixirIdentifier getIdentifier() {
+        return identifier;
+    }
+    public void setIdentifier(ElixirIdentifier identifier) {
+        this.identifier = identifier;
     }
 
     public final String getName() {

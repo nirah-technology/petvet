@@ -8,6 +8,7 @@ import io.nirahtech.petvet.core.animalpark.Animal;
 import io.nirahtech.petvet.core.clinic.HealthBook;
 
 public final class House implements Familly {
+    private HouseIdentifier identifier;
     private final String name;
     private Farm farm;
 
@@ -15,6 +16,13 @@ public final class House implements Familly {
         final String name
     ) {
         this.name = Objects.requireNonNullElse(name, "Maison");
+    }
+
+    public HouseIdentifier getIdentifier() {
+        return identifier;
+    }
+    public void setIdentifier(HouseIdentifier identifier) {
+        this.identifier = identifier;
     }
 
     /**

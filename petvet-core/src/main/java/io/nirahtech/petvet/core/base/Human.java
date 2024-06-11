@@ -8,6 +8,7 @@ import java.util.Optional;
 import io.nirahtech.petvet.core.contact.Contact;
 
 public class Human implements Serializable {
+    private HumanIdentifier identifier;
     private final String firstName;
     private final String lastName;
     private final LocalDate birthDate;
@@ -23,6 +24,12 @@ public class Human implements Serializable {
         this.lastName = Objects.requireNonNull(lastName, "Lastname for human is required.");
         this.birthDate = birthDate;
         this.contact = Objects.requireNonNull(contact, "Contact fo human is required.");
+    }
+    public HumanIdentifier getIdentifier() {
+        return identifier;
+    }
+    public void setIdentifier(HumanIdentifier identifier) {
+        this.identifier = identifier;
     }
 
     /**

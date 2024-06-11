@@ -3,6 +3,7 @@ package io.nirahtech.petvet.features.pets;
 import java.util.Optional;
 
 import io.nirahtech.petvet.core.base.Farm;
+import io.nirahtech.petvet.core.base.FarmIdentifier;
 
 /**
  * 
@@ -17,5 +18,5 @@ import io.nirahtech.petvet.core.base.Farm;
  */
 @FunctionalInterface
 public interface RetrieveFarmFeature {
-    Optional<Farm> retrieveFarm();
+    Optional<Farm> retrieveFarm(final FarmIdentifier farmIdentifier);
 }

@@ -8,6 +8,7 @@ import java.util.Optional;
 import io.nirahtech.petvet.core.animalpark.Animal;
 
 public final class Pet implements Serializable {
+    private PetIdentifier identifier;
     private final Animal animal;
     private final String name;
     private final LocalDate adoptionDate;
@@ -24,6 +25,14 @@ public final class Pet implements Serializable {
         this.adoptionDate = Objects.requireNonNull(adoptionDate, "Adoption date for pet is required.");
         this.isTatooed = false;
     }
+
+    public PetIdentifier getIdentifier() {
+        return identifier;
+    }
+    public void setIdentifier(PetIdentifier identifier) {
+        this.identifier = identifier;
+    }
+    
     public Optional<Microship> getMicroship() {
         return Optional.ofNullable(this.microship);
     }

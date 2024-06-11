@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 public class Surgery implements Serializable {
+    private SurgeryIdentifier identifier;
     private final LocalDate date;
     private final String name;
     private final String description;
@@ -13,6 +14,15 @@ public class Surgery implements Serializable {
         this.name = name;
         this.description = description;
     }
+
+    public SurgeryIdentifier getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(SurgeryIdentifier identifier) {
+        this.identifier = identifier;
+    }
+    
     public final LocalDate getDate() {
         return this.date;
     }

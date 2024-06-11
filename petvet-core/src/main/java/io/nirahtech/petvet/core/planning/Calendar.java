@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public final class Calendar implements Serializable {
-
+    private CalendarIdentifier identifier;
     private static Calendar instance;
 
     public static final Calendar getInstance() {
@@ -18,6 +18,14 @@ public final class Calendar implements Serializable {
     }
 
     private final Set<Event> events;
+
+    public CalendarIdentifier getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(CalendarIdentifier identifier) {
+        this.identifier = identifier;
+    }
 
     public Stream<Event> getEvents() {
         return this.events.stream();

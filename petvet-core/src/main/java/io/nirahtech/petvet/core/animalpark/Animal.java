@@ -8,6 +8,7 @@ import java.util.Optional;
 import io.nirahtech.petvet.core.util.Weight;
 
 public final class Animal implements LifeCycle, Serializable {
+    private AnimalIdentifier identifier;
     private Species species;
     private Breed breed;
     private Gender gender;
@@ -18,6 +19,13 @@ public final class Animal implements LifeCycle, Serializable {
 
     public Animal() {
 
+    }
+
+    public AnimalIdentifier getIdentifier() {
+        return identifier;
+    }
+    public void setIdentifier(AnimalIdentifier identifier) {
+        this.identifier = identifier;
     }
 
     /**
@@ -111,6 +119,7 @@ public final class Animal implements LifeCycle, Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((identifier == null) ? 0 : identifier.hashCode());
         result = prime * result + ((species == null) ? 0 : species.hashCode());
         result = prime * result + ((breed == null) ? 0 : breed.hashCode());
         result = prime * result + ((birthDate == null) ? 0 : birthDate.hashCode());
@@ -130,6 +139,11 @@ public final class Animal implements LifeCycle, Serializable {
         if (getClass() != obj.getClass())
             return false;
         Animal other = (Animal) obj;
+        if (identifier == null) {
+            if (other.identifier != null)
+                return false;
+        } else if (!identifier.equals(other.identifier))
+            return false;
         if (species == null) {
             if (other.species != null)
                 return false;

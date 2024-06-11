@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 abstract class Medication  implements Serializable {
+    private MedicationIdentifier identifier;
     private final String name;
     private final Prescription prescription;
 
@@ -14,6 +15,14 @@ abstract class Medication  implements Serializable {
         this.name = Objects.requireNonNull(name, "Name fo medication is required.");
         this.prescription = Objects.requireNonNull(prescription, "Prescription fot medication is required.");
     }
+
+    public MedicationIdentifier getIdentifier() {
+        return identifier;
+    }
+    public void setIdentifier(MedicationIdentifier identifier) {
+        this.identifier = identifier;
+    }
+    
     public final String getName() {
         return this.name;
     }

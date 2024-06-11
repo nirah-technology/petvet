@@ -10,6 +10,7 @@ import io.nirahtech.petvet.features.planner.CancelEventFeature;
 import io.nirahtech.petvet.features.planner.PlannifyEventFeature;
 import io.nirahtech.petvet.features.planner.implementations.DefaultCancelEventFeatureImpl;
 import io.nirahtech.petvet.features.planner.implementations.DefaultPlannifyEventFeatureImpl;
+import io.nirahtech.petvet.features.util.FeaturesConfiguration;
 
 public final class FeaturesRegistry {
 
@@ -24,7 +25,7 @@ public final class FeaturesRegistry {
     }
 
     public final DetectFirstBootFeature detectFirstBootFeature(final File workingDirectory) {
-        return DefaultDetectFirstBootFeatureImpl.getInstance(null);
+        return DefaultDetectFirstBootFeatureImpl.getInstance(workingDirectory);
     }
 
     public final CreateNewHouseFeature createNewHouseFeature() {
