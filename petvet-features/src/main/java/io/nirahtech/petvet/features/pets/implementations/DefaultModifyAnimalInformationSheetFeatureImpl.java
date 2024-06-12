@@ -41,13 +41,10 @@ public class DefaultModifyAnimalInformationSheetFeatureImpl implements ModifyAni
             Boolean isTatooed, Microship microship) throws FeatureExecutionException {
         Objects.requireNonNull(petIdentifier, "Pet identifier is required for ModifyAnimalInformationSheetFeature");
         Optional<Pet> petFound = Optional.empty();
-        if (this.house.getFarm().isPresent()) {
-            final Farm farm = this.house.getFarm().get();
-            petFound = farm.getPets()
-                    .stream()
-                    .filter(pet -> pet.getIdentifier().equals(petIdentifier))
-                    .findFirst();
-        }
+        final Farm farm = this.house.getFarm();
+        petFound = farm.getPets()
+                .filter(pet -> pet.getIdentifier().equals(petIdentifier))
+                .findFirst();
         if (!petFound.isPresent()) {
             throw new FeatureExecutionException("Pet not found");
         }

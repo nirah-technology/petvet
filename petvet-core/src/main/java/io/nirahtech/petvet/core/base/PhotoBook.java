@@ -1,17 +1,15 @@
 package io.nirahtech.petvet.core.base;
 
 import java.io.File;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
-public final class PhotoBook implements Serializable {
-    private static final int MAX_PICTURES = 100;
+public final class PhotoBook implements Group<File> {
 
     private PhotoBookIdentifier identifier; 
-    public final Set<File> pictures;
+    private final Set<File> pictures;
     private final Pet pet;
 
     public PhotoBook(final Pet pet) {
@@ -30,28 +28,27 @@ public final class PhotoBook implements Serializable {
         return this.pet;
     }
 
-    public Collection<File> getPictures() {
-        return Collections.unmodifiableCollection(this.pictures);
+    @Override
+    public void add(File elementToAdd) {
+        Objects.requireNonNull(elementToAdd, "File to add is required for PhotoBook");
+        this.pictures.add(elementToAdd);
     }
 
-    public void clear() {
-        this.pictures.clear();
+    @Override
+    public void remove(File elementToRemove) {
+        Objects.requireNonNull(elementToRemove, "File to remove is required for PhotoBook");
+        this.pictures.remove(elementToRemove);
     }
 
-    public boolean contains(final File file) {
-        return this.pictures.contains(file);
+    @Override
+    public Stream<File> listAll() {
+        return this.pictures.stream();
     }
 
-    public final void add(final File file) {
-        if (!this.contains(file)) {
-            if (this.pictures.size() < MAX_PICTURES) {
-                this.pictures.add(file);
-            }
-        }
+    @Override
+    public boolean contains(File elementToCheck) {
+        Objects.requireNonNull(elementToCheck, "File to check is required for VetDirectory");
+        return this.pictures.contains(elementToCheck);
     }
-    public final void remove(final File file) {
-        if (this.contains(file)) {
-            this.pictures.remove(file);
-        }
-    }
+
 }

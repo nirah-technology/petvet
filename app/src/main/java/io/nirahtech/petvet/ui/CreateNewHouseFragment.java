@@ -24,6 +24,12 @@ import io.nirahtech.petvet.MainActivity;
 import io.nirahtech.petvet.R;
 import io.nirahtech.petvet.core.base.Farm;
 import io.nirahtech.petvet.core.base.House;
+import io.nirahtech.petvet.features.FeaturesRegistry;
+import io.nirahtech.petvet.features.boot.CreateNewHouseFeature;
+import io.nirahtech.petvet.features.boot.DetectFirstBootFeature;
+import io.nirahtech.petvet.features.persistence.LoadHouseFeature;
+import io.nirahtech.petvet.features.persistence.SaveHouseFeature;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 import io.nirahtech.petvet.services.house.HouseService;
 import io.nirahtech.petvet.services.house.HouseServiceImpl;
 import io.nirahtech.petvet.services.storage.LocalStorageService;
@@ -36,12 +42,19 @@ import io.nirahtech.petvet.services.storage.StorageService;
  */
 public class CreateNewHouseFragment extends Fragment {
 
+    private final File workspace = this.getContext().getFilesDir();
+    private final File dataFolder = new File(workspace, LoadHouseFeature.DATA_FOLDER_NAME);
+    private final File persistenceFile = new File(dataFolder, LoadHouseFeature.PERSISTENCE_FILE_NAME);
+
+    private final DetectFirstBootFeature detectFirstBootFeature = FeaturesRegistry.getInstance().detectFirstBootFeature(persistenceFile);
+    private final CreateNewHouseFeature createNewHouseFeature = FeaturesRegistry.getInstance().createNewHouseFeature();
+    private final SaveHouseFeature saveHouseFeature = FeaturesRegistry.getInstance().saveHouseFeature(persistenceFile);
 
 
     private TextInputEditText houseNameEditText;
     private Button createButton;
 
-    private HouseService houseService;
+    // private HouseService houseService;
 
 
     private final void redirectoToMainActivuty() {
@@ -55,18 +68,26 @@ public class CreateNewHouseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.houseService = HouseServiceImpl.getInstance(this.getContext());
-        this.houseService.getHouse().ifPresent(house -> this.redirectoToMainActivuty());
+        // this.houseService = HouseServiceImpl.getInstance(this.getContext());
+        try {
+            this.detectFirstBootFeature.detectFirstBootTryingToRetrieveHouse().ifPresent(house -> {
+                this.redirectoToMainActivuty();
+            });
+        } catch (FeatureExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private final void handleClick() {
         final String houseName = this.houseNameEditText.getText().toString();
         if (!houseName.isEmpty()) {
+            try {
+                final House createdHouse = this.createNewHouseFeature.createNewHouse(houseName);
+                this.saveHouseFeature.saveHouse(createdHouse);
+            } catch (FeatureExecutionException e) {
+                throw new RuntimeException(e);
+            }
 
-            final House house = new House(houseName);
-            final Farm farm = new Farm();
-            house.setFarm(farm);
-            this.houseService.save(house);
             new AlertDialog.Builder(this.getContext())
                     .setTitle("Parfait!")
                     .setMessage("Votre habitat a bien été sauvegardé.")

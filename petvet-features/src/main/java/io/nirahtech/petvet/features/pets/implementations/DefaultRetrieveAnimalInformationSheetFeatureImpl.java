@@ -30,13 +30,10 @@ public class DefaultRetrieveAnimalInformationSheetFeatureImpl implements Retriev
     @Override
     public Optional<Pet> retrieveAnimalInformationSheet(PetIdentifier petIdentifier) throws FeatureExecutionException {
         Optional<Pet> petFound = Optional.empty();
-        if (this.house.getFarm().isPresent()) {
-            final Farm farm = this.house.getFarm().get();
-            petFound = farm.getPets()
-                    .stream()
-                    .filter(pet -> pet.getIdentifier().equals(petIdentifier))
-                    .findFirst();
-        }
+        final Farm farm = this.house.getFarm();
+        petFound = farm.getPets()
+                .filter(pet -> pet.getIdentifier().equals(petIdentifier))
+                .findFirst();
         return petFound;
     }
 }

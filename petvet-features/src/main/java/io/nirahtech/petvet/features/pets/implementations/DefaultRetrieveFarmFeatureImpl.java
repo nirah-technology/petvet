@@ -28,7 +28,7 @@ public class DefaultRetrieveFarmFeatureImpl implements RetrieveFarmFeature {
 
     @Override
     public Optional<Farm> retrieveFarm(FarmIdentifier farmIdentifier) {
-        return this.house.getFarm();
+        return Optional.ofNullable(this.house.getFarm());
     }
 
 }

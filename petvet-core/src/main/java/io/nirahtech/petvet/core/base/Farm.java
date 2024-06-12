@@ -1,16 +1,16 @@
 package io.nirahtech.petvet.core.base;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import io.nirahtech.petvet.core.animalpark.Animal;
 import io.nirahtech.petvet.core.clinic.HealthBook;
 
-public class Farm implements Familly {
+public class Farm implements AbleToAdopt {
     private FarmIdentifier identifier;
     private final Set<Pet> pets = new HashSet<>();
     private final Set<HealthBook> healthBooks = new HashSet<>();
@@ -30,15 +30,15 @@ public class Farm implements Familly {
     /**
      * @return the pets
      */
-    public final Set<Pet> getPets() {
-        return Collections.unmodifiableSet(this.pets);
+    public final Stream<Pet> getPets() {
+        return this.pets.stream();
     }
 
     /**
      * @return the healthBooks
      */
-    public final Set<HealthBook> getHealthBooks() {
-        return Collections.unmodifiableSet(this.healthBooks);
+    public final Stream<HealthBook> getHealthBooks() {
+        return this.healthBooks.stream();
     }
 
     @Override

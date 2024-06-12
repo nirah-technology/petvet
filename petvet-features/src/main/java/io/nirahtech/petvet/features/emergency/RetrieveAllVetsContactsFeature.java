@@ -2,7 +2,7 @@ package io.nirahtech.petvet.features.emergency;
 
 import java.util.stream.Stream;
 
-import io.nirahtech.petvet.core.clinic.Company;
+import io.nirahtech.petvet.core.clinic.Vet;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
@@ -40,6 +40,6 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  * @see io.nirahtech.petvet.core.clinic.Company
  */
 @FunctionalInterface
-public interface RetrieveAllEmergencyContactsFeature {
-    Stream<Company> retrieveAllEmergencyContacts() throws FeatureExecutionException;
+public interface RetrieveAllVetsContactsFeature {
+    Stream<Vet> retrieveAllEmergencyContacts() throws FeatureExecutionException;
 }

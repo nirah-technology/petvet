@@ -8,50 +8,43 @@ import java.util.Optional;
 
 import io.nirahtech.petvet.core.base.House;
 import io.nirahtech.petvet.features.boot.DetectFirstBootFeature;
-import io.nirahtech.petvet.features.util.FeaturesConfiguration;
+import io.nirahtech.petvet.features.persistence.implementations.DefaultLoadHouseFeatureImpl;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 public class DefaultDetectFirstBootFeatureImpl implements DetectFirstBootFeature {
 
     private static final Map<String, DetectFirstBootFeature> INSTANCES = new HashMap<>();
-    private static final String DATABASE_FILE_NAME = FeaturesConfiguration.DATABASE_FILE_NAME;
     
-    public static final DetectFirstBootFeature getInstance(final File workingDirectory) {
-        Objects.requireNonNull(workingDirectory, "Working Directory folder is required for DetectFirstBootFeature.");
-        if (!INSTANCES.containsKey(workingDirectory.getAbsolutePath())) {
-            INSTANCES.put(workingDirectory.getAbsolutePath(), new DefaultDetectFirstBootFeatureImpl(workingDirectory));
+    public static final DetectFirstBootFeature getInstance(final File persistenceFile) {
+        Objects.requireNonNull(persistenceFile, "Working Directory folder is required for DetectFirstBootFeature.");
+        if (!INSTANCES.containsKey(persistenceFile.getAbsolutePath())) {
+            INSTANCES.put(persistenceFile.getAbsolutePath(), new DefaultDetectFirstBootFeatureImpl(persistenceFile));
         }
-        return INSTANCES.get(workingDirectory.getAbsolutePath());
+        return INSTANCES.get(persistenceFile.getAbsolutePath());
     }
 
-    private final File workingDirectory;
+    private final File persistenceFile;
 
-    private DefaultDetectFirstBootFeatureImpl(final File workingDirectory) {
-        this.workingDirectory = workingDirectory;
+    private DefaultDetectFirstBootFeatureImpl(final File persistenceFile) {
+        this.persistenceFile = persistenceFile;
     }
 
     public File getWorkingDirectory() {
-        return workingDirectory;
+        return persistenceFile;
     }
 
     @Override
     public Optional<House> detectFirstBootTryingToRetrieveHouse() throws FeatureExecutionException {
-        if (this.workingDirectory.exists()) {
-            if (this.workingDirectory.isFile()) {
+        Optional<House> loadedHouse = Optional.empty();
+        if (this.persistenceFile.exists()) {
+            if (!this.persistenceFile.isFile()) {
                 throw new FeatureExecutionException("");
             } else {
-                final File file = new File(this.workingDirectory, DATABASE_FILE_NAME);
-                if (file.exists()) {
-                    if (file.isDirectory()) {
-                        throw new FeatureExecutionException("");
-                    } else {
-                        // Load serialize House from file
-                    }
-                }  
+                loadedHouse = DefaultLoadHouseFeatureImpl.getInstance(this.persistenceFile).loadHouse();  
             }
         }
         
-        return Optional.empty();
+        return loadedHouse;
     }
     
 }

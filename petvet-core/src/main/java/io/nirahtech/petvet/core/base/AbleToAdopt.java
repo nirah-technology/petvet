@@ -9,6 +9,6 @@ import io.nirahtech.petvet.core.clinic.HealthBook;
 /**
  * Familly
  */
-interface Familly extends Serializable {
+interface AbleToAdopt extends Serializable {
     HealthBook adopt(final Animal animal, final String name, final LocalDate adoptionDate);
 }

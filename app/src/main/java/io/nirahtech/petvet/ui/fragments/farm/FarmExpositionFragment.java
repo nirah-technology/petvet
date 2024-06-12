@@ -32,6 +32,8 @@ import io.nirahtech.petvet.core.animalpark.Species;
 import io.nirahtech.petvet.core.base.House;
 import io.nirahtech.petvet.core.base.Pet;
 import io.nirahtech.petvet.core.util.Weight;
+import io.nirahtech.petvet.features.FeaturesRegistry;
+import io.nirahtech.petvet.features.pets.RetrieveFarmFeature;
 import io.nirahtech.petvet.services.house.HouseService;
 import io.nirahtech.petvet.services.house.HouseServiceImpl;
 import io.nirahtech.petvet.ui.adapters.SpeciesAdapter;
@@ -44,7 +46,8 @@ import io.nirahtech.petvet.ui.adapters.listeners.OnPetClickEventListener;
  */
 public class FarmExpositionFragment extends Fragment {
 
-    private HouseService houseService;
+    private final RetrieveFarmFeature retrieveFarmFeature = FeaturesRegistry.getInstance().retrieveFarmFeature();
+    // private HouseService houseService;
 
     private RecyclerView speciesRecyclerView;
     private SpeciesAdapter speciesAdapter;
@@ -57,7 +60,7 @@ public class FarmExpositionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.houseService = HouseServiceImpl.getInstance(this.getContext());
+//         this.houseService = HouseServiceImpl.getInstance(this.getContext());
     }
 
     private final void preventErrorOnLoadFailure() {
@@ -79,8 +82,11 @@ public class FarmExpositionFragment extends Fragment {
             nitroAsAnimal.setWeight(Weight.kg(7.2D));
             Pet nitroAsPet = new Pet(nitroAsAnimal, "Nitro", LocalDate.of(2017, 3, 17));
             cats.add(nitroAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(nitroAsAnimal, nitroAsPet.getName(), nitroAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(nitroAsAnimal, nitroAsPet.getName(), nitroAsPet.getAdoptionDate());
+//            });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(nitroAsAnimal, nitroAsPet.getName(), nitroAsPet.getAdoptionDate());
             });
 
             // Nala
@@ -91,8 +97,11 @@ public class FarmExpositionFragment extends Fragment {
             nalaAsAnimal.setWeight(Weight.kg(7.2D));
             Pet nalaAsPet = new Pet(nalaAsAnimal, "Nala", LocalDate.of(2017, 3, 17));
             cats.add(nalaAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(nalaAsAnimal, nalaAsPet.getName(), nalaAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(nalaAsAnimal, nalaAsPet.getName(), nalaAsPet.getAdoptionDate());
+//            });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(nalaAsAnimal, nalaAsPet.getName(), nalaAsPet.getAdoptionDate());
             });
 
 
@@ -104,8 +113,11 @@ public class FarmExpositionFragment extends Fragment {
             simbaAsAnimal.setWeight(Weight.kg(7.2D));
             Pet simbaAsPet = new Pet(simbaAsAnimal, "Simba", LocalDate.of(2017, 3, 17));
             cats.add(simbaAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(simbaAsAnimal, simbaAsPet.getName(), simbaAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(simbaAsAnimal, simbaAsPet.getName(), simbaAsPet.getAdoptionDate());
+//            });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(simbaAsAnimal, simbaAsPet.getName(), simbaAsPet.getAdoptionDate());
             });
 
             // Ed
@@ -116,8 +128,11 @@ public class FarmExpositionFragment extends Fragment {
             edAsAnimal.setWeight(Weight.kg(7.2D));
             Pet edAsPet = new Pet(edAsAnimal, "Ed", LocalDate.of(2017, 3, 17));
             cats.add(edAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(edAsAnimal, edAsPet.getName(), edAsPet.getAdoptionDate());
+//             this.houseService.getHouse().ifPresent((house) -> {
+//                  house.adopt(edAsAnimal, edAsPet.getName(), edAsPet.getAdoptionDate());
+//              });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(edAsAnimal, edAsPet.getName(), edAsPet.getAdoptionDate());
             });
 
             final Set<Pet> dogs = new HashSet<>();
@@ -132,8 +147,11 @@ public class FarmExpositionFragment extends Fragment {
             yumaAsAnimal.setWeight(Weight.kg(4.7D));
             Pet yumaAsPet = new Pet(yumaAsAnimal, "Yuma", LocalDate.of(2017, 3, 17));
             dogs.add(yumaAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(yumaAsAnimal, yumaAsPet.getName(), yumaAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(yumaAsAnimal, yumaAsPet.getName(), yumaAsPet.getAdoptionDate());
+//            });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(yumaAsAnimal, yumaAsPet.getName(), yumaAsPet.getAdoptionDate());
             });
 
             final Set<Pet> galinaceas = new HashSet<>();
@@ -151,8 +169,11 @@ public class FarmExpositionFragment extends Fragment {
             picsouAsAnimal.setWeight(Weight.kg(5.7D));
             Pet picsouAsPet = new Pet(picsouAsAnimal, "Picsou", LocalDate.of(2023, 9, 9));
             galinaceas.add(picsouAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(picsouAsAnimal, picsouAsPet.getName(), picsouAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(picsouAsAnimal, picsouAsPet.getName(), picsouAsPet.getAdoptionDate());
+//            });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(picsouAsAnimal, picsouAsPet.getName(), picsouAsPet.getAdoptionDate());
             });
 
             // Riri
@@ -163,8 +184,11 @@ public class FarmExpositionFragment extends Fragment {
             ririAsAnimal.setWeight(Weight.kg(4.2D));
             Pet ririAsPet = new Pet(ririAsAnimal, "Riri", LocalDate.of(2023, 9, 9));
             galinaceas.add(ririAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(ririAsAnimal, ririAsPet.getName(), ririAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(ririAsAnimal, ririAsPet.getName(), ririAsPet.getAdoptionDate());
+//            });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(ririAsAnimal, ririAsPet.getName(), ririAsPet.getAdoptionDate());
             });
 
             // Fifi
@@ -175,8 +199,11 @@ public class FarmExpositionFragment extends Fragment {
             fifiAsAnimal.setWeight(Weight.kg(4.2D));
             Pet fifiAsPet = new Pet(fifiAsAnimal, "Fifi", LocalDate.of(2023, 9, 9));
             galinaceas.add(fifiAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(fifiAsAnimal, fifiAsPet.getName(), fifiAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(fifiAsAnimal, fifiAsPet.getName(), fifiAsPet.getAdoptionDate());
+//            });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(fifiAsAnimal, fifiAsPet.getName(), fifiAsPet.getAdoptionDate());
             });
 
             // Loulou
@@ -187,8 +214,11 @@ public class FarmExpositionFragment extends Fragment {
             loulouAsAnimal.setWeight(Weight.kg(4.2D));
             Pet loulouAsPet = new Pet(loulouAsAnimal, "Loulou", LocalDate.of(2023, 9, 9));
             galinaceas.add(loulouAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(loulouAsAnimal, loulouAsPet.getName(), loulouAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(loulouAsAnimal, loulouAsPet.getName(), loulouAsPet.getAdoptionDate());
+//            });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(loulouAsAnimal, loulouAsPet.getName(), loulouAsPet.getAdoptionDate());
             });
 
             // Solo
@@ -199,8 +229,11 @@ public class FarmExpositionFragment extends Fragment {
             soloAnimal.setWeight(Weight.kg(4.2D));
             Pet soloAsPet = new Pet(soloAnimal, "Solo", LocalDate.of(2023, 9, 9));
             galinaceas.add(soloAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(soloAnimal, soloAsPet.getName(), soloAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(soloAnimal, soloAsPet.getName(), soloAsPet.getAdoptionDate());
+//            });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(soloAnimal, soloAsPet.getName(), soloAsPet.getAdoptionDate());
             });
 
             // Séké
@@ -211,8 +244,11 @@ public class FarmExpositionFragment extends Fragment {
             sekeAsAnimal.setWeight(Weight.kg(4.2D));
             Pet sekeAsPet = new Pet(sekeAsAnimal, "Séké", LocalDate.of(2023, 9, 9));
             galinaceas.add(sekeAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(sekeAsAnimal, sekeAsPet.getName(), sekeAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(sekeAsAnimal, sekeAsPet.getName(), sekeAsPet.getAdoptionDate());
+//            });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(sekeAsAnimal, sekeAsPet.getName(), sekeAsPet.getAdoptionDate());
             });
 
             // Gaïa
@@ -223,8 +259,11 @@ public class FarmExpositionFragment extends Fragment {
             gaiaAsAnimal.setWeight(Weight.kg(4.2D));
             Pet gaiaAsPet = new Pet(gaiaAsAnimal, "Gaïa", LocalDate.of(2023, 9, 9));
             galinaceas.add(gaiaAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(gaiaAsAnimal, gaiaAsPet.getName(), gaiaAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(gaiaAsAnimal, gaiaAsPet.getName(), gaiaAsPet.getAdoptionDate());
+//            });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(gaiaAsAnimal, gaiaAsPet.getName(), gaiaAsPet.getAdoptionDate());
             });
 
             // Cargo
@@ -235,8 +274,11 @@ public class FarmExpositionFragment extends Fragment {
             cargoAsAnimal.setWeight(Weight.kg(4.2D));
             Pet cargoAsPet = new Pet(cargoAsAnimal, "Cargo", LocalDate.of(2023, 9, 9));
             galinaceas.add(cargoAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(cargoAsAnimal, cargoAsPet.getName(), cargoAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(cargoAsAnimal, cargoAsPet.getName(), cargoAsPet.getAdoptionDate());
+//            });
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(cargoAsAnimal, cargoAsPet.getName(), cargoAsPet.getAdoptionDate());
             });
 
             final Set<Pet> bovids = new HashSet<>();
@@ -251,21 +293,35 @@ public class FarmExpositionFragment extends Fragment {
             djaliAsAnimal.setWeight(Weight.kg(14.24D));
             Pet djaliAsPet = new Pet(djaliAsAnimal, "Djali", LocalDate.of(2024, 9, 9));
             bovids.add(djaliAsPet);
-            this.houseService.getHouse().ifPresent((house) -> {
-                house.adopt(djaliAsAnimal, djaliAsPet.getName(), djaliAsPet.getAdoptionDate());
+//            this.houseService.getHouse().ifPresent((house) -> {
+//                house.adopt(djaliAsAnimal, djaliAsPet.getName(), djaliAsPet.getAdoptionDate());
+//            });
+
+            this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+                farm.adopt(djaliAsAnimal, djaliAsPet.getName(), djaliAsPet.getAdoptionDate());
             });
 
         }
     }
 
     private final void loadHouse() throws IOException, ClassNotFoundException {
-        this.houseService.getHouse().flatMap(House::getFarm).ifPresent(farm -> {
-            System.out.println("There is/are " + farm.getPets().size() + " loaded animals from the backup file.");
-            for (Pet pet : farm.getPets()) {
+
+
+//         this.houseService.getHouse().flatMap(House::getFarm).ifPresent(farm -> {
+//             System.out.println("There is/are " + farm.getPets().size() + " loaded animals from the backup file.");
+//             for (Pet pet : farm.getPets()) {
+//                 System.out.println("Loaded animal from backup: " + pet.getName());
+//                 Species species = pet.getAnimal().getSpecies();
+//                 this.petsBySpecies.computeIfAbsent(species, k -> new HashSet<>()).add(pet);
+//             }
+//         });
+        this.retrieveFarmFeature.retrieveFarm(null).ifPresent(farm -> {
+            System.out.println("There is/are " + farm.getPets().count() + " loaded animals from the backup file.");
+            farm.getPets().forEach(pet -> {
                 System.out.println("Loaded animal from backup: " + pet.getName());
                 Species species = pet.getAnimal().getSpecies();
                 this.petsBySpecies.computeIfAbsent(species, k -> new HashSet<>()).add(pet);
-            }
+            });
         });
         this.preventErrorOnLoadFailure();
     }
@@ -284,7 +340,6 @@ public class FarmExpositionFragment extends Fragment {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(this.houseService.getHouse().get().getFarm().get().getPets().size());
 
         OnPetClickEventListener onPetClickListener = pet -> {
             Bundle bundle = new Bundle();

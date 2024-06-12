@@ -2,8 +2,8 @@ package io.nirahtech.petvet.features.emergency;
 
 import java.util.Optional;
 
-import io.nirahtech.petvet.core.clinic.Company;
-import io.nirahtech.petvet.core.clinic.CompanyIdentifier;
+import io.nirahtech.petvet.core.clinic.Vet;
+import io.nirahtech.petvet.core.clinic.VetIdentifier;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
@@ -54,6 +54,6 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  * @see io.nirahtech.petvet.core.clinic.Company
  */
 @FunctionalInterface
-public interface RetrieveEmergencyContactDetailFeature {
-    Optional<Company> retrieveEmergencyContactDetail(final CompanyIdentifier emergencyCompanyContactIdentifier) throws FeatureExecutionException;
+public interface RetrieveVetContactDetailFeature {
+    Optional<Vet> retrieveEmergencyContactDetail(final VetIdentifier vetIdentifier) throws FeatureExecutionException;
 }

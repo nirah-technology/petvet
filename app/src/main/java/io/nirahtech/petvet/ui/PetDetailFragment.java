@@ -16,6 +16,10 @@ import java.util.Objects;
 
 import io.nirahtech.petvet.R;
 import io.nirahtech.petvet.core.base.Pet;
+import io.nirahtech.petvet.core.base.PetIdentifier;
+import io.nirahtech.petvet.features.FeaturesRegistry;
+import io.nirahtech.petvet.features.pets.RetrieveAnimalInformationSheetFeature;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +33,8 @@ public class PetDetailFragment extends Fragment {
     private static final String ARG_PET = "pet";
 
     private Pet pet;
+
+    private final RetrieveAnimalInformationSheetFeature feature = FeaturesRegistry.getInstance().retrieveAnimalInformationSheetFeature();
 
     private TextView petNameTextView;
     private TextView petSpeciesTextView;
@@ -49,9 +55,17 @@ public class PetDetailFragment extends Fragment {
 
         if (Objects.nonNull(getArguments())) {
             final Pet pet = (Pet) getArguments().getSerializable(ARG_PET);
-            if (Objects.nonNull(pet)) {
-                this.pet = pet;
+            final PetIdentifier petIdentifier = (PetIdentifier) getArguments().getSerializable(ARG_PET);
+            try {
+                this.feature.retrieveAnimalInformationSheet(petIdentifier).ifPresent(petFound -> {
+                    this.pet = petFound;
+                });
+            } catch (FeatureExecutionException e) {
+                throw new RuntimeException(e);
             }
+            // if (Objects.nonNull(pet)) {
+                // this.pet = pet;
+            // }
         }
 
         if (Objects.nonNull(this.pet)) {

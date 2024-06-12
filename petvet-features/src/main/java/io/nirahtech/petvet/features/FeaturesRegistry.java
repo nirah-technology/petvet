@@ -6,6 +6,10 @@ import io.nirahtech.petvet.features.boot.CreateNewHouseFeature;
 import io.nirahtech.petvet.features.boot.DetectFirstBootFeature;
 import io.nirahtech.petvet.features.boot.implementations.DefaultCreateNewHouseFeatureImpl;
 import io.nirahtech.petvet.features.boot.implementations.DefaultDetectFirstBootFeatureImpl;
+import io.nirahtech.petvet.features.persistence.LoadHouseFeature;
+import io.nirahtech.petvet.features.persistence.SaveHouseFeature;
+import io.nirahtech.petvet.features.persistence.implementations.DefaultLoadHouseFeatureImpl;
+import io.nirahtech.petvet.features.persistence.implementations.DefaultSaveHouseFeatureImpl;
 import io.nirahtech.petvet.features.pets.AdoptAnimalFeature;
 import io.nirahtech.petvet.features.pets.ModifyAnimalInformationSheetFeature;
 import io.nirahtech.petvet.features.pets.RetrieveAnimalInformationSheetFeature;
@@ -124,5 +128,11 @@ public final class FeaturesRegistry {
         return DefaultRetrieveHealthBookFeatureImpl.getInstance();
     }
 
+    public final LoadHouseFeature loadHouseFeature(final File persistenceFile) {
+        return DefaultLoadHouseFeatureImpl.getInstance(persistenceFile);
+    }
+    public final SaveHouseFeature saveHouseFeature(final File persistenceFile) {
+        return DefaultSaveHouseFeatureImpl.getInstance(persistenceFile);
+    }
 
 }

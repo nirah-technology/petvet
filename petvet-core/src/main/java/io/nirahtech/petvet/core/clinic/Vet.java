@@ -14,12 +14,11 @@ public final class Vet implements Healer {
 
     public Vet(
         final Human human,
-        final Company company,
-        final Contact contact
+        final Company company
     ) {
         this.human = Objects.requireNonNull(human, "Human for vet is required.");
         this.company = Objects.requireNonNull(company, "Company for vet is required.");
-        this.contact = Objects.requireNonNull(contact, "Contact for vet is required.");
+        this.contact = new Contact();
     }
 
     public VetIdentifier getIdentifier() {

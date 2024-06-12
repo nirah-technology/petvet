@@ -29,6 +29,7 @@ public class JoinExistingHouseFragment extends Fragment {
     private EditText otpEditTextNumberCode6;
 
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

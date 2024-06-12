@@ -30,13 +30,11 @@ public class DefaultRetrieveHealthBookFeatureImpl implements RetrieveHealthBookF
     @Override
     public Optional<HealthBook> retrieveHealthBook(PetIdentifier petIdentifier) throws FeatureExecutionException {
         Optional<HealthBook> healthBookFound = Optional.empty();
-        if (this.house.getFarm().isPresent()) {
-            final Farm farm = this.house.getFarm().get();
-            healthBookFound = farm.getHealthBooks()
-                    .stream()
-                    .filter(healthBook -> healthBook.getPet().getIdentifier().equals(petIdentifier))
-                    .findFirst();
-        }
+        final Farm farm = this.house.getFarm();
+        healthBookFound = farm.getHealthBooks()
+                .filter(healthBook -> healthBook.getPet().getIdentifier().equals(petIdentifier))
+                .findFirst();
+
         return healthBookFound;
     }
 

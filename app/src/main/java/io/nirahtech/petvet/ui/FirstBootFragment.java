@@ -1,5 +1,7 @@
 package io.nirahtech.petvet.ui;
 
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,9 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.util.Optional;
+
+import io.nirahtech.petvet.MainActivity;
 import io.nirahtech.petvet.R;
+import io.nirahtech.petvet.core.base.House;
+import io.nirahtech.petvet.features.FeaturesRegistry;
 import io.nirahtech.petvet.features.boot.DetectFirstBootFeature;
 import io.nirahtech.petvet.features.boot.implementations.DefaultDetectFirstBootFeatureImpl;
+import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,14 +28,9 @@ import io.nirahtech.petvet.features.boot.implementations.DefaultDetectFirstBootF
  */
 public class FirstBootFragment extends Fragment {
 
-    private DetectFirstBootFeature feature;
-    private Button button;
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.feature = new DefaultDetectFirstBootFeatureImpl(this.getContext().getCacheDir());
     }
 
 
@@ -38,13 +41,6 @@ public class FirstBootFragment extends Fragment {
         // final AnimalClassifier animalClassifier = ClassifierFactory.animalClassifier();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_first_boot, container, false);
-        this.button = view.findViewById(R.id.testbtn);
-        this.button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                feature.get();
-            }
-        });
         return view;
     }
 }

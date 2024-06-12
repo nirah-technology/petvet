@@ -25,7 +25,7 @@ public final class AnimalIdentifier implements Identifier {
     }
 
     public static final AnimalIdentifier generate() {
-        final long id = AnimalIdentifier.lastGeneratedIdentifier++;
+        final long id = ++AnimalIdentifier.lastGeneratedIdentifier;
         return of(id);
     }
 
