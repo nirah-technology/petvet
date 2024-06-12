@@ -3,7 +3,7 @@ package io.nirahtech.petvet.features.pharmacy;
 import java.util.Optional;
 
 import io.nirahtech.petvet.core.pharmacy.Elixir;
-import io.nirahtech.petvet.core.pharmacy.ElixirIdentifier;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
@@ -19,5 +19,5 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  */
 @FunctionalInterface
 public interface RetrieveCureDetailFeature {
-    Optional<Elixir> retriveCureDetail(final ElixirIdentifier elixirIdentifier) throws FeatureExecutionException;
+    Optional<Elixir> retriveCureDetail(final Identifier elixirIdentifier) throws FeatureExecutionException;
 }

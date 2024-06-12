@@ -7,12 +7,13 @@ import java.util.Optional;
 
 import io.nirahtech.petvet.core.base.Ingredient;
 import io.nirahtech.petvet.core.util.Volume;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 
 /**
  * Elixir
  */
 public final class Elixir implements Alchimy {
-    private ElixirIdentifier identifier;
+    private Identifier identifier;
     private final String name;
     private String description;
     private final Map<Ingredient, Volume> composition = new HashMap<>();
@@ -35,10 +36,10 @@ public final class Elixir implements Alchimy {
         this.composition.putAll(composition);
     }
 
-    public ElixirIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(ElixirIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
 

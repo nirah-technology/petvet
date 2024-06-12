@@ -6,9 +6,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import io.nirahtech.petvet.core.util.identifier.Identifier;
+
 public final class PhotoBook implements Group<File> {
 
-    private PhotoBookIdentifier identifier; 
+    private Identifier identifier; 
     private final Set<File> pictures;
     private final Pet pet;
 
@@ -17,10 +19,10 @@ public final class PhotoBook implements Group<File> {
         this.pictures = new HashSet<>();
     }
 
-    public PhotoBookIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(PhotoBookIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
 

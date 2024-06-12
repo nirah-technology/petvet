@@ -1,6 +1,6 @@
 package io.nirahtech.petvet.features.emergency;
 
-import io.nirahtech.petvet.core.clinic.VetIdentifier;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
@@ -34,5 +34,5 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  */
 @FunctionalInterface
 public interface DeleteVetFeature {
-    void deleteVetContact(final VetIdentifier vetIdentifierToDelete) throws FeatureExecutionException;
+    void deleteVetContact(final Identifier vetIdentifierToDelete) throws FeatureExecutionException;
 }

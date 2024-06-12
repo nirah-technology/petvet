@@ -1,12 +1,13 @@
 package io.nirahtech.petvet.core.planning;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.SortedSet;
 import java.util.function.Consumer;
 
-final class EventRecallCheckRunner implements Runnable {
+final class EventRecallCheckRunner implements Runnable, Serializable {
 
     private final Collection<Event> events;
     private final SortedSet<EventRecall> eventRecalls;

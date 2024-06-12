@@ -8,8 +8,8 @@ import java.util.Set;
 import io.nirahtech.petvet.core.base.Ingredient;
 import io.nirahtech.petvet.core.base.Pharmacy;
 import io.nirahtech.petvet.core.pharmacy.Elixir;
-import io.nirahtech.petvet.core.pharmacy.ElixirIdentifier;
 import io.nirahtech.petvet.core.util.Volume;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.pharmacy.ModifyCureFeature;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
@@ -31,7 +31,7 @@ public class DefaultModifyCureFeatureImpl implements ModifyCureFeature {
     }
 
     @Override
-    public Elixir modifyCure(ElixirIdentifier identifierOfTheElixirToModify, String name,
+    public Elixir modifyCure(Identifier identifierOfTheElixirToModify, String name,
             Set<Ingredient> ingredientsToDelete, Map<Ingredient, Volume> ingredientToAdd)
             throws FeatureExecutionException {
         Objects.requireNonNull(identifierOfTheElixirToModify, "Elixir identifier is required for ModifyCureFeature.");

@@ -5,9 +5,10 @@ import java.util.Objects;
 import io.nirahtech.petvet.core.base.Human;
 import io.nirahtech.petvet.core.base.Pet;
 import io.nirahtech.petvet.core.contact.Contact;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 
 public final class Vet implements Healer {
-    private VetIdentifier identifier;
+    private Identifier identifier;
     private final Human human;
     private final Company company;
     private final Contact contact;
@@ -21,10 +22,10 @@ public final class Vet implements Healer {
         this.contact = new Contact();
     }
 
-    public VetIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(VetIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
 

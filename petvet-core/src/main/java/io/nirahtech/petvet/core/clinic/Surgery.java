@@ -3,8 +3,10 @@ package io.nirahtech.petvet.core.clinic;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import io.nirahtech.petvet.core.util.identifier.Identifier;
+
 public class Surgery implements Serializable {
-    private SurgeryIdentifier identifier;
+    private Identifier identifier;
     private final LocalDate date;
     private final String name;
     private final String description;
@@ -15,11 +17,11 @@ public class Surgery implements Serializable {
         this.description = description;
     }
 
-    public SurgeryIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
 
-    public void setIdentifier(SurgeryIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
     

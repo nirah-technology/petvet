@@ -1,6 +1,10 @@
 package io.nirahtech.petvet.features.emergency;
 
-import io.nirahtech.petvet.core.clinic.Company;
+import java.time.LocalDate;
+
+import io.nirahtech.petvet.core.clinic.Vet;
+import io.nirahtech.petvet.core.contact.Contact;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
@@ -37,5 +41,14 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  */
 @FunctionalInterface
 public interface ModifyVetFeature {
-    void modifyVetContact(final Company emergencyCompanyContactToModify) throws FeatureExecutionException;
+    Vet modifyVetContact(
+        final Identifier vetIdenfitifer,
+        final String firstName,
+        final String lastName,
+        final LocalDate birthDate,
+        final Contact humanContact,
+        final String companyName,
+        final Contact companyContact,
+        final Contact vetContact
+    ) throws FeatureExecutionException;
 }

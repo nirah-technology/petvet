@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import io.nirahtech.petvet.core.planning.Calendar;
 import io.nirahtech.petvet.core.planning.Event;
-import io.nirahtech.petvet.core.planning.EventIdentifier;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.planner.RetrieveEventDetailFeature;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
@@ -27,7 +27,7 @@ public class DefaultRetrieveEventDetailFeatureImpl implements RetrieveEventDetai
     }
 
     @Override
-    public Optional<Event> retrieveEventDetail(EventIdentifier identifierOfTheEventToRetrieve) throws FeatureExecutionException {
+    public Optional<Event> retrieveEventDetail(Identifier identifierOfTheEventToRetrieve) throws FeatureExecutionException {
         Objects.requireNonNull(identifierOfTheEventToRetrieve, "Identifier is required for RetrieveEventDetailFeature");
         return this.calendar.getEvents()
                 .filter(event -> event.getIdentifier().equals(identifierOfTheEventToRetrieve))

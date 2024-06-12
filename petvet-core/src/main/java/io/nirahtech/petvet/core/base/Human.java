@@ -7,9 +7,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 import io.nirahtech.petvet.core.contact.Contact;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 
 public class Human implements Comparator<Human>, Serializable {
-    private HumanIdentifier identifier;
+    private Identifier identifier;
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
@@ -24,10 +25,10 @@ public class Human implements Comparator<Human>, Serializable {
         this.contact = new Contact();
     }
 
-    public HumanIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(HumanIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
 

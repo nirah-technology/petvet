@@ -2,20 +2,22 @@ package io.nirahtech.petvet.core.base;
 
 import java.io.Serializable;
 
+import io.nirahtech.petvet.core.util.identifier.Identifier;
+
 public final class Microship implements Serializable {
     private static final int SIZE = 15;
 
-    private MicroshipIdentifier identifier;
+    private Identifier identifier;
     private final String code;
     
     private Microship(final String code) {
         this.code = code;
     }
 
-    public MicroshipIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(MicroshipIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
 

@@ -8,8 +8,8 @@ import io.nirahtech.petvet.core.animalpark.Gender;
 import io.nirahtech.petvet.core.animalpark.Species;
 import io.nirahtech.petvet.core.base.Microship;
 import io.nirahtech.petvet.core.base.Pet;
-import io.nirahtech.petvet.core.base.PetIdentifier;
 import io.nirahtech.petvet.core.util.Weight;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
@@ -26,7 +26,7 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 @FunctionalInterface
 public interface ModifyAnimalInformationSheetFeature {
     Pet modifyAnimalInformationSheet(
-        final PetIdentifier petIdentifier,
+        final Identifier petIdentifier,
         final Species species,
         final Breed breed,
         final Gender gender,

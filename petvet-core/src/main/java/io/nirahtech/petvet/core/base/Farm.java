@@ -9,9 +9,10 @@ import java.util.stream.Stream;
 
 import io.nirahtech.petvet.core.animalpark.Animal;
 import io.nirahtech.petvet.core.clinic.HealthBook;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 
 public class Farm implements AbleToAdopt {
-    private FarmIdentifier identifier;
+    private Identifier identifier;
     private final Set<Pet> pets = new HashSet<>();
     private final Set<HealthBook> healthBooks = new HashSet<>();
 
@@ -20,10 +21,10 @@ public class Farm implements AbleToAdopt {
         
     }
 
-    public FarmIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(FarmIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
 

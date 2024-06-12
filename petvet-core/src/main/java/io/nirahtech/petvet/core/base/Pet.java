@@ -6,9 +6,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 import io.nirahtech.petvet.core.animalpark.Animal;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 
 public final class Pet implements Serializable {
-    private PetIdentifier identifier;
+    private Identifier identifier;
     private final Animal animal;
     private String name;
     private LocalDate adoptionDate;
@@ -26,10 +27,10 @@ public final class Pet implements Serializable {
         this.isTatooed = false;
     }
 
-    public PetIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(PetIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
     

@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import io.nirahtech.petvet.core.base.Farm;
 import io.nirahtech.petvet.core.base.House;
-import io.nirahtech.petvet.core.base.PetIdentifier;
 import io.nirahtech.petvet.core.clinic.HealthBook;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.pets.RetrieveHealthBookFeature;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
@@ -28,7 +28,7 @@ public class DefaultRetrieveHealthBookFeatureImpl implements RetrieveHealthBookF
     }
 
     @Override
-    public Optional<HealthBook> retrieveHealthBook(PetIdentifier petIdentifier) throws FeatureExecutionException {
+    public Optional<HealthBook> retrieveHealthBook(Identifier petIdentifier) throws FeatureExecutionException {
         Optional<HealthBook> healthBookFound = Optional.empty();
         final Farm farm = this.house.getFarm();
         healthBookFound = farm.getHealthBooks()

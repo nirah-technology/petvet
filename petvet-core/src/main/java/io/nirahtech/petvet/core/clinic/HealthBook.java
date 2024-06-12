@@ -15,9 +15,10 @@ import java.util.Set;
 import io.nirahtech.petvet.core.base.Human;
 import io.nirahtech.petvet.core.base.Pet;
 import io.nirahtech.petvet.core.util.Weight;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 
 public final class HealthBook implements Serializable {
-    private HealthBookIdentifier identifier;
+    private Identifier identifier;
     private final Pet pet;
     private Human owner;
     private final Set<Consultation> consultations;
@@ -35,10 +36,10 @@ public final class HealthBook implements Serializable {
         this.allergicReactions = new HashSet<>(); // Initialize allergic reactions
     }
 
-    public HealthBookIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(HealthBookIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
 

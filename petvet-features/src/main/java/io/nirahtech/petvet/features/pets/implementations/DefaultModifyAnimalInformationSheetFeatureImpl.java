@@ -12,8 +12,8 @@ import io.nirahtech.petvet.core.base.Farm;
 import io.nirahtech.petvet.core.base.House;
 import io.nirahtech.petvet.core.base.Microship;
 import io.nirahtech.petvet.core.base.Pet;
-import io.nirahtech.petvet.core.base.PetIdentifier;
 import io.nirahtech.petvet.core.util.Weight;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.pets.ModifyAnimalInformationSheetFeature;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
@@ -36,7 +36,7 @@ public class DefaultModifyAnimalInformationSheetFeatureImpl implements ModifyAni
     }
 
     @Override
-    public Pet modifyAnimalInformationSheet(PetIdentifier petIdentifier, Species species, Breed breed, Gender gender,
+    public Pet modifyAnimalInformationSheet(Identifier petIdentifier, Species species, Breed breed, Gender gender,
             LocalDate birthDate, LocalDate deathDate, Weight weight, File picture, String name, LocalDate adoptionDate,
             Boolean isTatooed, Microship microship) throws FeatureExecutionException {
         Objects.requireNonNull(petIdentifier, "Pet identifier is required for ModifyAnimalInformationSheetFeature");
