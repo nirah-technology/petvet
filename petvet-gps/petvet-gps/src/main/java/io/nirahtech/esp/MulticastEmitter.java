@@ -1,4 +1,4 @@
-package io.nirahtech;
+package io.nirahtech.esp;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

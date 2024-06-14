@@ -1,4 +1,4 @@
-package io.nirahtech;
+package io.nirahtech.esp;
 
 public enum MessageType {
     IS_ORCHESTRATOR_AVAILABLE,

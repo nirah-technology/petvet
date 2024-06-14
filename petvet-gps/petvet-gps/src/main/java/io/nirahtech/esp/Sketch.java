@@ -1,4 +1,4 @@
-package io.nirahtech;
+package io.nirahtech.esp;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -20,8 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
+
+import io.nirahtech.esp.commands.Command;
+import io.nirahtech.esp.commands.CommandFactory;
 
 public class Sketch implements Program {
 
@@ -40,7 +43,7 @@ public class Sketch implements Program {
     private boolean isFirstLoopCycle = true;
 
     private boolean isRunning = false;
-    private long uptime = 0;
+    private AtomicLong uptime = new AtomicLong(0);
     private byte lastOctetOfIp = 0;
 
     private LocalDateTime lastScanExecutionOrder = null;
@@ -53,25 +56,20 @@ public class Sketch implements Program {
         this.port = port;
     }
 
-    private final void runTaskSearchingOrchestratorAvailablility() {
-        if (this.mode == Mode.ORCHESTRATOR_NODE) {
-            try {
-                MulticastEmitter.broadcast(this.group, this.port, MessageType.ORCHESTRATOR_AVAILABLE.name());
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private final void runOrchestratorTask() {
+    private final void triggerOrchestratorTask() {
         System.out.println("Running ORCHESTRATOR TASK");
         final Optional<String> availabilityRequest = this
                 .retrieveSpecificIncommingMessage(MessageType.IS_ORCHESTRATOR_AVAILABLE, 200);
 
         if (this.mode == Mode.ORCHESTRATOR_NODE) {
             availabilityRequest.ifPresent(request -> {
-                this.runTaskSearchingOrchestratorAvailablility();
+                final Command command = CommandFactory.createCheckIfOrchestratorIsAvailableCommand(this.group,
+                        this.port, this.mode);
+                try {
+                    command.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
 
             if (Objects.isNull(this.lastScanExecutionOrder)) {
@@ -98,53 +96,69 @@ public class Sketch implements Program {
             }
 
         }
-        this.runNativeTask();
+        this.triggerNativeTask();
     }
 
-    private final void runNativeTask() {
+
+    private final void askIfOrchestratorIsAvailable() {
+        try {
+            MulticastEmitter.broadcast(this.group, this.port, MessageType.IS_ORCHESTRATOR_AVAILABLE.name());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.lastSendedOrchestratorAvailabilityRequest = LocalDateTime.now();
+        this.runJobForOchestratorAvailibilityChecking();
+    }
+
+    private final void triggerNativeTask() {
         System.out.println("Running NATIVE TASK");
+
+        // SCAN_NOW
         Optional<String> message = this.retrieveSpecificIncommingMessage(MessageType.SCAN_NOW, 100);
         if (message.isPresent()) {
+            final Command command = CommandFactory.createScanNowCommand(group, port);
             try {
-                MulticastEmitter.broadcast(this.group, this.port, MessageType.SCAN_REPORT.name());
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-        }
-        message = this.retrieveSpecificIncommingMessage(MessageType.IS_ORCHESTRATOR_AVAILABLE, 100);
-        if (message.isPresent()) {
-            this.runTaskSearchingOrchestratorAvailablility();
-        }
-        message = this.retrieveSpecificIncommingMessage(MessageType.CHALLENGE_ORCHESTRATOR, 100);
-        if (message.isPresent()) {
-            this.runTaskForOrchestratorElection();
-        }
-        message = this.retrieveSpecificIncommingMessage(MessageType.ORCHESTRATOR_AVAILABLE, 100);
-        if (message.isPresent()) {
-            //
-        }
-
-        if (Objects.isNull(this.lastSendedOrchestratorAvailabilityRequest)) {
-            try {
-                MulticastEmitter.broadcast(this.group, this.port, MessageType.IS_ORCHESTRATOR_AVAILABLE.name());
+                command.execute();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            this.lastSendedOrchestratorAvailabilityRequest = LocalDateTime.now();
-            this.runTaskForOchestratorAvailibilityChecking();
+        }
+
+        // IS_ORCHESTRATOR_AVAILABLE
+        message = this.retrieveSpecificIncommingMessage(MessageType.IS_ORCHESTRATOR_AVAILABLE, 100);
+        if (message.isPresent()) {
+            final Command command = CommandFactory.createCheckIfOrchestratorIsAvailableCommand(this.group, this.port,
+                    this.mode);
+            try {
+                command.execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // CHALLENGE_ORCHESTRATOR
+        message = this.retrieveSpecificIncommingMessage(MessageType.CHALLENGE_ORCHESTRATOR, 100);
+        if (message.isPresent()) {
+            this.runJobForOrchestratorElection();
+
+            // or
+
+            final Command command = CommandFactory.createChallengeToElectOrchestratorCommand(this.group, this.port,
+                    null, this.uptime);
+            try {
+                command.execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Check orchestrator availability
+        if (Objects.isNull(this.lastSendedOrchestratorAvailabilityRequest)) {
+            this.askIfOrchestratorIsAvailable();
         } else {
             if (LocalDateTime.now().isAfter(this.lastSendedOrchestratorAvailabilityRequest
                     .plus(this.intervalBetweenEachOrchestratorAvailabilityRequests.toMillis(), ChronoUnit.MILLIS))) {
-                try {
-                    MulticastEmitter.broadcast(this.group, this.port, MessageType.IS_ORCHESTRATOR_AVAILABLE.name());
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                this.lastSendedOrchestratorAvailabilityRequest = LocalDateTime.now();
-                this.runTaskForOchestratorAvailibilityChecking();
-
+                this.askIfOrchestratorIsAvailable();
             }
         }
     }
@@ -221,58 +235,17 @@ public class Sketch implements Program {
         return map;
     }
 
-    private final void runTaskForOchestratorSelection() {
+    private final void runJobForOchestratorSelection() {
 
         List<String> voteMessagesList = retrieveAllSpecificIncommingMessages(MessageType.VOTE, 2_000)
                 .map(message -> message.split(":")[1])
                 .collect(Collectors.toList());
-
-        Optional<String> messageWithMaxUptime = voteMessagesList
-                .stream()
-                .max((msg1, msg2) -> {
-                    Map<String, Object> map1 = loadJson(msg1);
-                    Map<String, Object> map2 = loadJson(msg2);
-                    long uptime1 = Long.parseLong(map1.getOrDefault(UPTIME_KEY, 0L).toString());
-                    long uptime2 = Long.parseLong(map2.getOrDefault(UPTIME_KEY, 0L).toString());
-                    return Long.compare(uptime1, uptime2);
-                });
-
-        if (!messageWithMaxUptime.isPresent()) {
-            this.mode = Mode.NATIVE_NODE;
-            return;
-        }
-
-        Collection<String> messagesWithMaxUptime = voteMessagesList.stream()
-                .filter(message -> {
-                    Map<String, Object> map = loadJson(message);
-                    long messageUptime = Long.parseLong(map.getOrDefault(UPTIME_KEY, 0L).toString());
-                    return messageUptime == Long
-                            .parseLong(loadJson(messageWithMaxUptime.get()).getOrDefault(UPTIME_KEY, 0L).toString());
-                })
-                .collect(Collectors.toList());
-
-        byte maxOctet = 0;
-        for (String message : messagesWithMaxUptime) {
-
-            byte octet = Byte.parseByte(loadJson(message).get(OCTET_KEY).toString());
-            if (octet > maxOctet) {
-                maxOctet = octet;
-            }
-        }
-
-        if (maxOctet == this.lastOctetOfIp) {
-            try {
-                mode = Mode.ORCHESTRATOR_NODE;
-                MulticastEmitter.broadcast(group, port, MessageType.ORCHESTRATOR_AVAILABLE.name());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            mode = Mode.NATIVE_NODE;
-        }
+        // Faire la convertion String -> Map.Enrey<Byte,Long>
+        Command command = CommandFactory.createAnalyseVotesToElectOrchestratorCommand(group, port, null, null, null)
+        command.execute();
     }
 
-    private final void runTaskForOchestratorAvailibilityChecking() {
+    private final void runJobForOchestratorAvailibilityChecking() {
         final Optional<String> messageForAvailableOrchestrator = this
                 .retrieveSpecificIncommingMessage(MessageType.ORCHESTRATOR_AVAILABLE, 2_000);
         if (!messageForAvailableOrchestrator.isPresent()) {
@@ -282,17 +255,17 @@ public class Sketch implements Program {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            this.runTaskForOrchestratorElection();
+            this.runJobForOrchestratorElection();
         }
     }
 
-    private final void runTaskForOrchestratorElection() {
+    private final void runJobForOrchestratorElection() {
         final Map<String, Object> json = new HashMap<>();
         final Optional<String> startChallengeMessage = this
                 .retrieveSpecificIncommingMessage(MessageType.CHALLENGE_ORCHESTRATOR, 2_000);
         if (startChallengeMessage.isPresent()) {
             final RuntimeMXBean runtimeMX = ManagementFactory.getRuntimeMXBean();
-            this.uptime = runtimeMX.getUptime();
+            this.uptime.set(runtimeMX.getUptime());
             json.put(UPTIME_KEY, this.uptime);
             if (this.lastOctetOfIp == 0) {
                 try {
@@ -327,27 +300,23 @@ public class Sketch implements Program {
                 e.printStackTrace();
             }
         }
-        this.runTaskForOchestratorSelection();
+        this.runJobForOchestratorSelection();
 
     }
 
     private final void setup() throws IOException {
         this.multicastSocketForReception = new MulticastSocket(this.port);
         this.multicastSocketForReception.joinGroup(this.group);
-
-        MulticastEmitter.broadcast(this.group, this.port, MessageType.IS_ORCHESTRATOR_AVAILABLE.name());
-        this.lastSendedOrchestratorAvailabilityRequest = LocalDateTime.now();
-        this.runTaskForOchestratorAvailibilityChecking();
-
+        this.askIfOrchestratorIsAvailable();
     }
 
     private final void loop() {
         switch (this.mode) {
             case ORCHESTRATOR_NODE:
-                this.runOrchestratorTask();
+                this.triggerOrchestratorTask();
                 break;
             default:
-                this.runNativeTask();
+                this.triggerNativeTask();
                 break;
         }
     }
