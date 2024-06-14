@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import io.nirahtech.petvet.core.util.identifier.Identifier;
+
 public final class Library implements Group<PhotoBook> {
 
     private static Library instance;
@@ -46,7 +48,7 @@ public final class Library implements Group<PhotoBook> {
         return this.photoBooks.contains(elementToCheck);
     }
 
-    public Optional<PhotoBook> getFor(final PetIdentifier petIdentifier) {
+    public Optional<PhotoBook> getFor(final Identifier petIdentifier) {
         return this.listAll()
                 .filter(book -> book.getPet().getIdentifier().equals(petIdentifier))
                 .findFirst();

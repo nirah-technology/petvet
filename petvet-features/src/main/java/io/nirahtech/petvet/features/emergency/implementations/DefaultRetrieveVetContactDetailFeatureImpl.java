@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import io.nirahtech.petvet.core.base.House;
 import io.nirahtech.petvet.core.clinic.Vet;
-import io.nirahtech.petvet.core.clinic.VetIdentifier;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.emergency.RetrieveVetContactDetailFeature;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
@@ -27,7 +27,7 @@ public class DefaultRetrieveVetContactDetailFeatureImpl implements RetrieveVetCo
     }
 
     @Override
-    public Optional<Vet> retrieveEmergencyContactDetail(VetIdentifier vetIdentifier) throws FeatureExecutionException {
+    public Optional<Vet> retrieveEmergencyContactDetail(Identifier vetIdentifier) throws FeatureExecutionException {
         return this.house.getVetDirectory()
                 .listAll()
                 .filter(vet -> vet.getIdentifier().equals(vetIdentifier))

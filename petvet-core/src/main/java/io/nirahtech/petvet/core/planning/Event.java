@@ -5,8 +5,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+import io.nirahtech.petvet.core.util.identifier.Identifier;
+
 public class Event implements Serializable {
-    private EventIdentifier identifier;
+    private Identifier identifier;
 
     private String name;
     private String description;
@@ -24,10 +26,10 @@ public class Event implements Serializable {
         this.dateTime = dateTime;
         this.duration = duration;
     }
-    public EventIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(EventIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
 

@@ -1,6 +1,6 @@
 package io.nirahtech.petvet.features.pharmacy;
 
-import io.nirahtech.petvet.core.pharmacy.ElixirIdentifier;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
@@ -16,5 +16,5 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  */
 @FunctionalInterface
 public interface DetroyCureFeature {
-    void detroyCure(final ElixirIdentifier identifierOfTheElixirToDestroy) throws FeatureExecutionException;
+    void detroyCure(final Identifier identifierOfTheElixirToDestroy) throws FeatureExecutionException;
 }

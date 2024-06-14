@@ -3,8 +3,10 @@ package io.nirahtech.petvet.core.clinic;
 import java.io.Serializable;
 import java.util.Objects;
 
+import io.nirahtech.petvet.core.util.identifier.Identifier;
+
 public abstract class Medication implements Serializable {
-    private MedicationIdentifier identifier;
+    private Identifier identifier;
     private final String name;
     private final Prescription prescription;
 
@@ -16,10 +18,10 @@ public abstract class Medication implements Serializable {
         this.prescription = Objects.requireNonNull(prescription, "Prescription fot medication is required.");
     }
 
-    public MedicationIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(MedicationIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
     

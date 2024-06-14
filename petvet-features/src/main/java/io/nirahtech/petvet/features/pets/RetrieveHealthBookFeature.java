@@ -2,8 +2,8 @@ package io.nirahtech.petvet.features.pets;
 
 import java.util.Optional;
 
-import io.nirahtech.petvet.core.base.PetIdentifier;
 import io.nirahtech.petvet.core.clinic.HealthBook;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
 /**
@@ -19,5 +19,5 @@ import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
  */
 @FunctionalInterface
 public interface RetrieveHealthBookFeature {
-    Optional<HealthBook> retrieveHealthBook(final PetIdentifier petIdentifier) throws FeatureExecutionException;
+    Optional<HealthBook> retrieveHealthBook(final Identifier petIdentifier) throws FeatureExecutionException;
 }

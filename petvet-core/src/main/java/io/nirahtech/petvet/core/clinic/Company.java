@@ -6,12 +6,13 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.nirahtech.petvet.core.contact.Contact;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 
 public final class Company implements Serializable {
     private static final Map<String, Company> INSTANCES = new HashMap<>();
 
 
-    private CompanyIdentifier identifier;
+    private Identifier identifier;
     private final String name;
     private final Contact contact;
 
@@ -22,10 +23,10 @@ public final class Company implements Serializable {
         this.contact = new Contact();
     }
     
-    public CompanyIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(CompanyIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
     /**

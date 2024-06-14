@@ -6,7 +6,7 @@ import java.util.Optional;
 import io.nirahtech.petvet.core.base.Farm;
 import io.nirahtech.petvet.core.base.House;
 import io.nirahtech.petvet.core.base.Pet;
-import io.nirahtech.petvet.core.base.PetIdentifier;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.pets.RetrieveAnimalInformationSheetFeature;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
@@ -28,7 +28,7 @@ public class DefaultRetrieveAnimalInformationSheetFeatureImpl implements Retriev
     }
 
     @Override
-    public Optional<Pet> retrieveAnimalInformationSheet(PetIdentifier petIdentifier) throws FeatureExecutionException {
+    public Optional<Pet> retrieveAnimalInformationSheet(Identifier petIdentifier) throws FeatureExecutionException {
         Optional<Pet> petFound = Optional.empty();
         final Farm farm = this.house.getFarm();
         petFound = farm.getPets()

@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDate;
 
+import io.nirahtech.petvet.core.util.identifier.Identifier;
+
 public class Prescription implements Serializable {
-    private PrescriptionIdentifier identifier;
+    private Identifier identifier;
     private final Dosage dosage;
     private final Duration durationInDays;
     private final LocalDate startDate;
@@ -19,10 +21,10 @@ public class Prescription implements Serializable {
         this.durationInDays = durationInDays;
         this.startDate = startDate;
     }
-    public PrescriptionIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(PrescriptionIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
 

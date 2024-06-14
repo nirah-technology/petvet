@@ -6,6 +6,7 @@ import java.util.Objects;
 import io.nirahtech.petvet.core.animalpark.Animal;
 import io.nirahtech.petvet.core.clinic.HealthBook;
 import io.nirahtech.petvet.core.planning.Calendar;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 
 public final class House implements AbleToAdopt {
 
@@ -17,7 +18,7 @@ public final class House implements AbleToAdopt {
         return instance;
     }
 
-    private HouseIdentifier identifier;
+    private Identifier identifier;
     private String name;
     private final Family family;
     private final Calendar calendar;
@@ -62,10 +63,10 @@ public final class House implements AbleToAdopt {
         return this.family;
     }
 
-    public HouseIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(HouseIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
 

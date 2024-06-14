@@ -4,8 +4,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import io.nirahtech.petvet.core.base.Farm;
-import io.nirahtech.petvet.core.base.FarmIdentifier;
 import io.nirahtech.petvet.core.base.House;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.pets.RetrieveFarmFeature;
 
 public class DefaultRetrieveFarmFeatureImpl implements RetrieveFarmFeature {
@@ -27,7 +27,7 @@ public class DefaultRetrieveFarmFeatureImpl implements RetrieveFarmFeature {
     }
 
     @Override
-    public Optional<Farm> retrieveFarm(FarmIdentifier farmIdentifier) {
+    public Optional<Farm> retrieveFarm(Identifier farmIdentifier) {
         return Optional.ofNullable(this.house.getFarm());
     }
 

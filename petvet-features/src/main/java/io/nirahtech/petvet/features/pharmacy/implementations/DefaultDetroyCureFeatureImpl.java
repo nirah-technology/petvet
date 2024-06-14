@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import io.nirahtech.petvet.core.base.Pharmacy;
 import io.nirahtech.petvet.core.pharmacy.Elixir;
-import io.nirahtech.petvet.core.pharmacy.ElixirIdentifier;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.pharmacy.DetroyCureFeature;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
@@ -27,7 +27,7 @@ public class DefaultDetroyCureFeatureImpl implements DetroyCureFeature {
     }
 
     @Override
-    public void detroyCure(ElixirIdentifier identifierOfTheElixirToDestroy) throws FeatureExecutionException {
+    public void detroyCure(Identifier identifierOfTheElixirToDestroy) throws FeatureExecutionException {
         Objects.requireNonNull(identifierOfTheElixirToDestroy, "Identifier of elixir is required for DetroyCureFeature");
         final Optional<Elixir> elixirFound = this.pharmacy.getElixirs()
                 .filter(elixir -> elixir.getIdentifier().equals(identifierOfTheElixirToDestroy))

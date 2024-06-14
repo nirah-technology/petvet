@@ -3,7 +3,7 @@ package io.nirahtech.petvet.features.emergency.implementations;
 import java.util.Objects;
 
 import io.nirahtech.petvet.core.base.House;
-import io.nirahtech.petvet.core.clinic.VetIdentifier;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.emergency.DeleteVetFeature;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
@@ -25,7 +25,7 @@ public class DefaultDeleteVetFeatureImpl implements DeleteVetFeature {
     }
 
     @Override
-    public void deleteVetContact(VetIdentifier vetIdentifierToDelete) throws FeatureExecutionException {
+    public void deleteVetContact(Identifier vetIdentifierToDelete) throws FeatureExecutionException {
         Objects.requireNonNull(vetIdentifierToDelete, "Vet is required for DeleteVetFeature");
         this.house.getVetDirectory()
                 .listAll()

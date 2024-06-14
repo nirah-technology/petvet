@@ -3,8 +3,10 @@ package io.nirahtech.petvet.core.clinic;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import io.nirahtech.petvet.core.util.identifier.Identifier;
+
 public final class Vaccination implements Serializable {
-    private VaccinationIdentifier identifier;
+    private Identifier identifier;
     private final LocalDate date;
     private final Vaccine vaccine;
 
@@ -13,10 +15,10 @@ public final class Vaccination implements Serializable {
         this.vaccine = vaccine;
     }
 
-    public VaccinationIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(VaccinationIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
     public final LocalDate getDate() {

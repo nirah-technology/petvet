@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import io.nirahtech.petvet.core.base.Pharmacy;
 import io.nirahtech.petvet.core.pharmacy.Elixir;
-import io.nirahtech.petvet.core.pharmacy.ElixirIdentifier;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.pharmacy.RetrieveCureDetailFeature;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
 
@@ -27,7 +27,7 @@ public class DefaultRetrieveCureDetailFeatureImpl implements RetrieveCureDetailF
     }
 
     @Override
-    public Optional<Elixir> retriveCureDetail(ElixirIdentifier elixirIdentifier) throws FeatureExecutionException {
+    public Optional<Elixir> retriveCureDetail(Identifier elixirIdentifier) throws FeatureExecutionException {
         Objects.requireNonNull(elixirIdentifier, "Elixir identifier is required for RetrieveCureDetailFeature.");
         return this.pharmacy.getElixirs()
         .filter(elixir -> elixir.getIdentifier().equals(elixirIdentifier))

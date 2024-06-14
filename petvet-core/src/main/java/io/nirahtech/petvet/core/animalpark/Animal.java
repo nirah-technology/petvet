@@ -6,9 +6,10 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import io.nirahtech.petvet.core.util.Weight;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 
 public final class Animal implements LifeCycle, Serializable {
-    private AnimalIdentifier identifier;
+    private Identifier identifier;
     private Species species;
     private Breed breed;
     private Gender gender;
@@ -21,10 +22,10 @@ public final class Animal implements LifeCycle, Serializable {
 
     }
 
-    public AnimalIdentifier getIdentifier() {
+    public Identifier getIdentifier() {
         return identifier;
     }
-    public void setIdentifier(AnimalIdentifier identifier) {
+    public void setIdentifier(Identifier identifier) {
         this.identifier = identifier;
     }
 
