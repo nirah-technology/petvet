@@ -1,0 +1,16 @@
+io/nirahtech/petvet/esp/Program.class
+io/nirahtech/petvet/esp/commands/Command.class
+io/nirahtech/petvet/esp/Sketch.class
+io/nirahtech/petvet/esp/App.class
+io/nirahtech/petvet/esp/commands/ScanNowCommand.class
+io/nirahtech/petvet/esp/commands/CommandType.class
+io/nirahtech/petvet/esp/commands/AbstractCommand.class
+io/nirahtech/petvet/esp/commands/ChallengeToElectOrchestratorCommand.class
+io/nirahtech/petvet/esp/Mode.class
+io/nirahtech/petvet/esp/commands/CommandFactory.class
+io/nirahtech/petvet/esp/Sketch$1.class
+io/nirahtech/petvet/esp/commands/CheckIfOrchestratorIsAvailableCommand.class
+io/nirahtech/petvet/esp/ESP32.class
+io/nirahtech/petvet/esp/MessageType.class
+io/nirahtech/petvet/esp/MulticastEmitter.class
+io/nirahtech/petvet/esp/commands/AnalyseVotesToElectOrchestratorCommand.class
