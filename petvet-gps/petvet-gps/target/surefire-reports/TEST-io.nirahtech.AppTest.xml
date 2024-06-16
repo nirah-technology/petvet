@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="io.nirahtech.AppTest" time="0.083" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="io.nirahtech.AppTest" time="0.077" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-17-openjdk-17.0.9.0.9-3.fc39.x86_64/lib"/>
-    <property name="sun.java.command" value="/home/nicolasmetivier/Documents/Work/NIRAH-TECHNOLOGY/Programming/PetVet/petvet-gps/petvet-gps/target/surefire/surefirebooter-20240615113654144_3.jar /home/nicolasmetivier/Documents/Work/NIRAH-TECHNOLOGY/Programming/PetVet/petvet-gps/petvet-gps/target/surefire 2024-06-15T11-36-53_358-jvmRun1 surefire-20240615113654144_1tmp surefire_0-20240615113654144_2tmp"/>
+    <property name="sun.java.command" value="/home/nicolasmetivier/Documents/Work/NIRAH-TECHNOLOGY/Programming/PetVet/petvet-gps/petvet-gps/target/surefire/surefirebooter-20240616174933394_3.jar /home/nicolasmetivier/Documents/Work/NIRAH-TECHNOLOGY/Programming/PetVet/petvet-gps/petvet-gps/target/surefire 2024-06-16T17-49-33_187-jvmRun1 surefire-20240616174933394_1tmp surefire_0-20240616174933394_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/home/nicolasmetivier/Documents/Work/NIRAH-TECHNOLOGY/Programming/PetVet/petvet-gps/petvet-gps/target/test-classes:/home/nicolasmetivier/Documents/Work/NIRAH-TECHNOLOGY/Programming/PetVet/petvet-gps/petvet-gps/target/classes:/root/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.0-M1/junit-jupiter-api-5.11.0-M1.jar:/root/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/root/.m2/repository/org/junit/platform/junit-platform-commons/1.11.0-M1/junit-platform-commons-1.11.0-M1.jar:/root/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -27,7 +27,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="/home/nicolasmetivier/Documents/Work/NIRAH-TECHNOLOGY/Programming/PetVet/petvet-gps/petvet-gps/target/surefire/surefirebooter-20240615113654144_3.jar"/>
+    <property name="surefire.real.class.path" value="/home/nicolasmetivier/Documents/Work/NIRAH-TECHNOLOGY/Programming/PetVet/petvet-gps/petvet-gps/target/surefire/surefirebooter-20240616174933394_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="17.0.9+9"/>
     <property name="user.name" value="root"/>
@@ -52,5 +52,5 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="shouldAnswerWithTrue" classname="io.nirahtech.AppTest" time="0.049"/>
+  <testcase name="shouldAnswerWithTrue" classname="io.nirahtech.AppTest" time="0.046"/>
 </testsuite>
