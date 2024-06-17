@@ -3,25 +3,29 @@ package io.nirahtech.petvet.esp.commands;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
-import io.nirahtech.petvet.esp.MessageType;
-import io.nirahtech.petvet.esp.MulticastEmitter;
+import io.nirahtech.petvet.esp.MessageSender;
+import io.nirahtech.petvet.esp.MessageTypeOld;
+import io.nirahtech.petvet.esp.messages.VoteMessage;
 
 public final class ChallengeToElectOrchestratorCommand extends AbstractCommand {
 
     private final AtomicLong uptime;
-    private final Inet4Address ipv4Addess;
+    private final InetAddress ipv4Addess;
+    private final MessageSender messageSender;
+    private final UUID id;
 
-    ChallengeToElectOrchestratorCommand(InetAddress group, int port, final Inet4Address ipv4Addess, final AtomicLong uptime) {
-        super(group, port);
+    ChallengeToElectOrchestratorCommand(final MessageSender messageSender, final UUID id, final InetAddress ipv4Addess, final AtomicLong uptime) {
         this.ipv4Addess = ipv4Addess;
         this.uptime = uptime;
+        this.messageSender = messageSender;
+        this.id = id;
     }
 
     private final Map<Byte, Long> retrieveInfoToBeElectedAsOrchestrator() {
@@ -35,7 +39,7 @@ public final class ChallengeToElectOrchestratorCommand extends AbstractCommand {
     private final void publishInfoToBeElectedAsOrchestrator(final Map<Byte, Long> infos) {
         final Optional<Map.Entry<Byte, Long>> info = infos.entrySet().stream().findFirst();
         info.ifPresent(vote -> {
-            final StringBuilder ballotBuilder = new StringBuilder(MessageType.VOTE.name())
+            final StringBuilder ballotBuilder = new StringBuilder(MessageTypeOld.VOTE.name())
             .append(":")
             .append(vote.getKey())
             .append("=")
@@ -43,7 +47,8 @@ public final class ChallengeToElectOrchestratorCommand extends AbstractCommand {
      
             final String voteMessage = ballotBuilder.toString();
             try {
-                MulticastEmitter.broadcast(this.group, this.port, voteMessage);
+                final VoteMessage message = VoteMessage.create(this.id, this.ipv4Addess, vote.getValue(), vote.getKey());
+                messageSender.send(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }

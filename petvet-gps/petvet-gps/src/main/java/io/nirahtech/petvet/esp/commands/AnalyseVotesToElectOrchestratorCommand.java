@@ -1,34 +1,42 @@
 package io.nirahtech.petvet.esp.commands;
 
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import io.nirahtech.petvet.esp.MessageType;
+import io.nirahtech.petvet.esp.MessageSender;
 import io.nirahtech.petvet.esp.Mode;
-import io.nirahtech.petvet.esp.MulticastEmitter;
+import io.nirahtech.petvet.esp.messages.OrchestratorAvailableMessage;
 
 public final class AnalyseVotesToElectOrchestratorCommand extends AbstractCommand {
 
+
     private final Map<Byte, Long> candidacies;
     private final AtomicReference<Mode> mode;
-    private final Inet4Address ipv4Addess;
+    private final InetAddress emitter;
+    private final MessageSender messageSender;
+    private final UUID id;
 
-    AnalyseVotesToElectOrchestratorCommand(InetAddress group, int port, final AtomicReference<Mode> mode,
-            final Inet4Address ipv4Addess, final Map<Byte, Long> candidacies) {
-        super(group, port);
+    AnalyseVotesToElectOrchestratorCommand(final MessageSender messageSender, final UUID id, final InetAddress emitter, final AtomicReference<Mode> mode, final Map<Byte, Long> candidacies) {
         this.candidacies = candidacies;
         this.mode = mode;
-        this.ipv4Addess = ipv4Addess;
+        this.emitter = emitter;
+        this.messageSender = messageSender;
+        this.id = id;
     }
     
     private final void notifyThatTheNewOrchestratorIsFound() throws IOException {
-        MulticastEmitter.broadcast(group, port, MessageType.ORCHESTRATOR_AVAILABLE.name());
+        final OrchestratorAvailableMessage message = OrchestratorAvailableMessage.create(
+            this.id,
+            this.emitter,
+            this.mode.get().equals(Mode.ORCHESTRATOR_NODE)
+        );
+        this.messageSender.send(message);
     }
 
     @Override
@@ -65,7 +73,7 @@ public final class AnalyseVotesToElectOrchestratorCommand extends AbstractComman
             }
         }
 
-        if (maxOctet == this.ipv4Addess.getAddress()[3]) {
+        if (maxOctet == this.emitter.getAddress()[3]) {
             try {
                 mode.set(Mode.ORCHESTRATOR_NODE);
                 this.notifyThatTheNewOrchestratorIsFound();

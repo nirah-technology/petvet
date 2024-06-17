@@ -2,22 +2,29 @@ package io.nirahtech.petvet.esp.commands;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.UUID;
 
-import io.nirahtech.petvet.esp.MessageType;
+import io.nirahtech.petvet.esp.MessageSender;
 import io.nirahtech.petvet.esp.Mode;
-import io.nirahtech.petvet.esp.MulticastEmitter;
+import io.nirahtech.petvet.esp.messages.OrchestratorAvailableMessage;
 
 public final class CheckIfOrchestratorIsAvailableCommand extends AbstractCommand {
 
     private final Mode mode;
+    private final InetAddress ipv4Addess;
+    private final MessageSender messageSender;
+    private final UUID id;
 
-    CheckIfOrchestratorIsAvailableCommand(final InetAddress group, final int port, final Mode mode) {
-        super(group, port);
+    CheckIfOrchestratorIsAvailableCommand(final MessageSender messageSender, final UUID id, InetAddress emitter, final Mode mode) {
         this.mode = mode;
+        this.id = id;
+        this.messageSender = messageSender;
+        this.ipv4Addess = emitter;
     }
 
     private final void notifyThatOrchestratorIsAvailable() throws IOException {
-        MulticastEmitter.broadcast(super.group, super.port, MessageType.ORCHESTRATOR_AVAILABLE.name());
+        final OrchestratorAvailableMessage message = OrchestratorAvailableMessage.create(this.id, this.ipv4Addess, this.mode.equals(Mode.ORCHESTRATOR_NODE));
+        this.messageSender.send(message);
     }
 
     /**

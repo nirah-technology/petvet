@@ -3,38 +3,34 @@ package io.nirahtech.petvet.esp;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.net.DatagramPacket;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import io.nirahtech.petvet.esp.commands.Command;
 import io.nirahtech.petvet.esp.commands.CommandFactory;
+import io.nirahtech.petvet.esp.messages.ChallengeOrchestratorMessage;
+import io.nirahtech.petvet.esp.messages.IsOrchestratorAvailableMessage;
+import io.nirahtech.petvet.esp.messages.MessageType;
+import io.nirahtech.petvet.esp.messages.ScanNowMessage;
+import io.nirahtech.petvet.esp.messages.VoteMessage;
 
 public class Sketch implements Program {
     private static final byte[] NETWORK_MASK = { (byte) 192, (byte) 168 };
 
+    private final UUID id = UUID.randomUUID();
     private AtomicReference<Mode> mode = new AtomicReference<>(Mode.NATIVE_NODE);
-
-    private MulticastSocket multicastSocketForReception;
-    private final byte[] incommingMessagesBuffer = new byte[256];
 
     private final InetAddress group;
     private final int port;
@@ -42,16 +38,21 @@ public class Sketch implements Program {
     private boolean isRunning = false;
     private AtomicLong uptime = new AtomicLong(0);
 
-    private Inet4Address ip;
+    private NetworkInterface networkInterface;
+    private InetAddress ip;
 
     private LocalDateTime lastScanExecutionOrder = null;
     private LocalDateTime lastSendedOrchestratorAvailabilityRequest = null;
     private Duration intervalBetweenEachScans = Duration.ofSeconds(10);
     private Duration intervalBetweenEachOrchestratorAvailabilityRequests = Duration.ofSeconds(5);
 
+    private final MessageBroker messageBroker;
+
     public Sketch(final InetAddress group, final int port) {
         this.group = group;
         this.port = port;
+        this.retrieveIpAddress();
+        this.messageBroker = MessageBroker.getOrCreate(this.networkInterface, group, port);
     }
 
     /**
@@ -87,6 +88,7 @@ public class Sketch implements Program {
                     final InetAddress ipAddress = (InetAddress) ipAddresses.nextElement();
                     final byte[] address = ipAddress.getAddress();
                     if ((address[0] == NETWORK_MASK[0]) && (address[1] == NETWORK_MASK[1])) {
+                        this.networkInterface = networkInterface;
                         this.ip = (Inet4Address) ipAddress;
                         break NICS;
                     }
@@ -96,265 +98,6 @@ public class Sketch implements Program {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Retrieves an incoming message from the multicast socket within a specified
-     * timeout period.
-     * <p>
-     * This method sets the timeout for the multicast socket to the provided value
-     * in milliseconds.
-     * It then continuously attempts to receive a datagram packet until either a
-     * valid message is received
-     * or the timeout period elapses. If a valid message is received (i.e., it is
-     * non-null and non-empty),
-     * it is returned as an {@link Optional} containing the message. If the timeout
-     * period elapses without
-     * receiving a valid message, an empty {@link Optional} is returned.
-     * </p>
-     * <p>
-     * If an I/O error occurs while receiving the datagram packet, an
-     * {@link IOException} is caught and
-     * the stack trace is printed. If a {@link SocketTimeoutException} occurs, the
-     * method stops attempting
-     * to receive messages and returns the current state of {@code receivedMessage}.
-     * </p>
-     * 
-     * @param timeoutInMilliseconds the timeout period in milliseconds for receiving
-     *                              a message.
-     * @return an {@link Optional} containing the received message, or an empty
-     *         {@link Optional} if no
-     *         message is received within the timeout period.
-     * @throws IOException if an I/O error occurs when setting the socket timeout or
-     *                     receiving the datagram packet.
-     */
-    private final Optional<String> retrieveIncommingMessage(final int timeoutInMilliseconds) {
-        Optional<String> receivedMessage = Optional.empty();
-        try {
-            this.multicastSocketForReception.setSoTimeout(timeoutInMilliseconds);
-            while (true) {
-                final DatagramPacket incommingUdpPacket = new DatagramPacket(this.incommingMessagesBuffer,
-                        this.incommingMessagesBuffer.length);
-                try {
-                    this.multicastSocketForReception.receive(incommingUdpPacket);
-                    final String message = new String(incommingUdpPacket.getData(), 0, incommingUdpPacket.getLength());
-                    if (Objects.nonNull(message) && !message.isEmpty()) {
-                        receivedMessage = Optional.of(message);
-                        break;
-                    }
-                } catch (SocketTimeoutException e) {
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return receivedMessage;
-    }
-
-    /**
-     * Retrieves all incoming messages of a specific type within a specified timeout
-     * period.
-     * <p>
-     * This method continuously attempts to retrieve messages of the specified type
-     * from the multicast socket
-     * until the timeout period elapses. It accumulates all messages of the
-     * specified type into a collection
-     * and returns them as a {@link Stream} of strings.
-     * </p>
-     * <p>
-     * The method calculates the remaining timeout for each attempt to retrieve a
-     * specific message, ensuring
-     * that the total operation respects the initial timeout period. If a message of
-     * the required type is
-     * received, it is added to the collection of received messages.
-     * </p>
-     * 
-     * @param requiredMessageType   the type of messages to be retrieved.
-     * @param timeoutInMilliseconds the total timeout period in milliseconds for
-     *                              retrieving messages.
-     * @return a {@link Stream} of strings containing all messages of the specified
-     *         type received within the timeout period.
-     */
-    private final Stream<String> retrieveAllSpecificIncommingMessages(final MessageType requiredMessageType,
-            final int timeoutInMilliseconds) {
-        final Collection<String> receivedMessages = new ArrayList<>();
-        long endTime = System.currentTimeMillis() + timeoutInMilliseconds;
-        while (System.currentTimeMillis() < endTime) {
-            int timeoutInMillisLeft = (int) (endTime - System.currentTimeMillis());
-            this.retrieveSpecificIncommingMessage(requiredMessageType, timeoutInMillisLeft)
-                    .ifPresent(receivedMessages::add);
-        }
-        return receivedMessages.stream();
-    }
-
-    /**
-     * Retrieves a specific incoming message of the required type within a specified
-     * timeout period.
-     * <p>
-     * This method attempts to retrieve messages from the multicast socket until a
-     * message of the specified type
-     * is found or the timeout period elapses. It continuously calls
-     * {@link #retrieveIncommingMessage(int)} with
-     * the remaining timeout to receive messages.
-     * </p>
-     * <p>
-     * If a message is received, it is checked to see if it matches the required
-     * message type. If a matching
-     * message is found, it is returned as an {@link Optional} containing the
-     * message. If no matching message is
-     * found within the timeout period, an empty {@link Optional} is returned.
-     * </p>
-     * <p>
-     * If a received message cannot be parsed to a {@link MessageType}, an
-     * {@link IllegalArgumentException} is
-     * caught and its stack trace is printed.
-     * </p>
-     * 
-     * @param requiredMessageType   the type of message to be retrieved.
-     * @param timeoutInMilliseconds the total timeout period in milliseconds for
-     *                              retrieving the message.
-     * @return an {@link Optional} containing the received message of the specified
-     *         type, or an empty {@link Optional}
-     *         if no such message is received within the timeout period.
-     */
-    private final Optional<String> retrieveSpecificIncommingMessage(final MessageType requiredMessageType,
-            final int timeoutInMilliseconds) {
-        long endTime = System.currentTimeMillis() + timeoutInMilliseconds;
-        Optional<String> receivedSpecificMessage = Optional.empty();
-        while (System.currentTimeMillis() < endTime) {
-            int timeoutInMillisLeft = (int) (endTime - System.currentTimeMillis());
-            Optional<String> receivedMessage = this.retrieveIncommingMessage(timeoutInMillisLeft);
-            if (receivedMessage.isPresent()) {
-                final String message = receivedMessage.get().split(":")[0];
-                try {
-                    MessageType receivedMessageType = MessageType.valueOf(message);
-                    if (Objects.nonNull(receivedMessageType) && receivedMessageType.equals(requiredMessageType)) {
-                        receivedSpecificMessage = receivedMessage;
-                        break;
-                    }
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return receivedSpecificMessage;
-    }
-
-    /**
-     * Decodes a vote message into a map of host uptimes.
-     * <p>
-     * This method parses a vote message, which is expected to be a comma-separated
-     * string of key-value pairs.
-     * Each key-value pair represents a host's identifier (as a byte) and its uptime
-     * (as a long). The method
-     * splits the message into individual entries, further splits each entry into a
-     * key and a value, and adds
-     * these to a map. The resulting map associates each host's identifier with its
-     * uptime.
-     * </p>
-     * <p>
-     * If an entry does not contain exactly two parts (a key and a value), it is
-     * ignored.
-     * </p>
-     * 
-     * @param message the vote message to decode, in the format
-     *                "host1=uptime1,host2=uptime2,...".
-     * @return a {@link Map} where the keys are host identifiers (bytes) and the
-     *         values are their uptimes (longs).
-     */
-    private final Map<Byte, Long> decodeVote(final String message) {
-        final Map<Byte, Long> uptimesByHost = new HashMap<>();
-
-        final String[] entries = message.split(",");
-        for (String entry : entries) {
-            final String[] keyValue = entry.split("=");
-            if (keyValue.length == 2) {
-                final byte host = Byte.parseByte(keyValue[0].strip());
-                final long uptime = Long.parseLong(keyValue[1].strip());
-                uptimesByHost.put(host, uptime);
-            }
-        }
-        return uptimesByHost;
-    }
-
-    /**
-     * Runs the job for orchestrator selection.
-     * <p>
-     * This method retrieves all incoming VOTE messages within a specified timeout,
-     * decodes the messages to extract
-     * host uptimes, and aggregates the votes into a map of candidacies. It then
-     * creates and executes a command to
-     * analyze the votes and elect an orchestrator.
-     * </p>
-     * <p>
-     * The method handles the retrieval, decoding, and aggregation of vote messages
-     * and ensures that the command
-     * for analyzing votes is executed. Any IO exceptions encountered during command
-     * execution are caught and
-     * their stack traces are printed.
-     * </p>
-     */
-    private final void runJobForOchestratorSelection() {
-
-        final Collection<Map<Byte, Long>> voteMessagesList = retrieveAllSpecificIncommingMessages(MessageType.VOTE,
-                2_000)
-                .map(message -> message.split(":")[1])
-                .map(message -> decodeVote(message))
-                .collect(Collectors.toList());
-        final Map<Byte, Long> candidacies = new HashMap<>();
-        voteMessagesList.forEach(map -> {
-            final Optional<Map.Entry<Byte, Long>> vote = map.entrySet().stream().findFirst();
-            if (vote.isPresent()) {
-                candidacies.put(vote.get().getKey(), vote.get().getValue());
-            }
-        });
-        final Command command = CommandFactory.createAnalyseVotesToElectOrchestratorCommand(group, port, this.mode,
-                this.ip,
-                candidacies);
-        try {
-            command.execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Runs the job for orchestrator election.
-     * <p>
-     * This method initiates the process for orchestrator election by first checking
-     * for a CHALLENGE_ORCHESTRATOR message
-     * within a specified timeout. If such a message is present, it retrieves the
-     * system uptime and broadcasts a VOTE
-     * message containing the current node's IP address and uptime. It then proceeds
-     * to run the job for orchestrator
-     * selection to analyze the received votes and elect an orchestrator.
-     * </p>
-     * <p>
-     * The method handles the retrieval of CHALLENGE_ORCHESTRATOR message, updates
-     * the node's uptime, broadcasts the
-     * VOTE message, and triggers the job for orchestrator selection. Any IO
-     * exceptions encountered during message
-     * broadcasting are caught and their stack traces are printed.
-     * </p>
-     */
-
-    private final void runJobForOrchestratorElection() {
-        final Optional<String> startChallengeMessage = this
-                .retrieveSpecificIncommingMessage(MessageType.CHALLENGE_ORCHESTRATOR, 2_000);
-        if (startChallengeMessage.isPresent()) {
-            final RuntimeMXBean runtimeMX = ManagementFactory.getRuntimeMXBean();
-            this.uptime.set(runtimeMX.getUptime());
-        }
-        final String voteMessage = String.format("%s:%s=%s", MessageType.VOTE.name(), this.ip.getAddress()[3],
-                this.uptime.get());
-        try {
-            MulticastEmitter.broadcast(this.group, this.port, voteMessage);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.runJobForOchestratorSelection();
-
     }
 
     /**
@@ -380,7 +123,7 @@ public class Sketch implements Program {
         if (Objects.isNull(this.lastScanExecutionOrder)) {
             System.out.println("Scan is required!");
             try {
-                MulticastEmitter.broadcast(this.group, this.port, MessageType.SCAN_NOW.name());
+                MulticastEmitter.broadcast(this.group, this.port, MessageTypeOld.SCAN_NOW.name());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -391,7 +134,7 @@ public class Sketch implements Program {
                     .plus(this.intervalBetweenEachScans.toMillis(), ChronoUnit.MILLIS))) {
                 System.out.println("Another Scan is required!");
                 try {
-                    MulticastEmitter.broadcast(this.group, this.port, MessageType.SCAN_NOW.name());
+                    MulticastEmitter.broadcast(this.group, this.port, MessageTypeOld.SCAN_NOW.name());
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -443,7 +186,7 @@ public class Sketch implements Program {
      * </p>
      */
     private final void sendAnswerToTheIsOrchestratorAvailableMessage() {
-        final Optional<String> message = this.retrieveSpecificIncommingMessage(MessageType.IS_ORCHESTRATOR_AVAILABLE,
+        final Optional<String> message = this.retrieveSpecificIncommingMessage(MessageTypeOld.IS_ORCHESTRATOR_AVAILABLE,
                 100);
         if (message.isPresent()) {
             final Command command = CommandFactory.createCheckIfOrchestratorIsAvailableCommand(this.group, this.port,
@@ -470,7 +213,7 @@ public class Sketch implements Program {
      * </p>
      */
     private final void sendAnswerToTheScanNowMessage() {
-        final Optional<String> message = this.retrieveSpecificIncommingMessage(MessageType.SCAN_NOW, 100);
+        final Optional<String> message = this.retrieveSpecificIncommingMessage(MessageTypeOld.SCAN_NOW, 100);
         if (message.isPresent()) {
             final Command command = CommandFactory.createScanNowCommand(group, port);
             try {
@@ -496,7 +239,8 @@ public class Sketch implements Program {
      * </p>
      */
     private final void sendAnwserToTheChallengeOrchestratorMessage() {
-        final Optional<String> message = this.retrieveSpecificIncommingMessage(MessageType.CHALLENGE_ORCHESTRATOR, 100);
+        final Optional<String> message = this.retrieveSpecificIncommingMessage(MessageTypeOld.CHALLENGE_ORCHESTRATOR,
+                100);
         if (message.isPresent()) {
             final Command command = CommandFactory.createChallengeToElectOrchestratorCommand(this.group, this.port,
                     this.ip, this.uptime);
@@ -571,35 +315,10 @@ public class Sketch implements Program {
     }
 
     /**
-     * Runs the process for orchestrator election.
-     * <p>
-     * This method checks for the availability of an orchestrator node by retrieving
-     * a specific message,
-     * {@link MessageType#ORCHESTRATOR_AVAILABLE}, within a given timeout period.
-     * If no message is received, it initiates the process to challenge the
-     * orchestrator by broadcasting
-     * {@link MessageType#CHALLENGE_ORCHESTRATOR} message and subsequently runs the
-     * orchestrator election
-     * process using {@link #runJobForOrchestratorElection()}.
-     * </p>
-     */
-    private final void runJobForOrchestrationElectionProcess() {
-        final Optional<String> messageForAvailableOrchestrator = this
-                .retrieveSpecificIncommingMessage(MessageType.ORCHESTRATOR_AVAILABLE, 2_000);
-        if (!messageForAvailableOrchestrator.isPresent()) {
-            try {
-                MulticastEmitter.broadcast(this.group, this.port, MessageType.CHALLENGE_ORCHESTRATOR.name());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            this.runJobForOrchestratorElection();
-        }
-    }
-
-    /**
      * Broadcasts a message to check the availability of the orchestrator.
      * <p>
-     * This method broadcasts {@link MessageType#IS_ORCHESTRATOR_AVAILABLE} message
+     * This method broadcasts {@link MessageTypeOld#IS_ORCHESTRATOR_AVAILABLE}
+     * message
      * to the multicast
      * group and port specified. It updates the timestamp
      * {@code lastSendedOrchestratorAvailabilityRequest}
@@ -610,13 +329,13 @@ public class Sketch implements Program {
      * </p>
      */
     private final void askIfOrchestratorIsAvailable() {
+        final IsOrchestratorAvailableMessage message = IsOrchestratorAvailableMessage.create(this.ip, this.mode.get().equals(Mode.ORCHESTRATOR_NODE));
         try {
-            MulticastEmitter.broadcast(this.group, this.port, MessageType.IS_ORCHESTRATOR_AVAILABLE.name());
+            this.messageBroker.send(message);
         } catch (IOException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        this.lastSendedOrchestratorAvailabilityRequest = LocalDateTime.now();
-        this.runJobForOrchestrationElectionProcess();
     }
 
     /**
@@ -634,9 +353,54 @@ public class Sketch implements Program {
      *                     socket or joining the multicast group.
      */
     private final void setup() throws IOException {
-        this.multicastSocketForReception = new MulticastSocket(this.port);
-        this.multicastSocketForReception.joinGroup(this.group);
-        this.retrieveIpAddress();
+        this.messageBroker.subscribe(MessageType.IS_ORCHESTRATOR_AVAILABLE, (message) -> {
+            if (message instanceof IsOrchestratorAvailableMessage) {
+                final IsOrchestratorAvailableMessage realMessage = (IsOrchestratorAvailableMessage) message;
+                final Command command = CommandFactory.createCheckIfOrchestratorIsAvailableCommand(this.messageBroker,
+                        this.id, this.ip, this.mode.get());
+                try {
+                    command.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        this.messageBroker.subscribe(MessageType.CHALLENGE_ORCHESTRATOR, (message) -> {
+            if (message instanceof ChallengeOrchestratorMessage) {
+                final ChallengeOrchestratorMessage realMessage = (ChallengeOrchestratorMessage) message;
+                final RuntimeMXBean runtimeMX = ManagementFactory.getRuntimeMXBean();
+                this.uptime.set(runtimeMX.getUptime());
+                final Command command = CommandFactory.createChallengeToElectOrchestratorCommand(messageBroker, id,
+                        this.ip, uptime);
+                try {
+                    command.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        this.messageBroker.subscribe(MessageType.SCAN_NOW, (message) -> {
+            if (message instanceof ScanNowMessage) {
+                final ScanNowMessage realMessage = (ScanNowMessage) message;
+                final Command command = CommandFactory.createScanNowCommand(this.messageBroker, this.id, this.ip,
+                        this.mode.get());
+                try {
+                    command.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        this.messageBroker.subscribe(MessageType.VOTE, (message) -> {
+            if (message instanceof VoteMessage) {
+                final VoteMessage realMessage = (VoteMessage) message;
+
+            }
+        });
+
         this.askIfOrchestratorIsAvailable();
     }
 
