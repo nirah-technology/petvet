@@ -6,20 +6,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import io.nirahtech.petvet.esp.MessageSender;
-import io.nirahtech.petvet.esp.MessageTypeOld;
 import io.nirahtech.petvet.esp.Mode;
+import io.nirahtech.petvet.esp.brokers.MessagePublisher;
+import io.nirahtech.petvet.esp.messages.MessageType;
 import io.nirahtech.petvet.esp.messages.ScanNowMessage;
 
 public final class ScanNowCommand extends AbstractCommand {
 
 
     private final InetAddress ipv4Addess;
-    private final MessageSender messageSender;
+    private final MessagePublisher messageSender;
     private final Mode mode;
     private final UUID id;
 
-    ScanNowCommand(final MessageSender messageSender, final UUID id, InetAddress emitter, final Mode mode) {
+    ScanNowCommand(final MessagePublisher messageSender, final UUID id, InetAddress emitter, final Mode mode) {
         this.id = id;
         this.messageSender = messageSender;
         this.ipv4Addess = emitter;
@@ -27,7 +27,7 @@ public final class ScanNowCommand extends AbstractCommand {
     }
 
     private void sendScanReport(final Map<String, Double> detectedDevicesWithDBs) throws IOException {
-        final StringBuilder reportBuilder = new StringBuilder(MessageTypeOld.SCAN_REPORT.name())
+        final StringBuilder reportBuilder = new StringBuilder(MessageType.SCAN_REPORT.name())
             .append(":");
         detectedDevicesWithDBs.forEach((device, db) -> reportBuilder.append(device).append("=").append(db).append(";"));
         final String report = reportBuilder.toString();

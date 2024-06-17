@@ -1,9 +1,9 @@
-package io.nirahtech.petvet.esp;
+package io.nirahtech.petvet.esp.brokers;
 
 import java.io.IOException;
 
 import io.nirahtech.petvet.esp.messages.Message;
 
-public interface MessageSender {
+public interface MessagePublisher {
     void send(Message message) throws IOException;
 }

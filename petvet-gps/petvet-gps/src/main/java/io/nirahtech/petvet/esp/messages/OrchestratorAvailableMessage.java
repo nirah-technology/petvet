@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public final class OrchestratorAvailableMessage extends AbstractMessage {
+
+    
     private OrchestratorAvailableMessage(UUID id, InetAddress emitter, boolean isOrchestrator,
             LocalDateTime sentAt) {
         super(id, MessageType.ORCHESTRATOR_AVAILABLE, emitter, isOrchestrator, sentAt);
