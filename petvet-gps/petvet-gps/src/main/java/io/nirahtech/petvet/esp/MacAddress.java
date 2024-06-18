@@ -23,4 +23,31 @@ public final class MacAddress {
         address[4], 
         address[5]);
     }
+
+    public static final MacAddress of(String address) {
+        if (address == null || address.isEmpty()) {
+            throw new IllegalArgumentException("Address cannot be null or empty");
+        }
+    
+        String[] bytes = address.split("\\.", -1);
+        if (bytes.length != 6) {
+            throw new IllegalArgumentException("Invalid MAC address format: " + address);
+        }
+    
+        byte[] mac = new byte[6];
+        for (int i = 0; i < 6; i++) {
+            try {
+                String segment = bytes[i].replaceAll("[^0-9A-Fa-f]", "").trim();
+                int value = Integer.parseInt(segment, 16);
+                if (value < 0 || value > 255) {
+                    throw new IllegalArgumentException("Invalid value for MAC address segment: " + segment);
+                }
+                mac[i] = (byte) value;
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid value for MAC address segment: " + bytes[i], e);
+            }
+        }
+    
+        return of(mac);
+    }
 }

@@ -6,8 +6,10 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.nirahtech.petvet.esp.MacAddress;
+
 public final class NmCliCommand implements ScannerSystemCommand {
-    private static final String DETECT_OTHERS_WIFI_NETWORKS_COMMAND = "nmcli -t -f SSID,SECURITY,SIGNAL device wifi list";
+    private static final String DETECT_OTHERS_WIFI_NETWORKS_COMMAND = "nmcli -t -f BSSID,SSID,SIGNAL device wifi list";
     private static final String DETECT_WIFI_CARD_COMMAND = "nmcli -t -f DEVICE device";
 
     private boolean isWifiSupported() throws IOException {
@@ -18,7 +20,7 @@ public final class NmCliCommand implements ScannerSystemCommand {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         while ((line = reader.readLine()) != null) {
-            if (line.toLowerCase().contains("wireless")) {
+            if (line.toLowerCase().contains("wireless") || line.toLowerCase().startsWith("wl")) {
                 isSupported = true;
                 break;
             }
@@ -41,10 +43,11 @@ public final class NmCliCommand implements ScannerSystemCommand {
         while ((line = reader.readLine()) != null) {
             final String[] wifiInfo = line.split(":");
             if (wifiInfo.length == 3) {
-                System.out.println("SSID: " + wifiInfo[0]);
-                System.out.println("Security: " + wifiInfo[1]);
-                System.out.println("Signal: " + wifiInfo[2]);
-                System.out.println();
+                final String bssid = wifiInfo[0].strip();
+                final String ssid = wifiInfo[1].strip();
+                final float signalInDBm = -Float.parseFloat(wifiInfo[2].strip());
+                final Device device = new Device(MacAddress.of(bssid), ssid, 0, signalInDBm);
+                detectedDevices.add(device);
             }
         }
 

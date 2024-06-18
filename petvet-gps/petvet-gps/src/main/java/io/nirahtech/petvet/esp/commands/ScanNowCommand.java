@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import io.nirahtech.petvet.esp.Mode;
 import io.nirahtech.petvet.esp.brokers.MessagePublisher;
-import io.nirahtech.petvet.esp.messages.MessageType;
 import io.nirahtech.petvet.esp.messages.ScanReportMessage;
 import io.nirahtech.petvet.esp.scanners.Device;
 import io.nirahtech.petvet.esp.scanners.Scanner;
@@ -46,13 +45,10 @@ public final class ScanNowCommand extends AbstractCommand {
     @Override
     public void execute() throws IOException {
         super.execute();
-        System.out.println("Scan using Bluetooth...");
-        final Set<Device> detectedDevicesWithDBs = new HashSet<>();
-    
+        final Set<Device> detectedDevicesWithDBs = new HashSet<>();    
         this.scanner.scan().forEach(device -> {
             detectedDevicesWithDBs.add(device);
         });
-    
         this.sendScanReport(detectedDevicesWithDBs);
     }
     
