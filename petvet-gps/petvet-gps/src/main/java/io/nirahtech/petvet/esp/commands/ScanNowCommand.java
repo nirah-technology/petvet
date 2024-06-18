@@ -2,36 +2,37 @@ package io.nirahtech.petvet.esp.commands;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
-import io.nirahtech.petvet.esp.MessageSender;
-import io.nirahtech.petvet.esp.MessageTypeOld;
 import io.nirahtech.petvet.esp.Mode;
-import io.nirahtech.petvet.esp.messages.ScanNowMessage;
+import io.nirahtech.petvet.esp.brokers.MessagePublisher;
+import io.nirahtech.petvet.esp.messages.MessageType;
+import io.nirahtech.petvet.esp.messages.ScanReportMessage;
+import io.nirahtech.petvet.esp.scanners.Device;
+import io.nirahtech.petvet.esp.scanners.Scanner;
 
 public final class ScanNowCommand extends AbstractCommand {
 
 
     private final InetAddress ipv4Addess;
-    private final MessageSender messageSender;
+    private final MessagePublisher messageSender;
     private final Mode mode;
     private final UUID id;
+    private final Scanner scanner;
 
-    ScanNowCommand(final MessageSender messageSender, final UUID id, InetAddress emitter, final Mode mode) {
+    ScanNowCommand(final MessagePublisher messageSender, final UUID id, InetAddress emitter, final Mode mode, final Scanner scanner) {
         this.id = id;
         this.messageSender = messageSender;
         this.ipv4Addess = emitter;
         this.mode = mode;
+        this.scanner = scanner;
     }
 
-    private void sendScanReport(final Map<String, Double> detectedDevicesWithDBs) throws IOException {
-        final StringBuilder reportBuilder = new StringBuilder(MessageTypeOld.SCAN_REPORT.name())
-            .append(":");
-        detectedDevicesWithDBs.forEach((device, db) -> reportBuilder.append(device).append("=").append(db).append(";"));
-        final String report = reportBuilder.toString();
-        final ScanNowMessage message = ScanNowMessage.create(this.id, this.ipv4Addess, this.mode.equals(Mode.ORCHESTRATOR_NODE));
+    private void sendScanReport(final Collection<Device> detectedDevices) throws IOException {
+        final ScanReportMessage message = ScanReportMessage.create(this.id, this.ipv4Addess, this.mode.equals(Mode.ORCHESTRATOR_NODE), detectedDevices);
         this.messageSender.send(message);
     }
     
@@ -46,9 +47,11 @@ public final class ScanNowCommand extends AbstractCommand {
     public void execute() throws IOException {
         super.execute();
         System.out.println("Scan using Bluetooth...");
-        final Map<String, Double> detectedDevicesWithDBs = new HashMap<>();
+        final Set<Device> detectedDevicesWithDBs = new HashSet<>();
     
-        // On imagine qu'on a scanner avec le bluetooth ici !!
+        this.scanner.scan().forEach(device -> {
+            detectedDevicesWithDBs.add(device);
+        });
     
         this.sendScanReport(detectedDevicesWithDBs);
     }

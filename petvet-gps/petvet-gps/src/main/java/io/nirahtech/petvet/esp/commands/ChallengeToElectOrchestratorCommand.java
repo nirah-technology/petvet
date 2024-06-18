@@ -10,18 +10,18 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
-import io.nirahtech.petvet.esp.MessageSender;
-import io.nirahtech.petvet.esp.MessageTypeOld;
+import io.nirahtech.petvet.esp.brokers.MessagePublisher;
+import io.nirahtech.petvet.esp.messages.MessageType;
 import io.nirahtech.petvet.esp.messages.VoteMessage;
 
 public final class ChallengeToElectOrchestratorCommand extends AbstractCommand {
 
     private final AtomicLong uptime;
     private final InetAddress ipv4Addess;
-    private final MessageSender messageSender;
+    private final MessagePublisher messageSender;
     private final UUID id;
 
-    ChallengeToElectOrchestratorCommand(final MessageSender messageSender, final UUID id, final InetAddress ipv4Addess, final AtomicLong uptime) {
+    ChallengeToElectOrchestratorCommand(final MessagePublisher messageSender, final UUID id, final InetAddress ipv4Addess, final AtomicLong uptime) {
         this.ipv4Addess = ipv4Addess;
         this.uptime = uptime;
         this.messageSender = messageSender;
@@ -39,7 +39,7 @@ public final class ChallengeToElectOrchestratorCommand extends AbstractCommand {
     private final void publishInfoToBeElectedAsOrchestrator(final Map<Byte, Long> infos) {
         final Optional<Map.Entry<Byte, Long>> info = infos.entrySet().stream().findFirst();
         info.ifPresent(vote -> {
-            final StringBuilder ballotBuilder = new StringBuilder(MessageTypeOld.VOTE.name())
+            final StringBuilder ballotBuilder = new StringBuilder(MessageType.VOTE.name())
             .append(":")
             .append(vote.getKey())
             .append("=")

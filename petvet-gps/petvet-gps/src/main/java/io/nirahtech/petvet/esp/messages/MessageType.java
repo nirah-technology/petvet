@@ -33,4 +33,12 @@ public enum MessageType implements MessageParser {
             return VoteMessage.parse(messageAsString);
         }
     },
+
+    SCAN_REPORT {
+        
+        @Override
+        public Optional<ScanReportMessage> parse(String messageAsString) {
+            return ScanReportMessage.parse(messageAsString);
+        }
+    }
 }

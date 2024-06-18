@@ -15,7 +15,7 @@ public final class ESP32 implements Runnable {
     }
 
     public static final ESP32 newInstance() throws UnknownHostException {
-        final InetAddress group = InetAddress.getByName("224.6.6.6");
+        final InetAddress group = InetAddress.getByName("224.0.1.128");
         final int port = 44666;
         final Program program = new Sketch(group, port);
         return new ESP32(program);

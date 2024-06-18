@@ -4,18 +4,18 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.UUID;
 
-import io.nirahtech.petvet.esp.MessageSender;
 import io.nirahtech.petvet.esp.Mode;
+import io.nirahtech.petvet.esp.brokers.MessagePublisher;
 import io.nirahtech.petvet.esp.messages.OrchestratorAvailableMessage;
 
 public final class CheckIfOrchestratorIsAvailableCommand extends AbstractCommand {
 
     private final Mode mode;
     private final InetAddress ipv4Addess;
-    private final MessageSender messageSender;
+    private final MessagePublisher messageSender;
     private final UUID id;
 
-    CheckIfOrchestratorIsAvailableCommand(final MessageSender messageSender, final UUID id, InetAddress emitter, final Mode mode) {
+    CheckIfOrchestratorIsAvailableCommand(final MessagePublisher messageSender, final UUID id, InetAddress emitter, final Mode mode) {
         this.mode = mode;
         this.id = id;
         this.messageSender = messageSender;
