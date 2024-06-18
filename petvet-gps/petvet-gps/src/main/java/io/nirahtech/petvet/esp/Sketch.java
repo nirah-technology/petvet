@@ -86,14 +86,19 @@ public class Sketch implements Program {
             final Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
             NICS: while (networkInterfaces.hasMoreElements()) {
                 final NetworkInterface networkInterface = (NetworkInterface) networkInterfaces.nextElement();
-                final Enumeration<InetAddress> ipAddresses = networkInterface.getInetAddresses();
-                IPS_FOR_NIC: while (ipAddresses.hasMoreElements()) {
-                    final InetAddress ipAddress = (InetAddress) ipAddresses.nextElement();
-                    final byte[] address = ipAddress.getAddress();
-                    if ((address[0] == NETWORK_MASK[0]) && (address[1] == NETWORK_MASK[1])) {
-                        this.networkInterface = networkInterface;
-                        this.ip = (Inet4Address) ipAddress;
-                        break NICS;
+                if (!networkInterface.getName().toLowerCase().startsWith("br")) {
+                    final Enumeration<InetAddress> ipAddresses = networkInterface.getInetAddresses();
+                    IPS_FOR_NIC: while (ipAddresses.hasMoreElements()) {
+                        final InetAddress ipAddress = (InetAddress) ipAddresses.nextElement();
+                        final byte[] address = ipAddress.getAddress();
+                        if ((address[0] == NETWORK_MASK[0]) && (address[1] == NETWORK_MASK[1])) {
+                            this.networkInterface = networkInterface;
+                            System.out.println(this.networkInterface.getName());
+                            System.out.println(this.networkInterface.getDisplayName());
+                            this.ip = (Inet4Address) ipAddress;
+                            System.out.println(this.ip);
+                            break NICS;
+                        }
                     }
                 }
             }
