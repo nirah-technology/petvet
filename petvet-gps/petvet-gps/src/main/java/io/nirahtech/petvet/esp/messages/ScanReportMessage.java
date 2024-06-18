@@ -2,8 +2,10 @@ package io.nirahtech.petvet.esp.messages;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -45,8 +47,7 @@ public class ScanReportMessage extends AbstractMessage {
                                     .toInetAddress(),
                             Boolean.parseBoolean(
                                     properties.get(Message.IS_ORCHESTRATOR_PROPERTY_NAME).toString().strip()),
-                            LocalDateTime.parse(properties.get(Message.SENDED_AT_PROPERTY_NAME).toString().strip(),
-                                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")),
+                            LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(properties.get(Message.SENDED_AT_PROPERTY_NAME).toString().strip())), ZoneId.systemDefault()),
                             Set.of());
                     scanReportMessage = Optional.of(message);
                 } catch (UnknownHostException e) {
@@ -69,7 +70,7 @@ public class ScanReportMessage extends AbstractMessage {
                 .append(String.format("%s=%s,", Message.TYPE_PROPERTY_NAME, this.getType().name()))
                 .append(String.format("%s=%s,", Message.IS_ORCHESTRATOR_PROPERTY_NAME, this.isOrchestrator()))
                 .append(String.format("%s=%s,", Message.ID_PROPERTY_NAME, this.getId().toString()))
-                .append(String.format("%s=%s,", Message.SENDED_AT_PROPERTY_NAME, this.sentAt().toString()))
+                .append(String.format("%s=%s,", Message.SENDED_AT_PROPERTY_NAME, this.sentAt().toInstant(ZoneOffset.UTC).getNano()))
                 .append(String.format("%s=%s,", Message.EMITTER_PROPERTY_NAME, this.getEmitter().toString()))
                 .append(String.format("%s=%s", DETECTED_DEVICES_KEY, reportBuilder));
         return messageBuilder.toString();

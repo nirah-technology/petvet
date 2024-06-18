@@ -2,7 +2,10 @@ package io.nirahtech.petvet.esp.messages;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +37,7 @@ public class ChallengeOrchestratorMessage extends AbstractMessage {
                         UUID.fromString(properties.get(Message.ID_PROPERTY_NAME).toString().strip()),
                         IPV4Address.of(properties.get(Message.EMITTER_PROPERTY_NAME).toString().strip().substring(1)).toInetAddress(), 
                         Boolean.parseBoolean(properties.get(Message.IS_ORCHESTRATOR_PROPERTY_NAME).toString().strip()),
-                        LocalDateTime.parse(properties.get(Message.SENDED_AT_PROPERTY_NAME).toString().strip(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")));
+                            LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(properties.get(Message.SENDED_AT_PROPERTY_NAME).toString().strip())), ZoneId.systemDefault()));
                     challengeOrchestratorMessage = Optional.of(message);
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
@@ -52,7 +55,7 @@ public class ChallengeOrchestratorMessage extends AbstractMessage {
                 .append(String.format("%s=%s,", Message.TYPE_PROPERTY_NAME, this.getType().name()))
                 .append(String.format("%s=%s,", Message.IS_ORCHESTRATOR_PROPERTY_NAME, this.isOrchestrator()))
                 .append(String.format("%s=%s,", Message.ID_PROPERTY_NAME, this.getId().toString()))
-                .append(String.format("%s=%s,", Message.SENDED_AT_PROPERTY_NAME, this.sentAt().toString()))
+                .append(String.format("%s=%s,", Message.SENDED_AT_PROPERTY_NAME, this.sentAt().toInstant(ZoneOffset.UTC).getNano()))
                 .append(String.format("%s=%s", Message.EMITTER_PROPERTY_NAME, this.getEmitter().toString()));
         return messageBuilder.toString();
     }
