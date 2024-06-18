@@ -32,6 +32,7 @@ public final class ScanNowCommand extends AbstractCommand {
 
     private void sendScanReport(final Collection<Device> detectedDevices) throws IOException {
         final ScanReportMessage message = ScanReportMessage.create(this.id, this.ipv4Addess, this.mode.equals(Mode.ORCHESTRATOR_NODE), detectedDevices);
+        System.out.println(message);
         this.messageSender.send(message);
     }
     

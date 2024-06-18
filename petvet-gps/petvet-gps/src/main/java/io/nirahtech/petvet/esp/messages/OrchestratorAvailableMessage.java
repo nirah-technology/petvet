@@ -24,20 +24,18 @@ public final class OrchestratorAvailableMessage extends AbstractMessage {
     }
 
     public static Optional<OrchestratorAvailableMessage> parse(String messageAsString) {
-        System.out.println(messageAsString);
         Optional<OrchestratorAvailableMessage> orchestratorAvailableMessage = Optional.empty();
         if (messageAsString.contains(":")) {
             final String[] messageParts = messageAsString.split(":", 2);
             final MessageType type = MessageType.valueOf(messageParts[0]);
             if (type.equals(MessageType.ORCHESTRATOR_AVAILABLE)) {
                 final Map<String, Object> properties = Message.fromStringToMap(messageParts[1]);
-                System.out.println(properties);
                 try {
                     OrchestratorAvailableMessage message = new OrchestratorAvailableMessage(
                         UUID.fromString(properties.get(Message.ID_PROPERTY_NAME).toString().strip()),
                         IPV4Address.of(properties.get(Message.EMITTER_PROPERTY_NAME).toString().strip().substring(1)).toInetAddress(), 
                         Boolean.parseBoolean(properties.get(Message.IS_ORCHESTRATOR_PROPERTY_NAME).toString().strip()),
-                        LocalDateTime.parse(properties.get(Message.SENDED_AT_PROPERTY_NAME).toString().strip(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS")));
+                        LocalDateTime.parse(properties.get(Message.SENDED_AT_PROPERTY_NAME).toString().strip(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")));
                         orchestratorAvailableMessage = Optional.of(message);
                 } catch (UnknownHostException e) {
                     e.printStackTrace();

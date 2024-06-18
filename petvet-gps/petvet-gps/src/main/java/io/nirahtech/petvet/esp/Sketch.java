@@ -93,10 +93,7 @@ public class Sketch implements Program {
                         final byte[] address = ipAddress.getAddress();
                         if ((address[0] == NETWORK_MASK[0]) && (address[1] == NETWORK_MASK[1])) {
                             this.networkInterface = networkInterface;
-                            System.out.println(this.networkInterface.getName());
-                            System.out.println(this.networkInterface.getDisplayName());
                             this.ip = (Inet4Address) ipAddress;
-                            System.out.println(this.ip);
                             break NICS;
                         }
                     }
@@ -288,13 +285,11 @@ public class Sketch implements Program {
         });
 
         this.messageBroker.subscribe(MessageType.SCAN_NOW, (message) -> {
-            System.out.println("ok..");
             if (message instanceof ScanNowMessage) {
                 final ScanNowMessage realMessage = (ScanNowMessage) message;
                 final Command command = CommandFactory.createScanNowCommand(this.messageBroker, this.id, this.ip,
                         this.mode.get(), this.scanner);
                 try {
-                    System.out.println("I will scan...");
                     command.execute();
                 } catch (IOException e) {
                     e.printStackTrace();

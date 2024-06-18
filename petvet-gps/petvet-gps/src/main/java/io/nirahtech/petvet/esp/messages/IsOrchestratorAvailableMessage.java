@@ -33,7 +33,7 @@ public final class IsOrchestratorAvailableMessage extends AbstractMessage {
                         UUID.fromString(properties.get(Message.ID_PROPERTY_NAME).toString().strip()),
                         IPV4Address.of(properties.get(Message.EMITTER_PROPERTY_NAME).toString().strip().substring(1)).toInetAddress(), 
                         Boolean.parseBoolean(properties.get(Message.IS_ORCHESTRATOR_PROPERTY_NAME).toString().strip()),
-                        LocalDateTime.parse(properties.get(Message.SENDED_AT_PROPERTY_NAME).toString().strip(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS")));
+                        LocalDateTime.parse(properties.get(Message.SENDED_AT_PROPERTY_NAME).toString().strip(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")));
                         isOrchestratorAvailableMessage = Optional.of(message);
                 } catch (UnknownHostException e) {
                     e.printStackTrace();

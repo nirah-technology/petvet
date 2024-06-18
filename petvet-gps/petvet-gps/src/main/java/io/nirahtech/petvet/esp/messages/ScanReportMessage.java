@@ -46,7 +46,7 @@ public class ScanReportMessage extends AbstractMessage {
                             Boolean.parseBoolean(
                                     properties.get(Message.IS_ORCHESTRATOR_PROPERTY_NAME).toString().strip()),
                             LocalDateTime.parse(properties.get(Message.SENDED_AT_PROPERTY_NAME).toString().strip(),
-                                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS")),
+                                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")),
                             Set.of());
                     scanReportMessage = Optional.of(message);
                 } catch (UnknownHostException e) {
