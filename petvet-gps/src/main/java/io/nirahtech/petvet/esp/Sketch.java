@@ -15,6 +15,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -24,6 +25,7 @@ import io.nirahtech.petvet.esp.commands.Command;
 import io.nirahtech.petvet.esp.commands.CommandFactory;
 import io.nirahtech.petvet.esp.messages.ChallengeOrchestratorMessage;
 import io.nirahtech.petvet.esp.messages.IsOrchestratorAvailableMessage;
+import io.nirahtech.petvet.esp.messages.Message;
 import io.nirahtech.petvet.esp.messages.MessageType;
 import io.nirahtech.petvet.esp.messages.OrchestratorAvailableMessage;
 import io.nirahtech.petvet.esp.messages.ScanNowMessage;

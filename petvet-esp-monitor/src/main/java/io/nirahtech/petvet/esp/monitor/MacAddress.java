@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.esp;
+package io.nirahtech.petvet.esp.monitor;
 
 public final class MacAddress {
     private final byte[] address = new byte[6];
@@ -29,7 +29,7 @@ public final class MacAddress {
             throw new IllegalArgumentException("Address cannot be null or empty");
         }
     
-        String[] bytes = address.split("\\.", -1);
+        String[] bytes = address.split(":", -1);
         if (bytes.length != 6) {
             throw new IllegalArgumentException("Invalid MAC address format: " + address);
         }

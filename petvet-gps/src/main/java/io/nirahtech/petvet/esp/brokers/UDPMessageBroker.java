@@ -92,7 +92,7 @@ public final class UDPMessageBroker implements MessageBroker {
         final DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         boolean hasDataRetrieve = false;
         try {
-            multicastSocket.receive(packet);
+            this.multicastSocket.receive(packet);
             hasDataRetrieve = true;
         } catch (SocketTimeoutException e) {
 
@@ -104,6 +104,7 @@ public final class UDPMessageBroker implements MessageBroker {
                 if (Objects.nonNull(messageType)) {
                     final Optional<? extends Message> parsedMessage = messageType.parse(data);
                     parsedMessage.ifPresent(message -> {
+                        receivedMessage.set(message);
                         final MessageType type = message.getType();
                         final Consumer<Message> handler = this.messagesHandlers.get(type);
                         if (Objects.nonNull(handler)) {
