@@ -9,16 +9,17 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import io.nirahtech.petvet.esp.Mode;
 import io.nirahtech.petvet.esp.brokers.MessagePublisher;
+import io.nirahtech.petvet.esp.scanners.Scanner;
 
 public final class CommandFactory {
     private CommandFactory() {
 
     }
 
-    public static Command createScanNowCommand(MessagePublisher messageSender, UUID id, InetAddress emitter, Mode mode) {
+    public static Command createScanNowCommand(MessagePublisher messageSender, UUID id, InetAddress emitter, Mode mode, Scanner scanner) {
         Objects.requireNonNull(messageSender, "Multicast Group is required to create a new command.");
         Objects.requireNonNull(messageSender, "Multicast Port is required to create a new command.");
-        return new ScanNowCommand(messageSender, id, emitter, mode);
+        return new ScanNowCommand(messageSender, id, emitter, mode, scanner);
     }
 
 

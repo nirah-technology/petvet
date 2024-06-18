@@ -28,6 +28,8 @@ import io.nirahtech.petvet.esp.messages.MessageType;
 import io.nirahtech.petvet.esp.messages.OrchestratorAvailableMessage;
 import io.nirahtech.petvet.esp.messages.ScanNowMessage;
 import io.nirahtech.petvet.esp.messages.VoteMessage;
+import io.nirahtech.petvet.esp.scanners.Scanner;
+import io.nirahtech.petvet.esp.scanners.WifiScanner;
 
 public class Sketch implements Program {
     private static final byte[] NETWORK_MASK = { (byte) 192, (byte) 168 };
@@ -35,6 +37,7 @@ public class Sketch implements Program {
     private final UUID id = UUID.randomUUID();
     private AtomicReference<Mode> mode = new AtomicReference<>(Mode.NATIVE_NODE);
 
+    private final Scanner scanner;
     private boolean isRunning = false;
     private AtomicLong uptime = new AtomicLong(0);
 
@@ -52,6 +55,7 @@ public class Sketch implements Program {
     public Sketch(final InetAddress group, final int port) {
         this.retrieveIpAddress();
         this.messageBroker = UDPMessageBroker.getOrCreate(this.networkInterface, group, port);
+        this.scanner = new WifiScanner();
     }
 
     /**
@@ -282,7 +286,7 @@ public class Sketch implements Program {
             if (message instanceof ScanNowMessage) {
                 final ScanNowMessage realMessage = (ScanNowMessage) message;
                 final Command command = CommandFactory.createScanNowCommand(this.messageBroker, this.id, this.ip,
-                        this.mode.get());
+                        this.mode.get(), this.scanner);
                 try {
                     command.execute();
                 } catch (IOException e) {
