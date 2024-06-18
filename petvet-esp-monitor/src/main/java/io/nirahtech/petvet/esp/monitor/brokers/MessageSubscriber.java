@@ -2,8 +2,8 @@ package io.nirahtech.petvet.esp.monitor.brokers;
 
 import java.util.function.Consumer;
 
-import io.nirahtech.petvet.esp.messages.Message;
-import io.nirahtech.petvet.esp.messages.MessageType;
+import io.nirahtech.petvet.esp.monitor.messages.Message;
+import io.nirahtech.petvet.esp.monitor.messages.MessageType;
 
 
 interface MessageSubscriber {

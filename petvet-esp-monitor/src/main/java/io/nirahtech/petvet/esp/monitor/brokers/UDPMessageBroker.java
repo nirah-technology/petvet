@@ -16,41 +16,67 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import io.nirahtech.petvet.esp.messages.Message;
-import io.nirahtech.petvet.esp.messages.MessageType;
+import io.nirahtech.petvet.esp.monitor.messages.Message;
+import io.nirahtech.petvet.esp.monitor.messages.MessageType;
 
 public final class UDPMessageBroker implements MessageBroker {
     private static final Map<String, MessageBroker> brokers = new HashMap<>();
 
-    public static MessageBroker getOrCreate(final NetworkInterface networkInterface, final InetAddress groupAddress,
-            final int port) {
-        final String key = String.format("%s(%s:%s)", networkInterface.getName(), groupAddress.toString(), port);
-        if (!brokers.containsKey(key)) {
-            brokers.put(key, new UDPMessageBroker(networkInterface, groupAddress, port));
-        }
-        return brokers.get(key);
+    public static MessageBroker newInstance() {
+        return new UDPMessageBroker();
     }
 
     private final Map<MessageType, Consumer<Message>> messagesHandlers = new HashMap<>();
 
-    private final InetAddress groupAddress;
-    private final int port;
-    private final NetworkInterface networkInterface;
+    private InetAddress groupAddress;
+    private int port;
+    private NetworkInterface networkInterface;
 
-    private final MulticastSocket multicastSocket;
+    private MulticastSocket multicastSocket;
 
     private int timeoutInMilliseconds = 50;
 
-    private UDPMessageBroker(final NetworkInterface networkInterface, final InetAddress groupAddress, final int port) {
+    private UDPMessageBroker() {
+
+    }
+
+    @Override
+    public InetAddress getInetAddress() {
+        return this.groupAddress;
+    }
+
+    @Override
+    public int getPort() {
+        return this.port;
+    }
+
+    @Override
+    public void connect(NetworkInterface networkInterface, InetAddress groupAddress, int port) throws IOException {
+        if (this.isConnected()) {
+            this.disconnect();
+        }
         this.networkInterface = networkInterface;
         this.groupAddress = groupAddress;
         this.port = port;
-        try {
-            this.multicastSocket = new MulticastSocket(this.port);
-            this.multicastSocket.joinGroup(new InetSocketAddress(this.groupAddress, this.port), this.networkInterface);
-            this.multicastSocket.setSoTimeout(this.timeoutInMilliseconds);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        this.multicastSocket = new MulticastSocket(this.port);
+        this.multicastSocket.joinGroup(new InetSocketAddress(this.groupAddress, this.port), this.networkInterface);
+        this.multicastSocket.setSoTimeout(this.timeoutInMilliseconds);
+    }
+
+    @Override
+    public boolean isConnected() {
+        boolean isConnected = false;
+        if (Objects.nonNull(this.multicastSocket)) {
+            isConnected = this.multicastSocket.isConnected();
+        }
+        return isConnected;
+    }
+
+    @Override
+    public void disconnect() {
+        if (Objects.nonNull(this.multicastSocket)) {
+            this.multicastSocket.close();
+            this.multicastSocket = null;
         }
     }
 
@@ -60,22 +86,6 @@ public final class UDPMessageBroker implements MessageBroker {
             this.multicastSocket.setSoTimeout(this.timeoutInMilliseconds);
         } catch (SocketException e) {
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void send(final Message message) throws IOException {
-        final InetSocketAddress group = new InetSocketAddress(this.groupAddress, this.port);
-        try (MulticastSocket multicastSocketToSendMessage = new MulticastSocket(this.port)) {
-            multicastSocketToSendMessage.joinGroup(group, this.networkInterface);
-            final String rowMessage = message.toString();
-            final byte[] messageAsBytes = rowMessage.getBytes(StandardCharsets.UTF_8);
-            final DatagramPacket datagramPacket = new DatagramPacket(
-                    messageAsBytes,
-                    0,
-                    messageAsBytes.length,
-                    group);
-                    multicastSocketToSendMessage.send(datagramPacket);
         }
     }
 

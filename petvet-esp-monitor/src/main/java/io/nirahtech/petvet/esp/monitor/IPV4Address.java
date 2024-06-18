@@ -55,4 +55,9 @@ public final class IPV4Address {
     public InetAddress toInetAddress() throws UnknownHostException {
         return InetAddress.getByAddress(this.address);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s.%s.%s.%s", this.address[0], this.address[1], this.address[2], this.address[3]);
+    }
 }
