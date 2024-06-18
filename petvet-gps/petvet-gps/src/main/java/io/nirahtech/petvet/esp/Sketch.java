@@ -224,7 +224,7 @@ public class Sketch implements Program {
      * </p>
      */
     private final void askIfOrchestratorIsAvailable() {
-        final IsOrchestratorAvailableMessage message = IsOrchestratorAvailableMessage.create(this.ip,
+        final IsOrchestratorAvailableMessage message = IsOrchestratorAvailableMessage.create(this.id, this.ip,
                 this.mode.get().equals(Mode.ORCHESTRATOR_NODE));
         try {
             this.messageBroker.send(message);

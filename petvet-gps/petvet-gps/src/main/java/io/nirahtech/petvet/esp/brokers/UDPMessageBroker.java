@@ -71,7 +71,7 @@ public final class UDPMessageBroker implements MessageBroker {
         final InetSocketAddress group = new InetSocketAddress(this.groupAddress, this.port);
         try (MulticastSocket multicastSocket = new MulticastSocket(this.port)) {
             multicastSocket.joinGroup(group, this.networkInterface);
-            final String rowMessage = message.toMap().toString();
+            final String rowMessage = message.toString();
             final byte[] messageAsBytes = rowMessage.getBytes(StandardCharsets.UTF_8);
             final DatagramPacket datagramPacket = new DatagramPacket(
                     messageAsBytes,
@@ -103,21 +103,18 @@ public final class UDPMessageBroker implements MessageBroker {
         if (hasDataRetrieve) {
             final String data = new String(packet.getData(), StandardCharsets.UTF_8);
             try {
-                
-                final Optional<Message> parsedMessage = Message.parse(data);
-                parsedMessage.ifPresent(message -> {
-                    final MessageType type = message.getType();
-                    if (Objects.nonNull(type)) {
-                        final Optional<? extends Message> realMessageImplementation = type.parse(data);
-                        if (realMessageImplementation.isPresent()) {
-                            receivedMessage.set(realMessageImplementation.get());
-                            final Consumer<Message> handler = this.messagesHandlers.get(type);
-                            if (Objects.nonNull(handler)) {
-                                handler.accept(realMessageImplementation.get());
-                            }
+                final MessageType messageType = MessageType.valueOf(data.split(":", 2)[0]);
+                if (Objects.nonNull(messageType)) {
+                    final Optional<? extends Message> parsedMessage = messageType.parse(data);
+                    parsedMessage.ifPresent(message -> {
+                        final MessageType type = message.getType();
+                        final Consumer<Message> handler = this.messagesHandlers.get(type);
+                        if (Objects.nonNull(handler)) {
+                            handler.accept(message);
                         }
-                    }
-                });
+                    });
+                }
+                
             } catch (Exception e) {
                 e.printStackTrace();
             }
