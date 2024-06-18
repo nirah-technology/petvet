@@ -41,7 +41,7 @@ public final class VoteMessage extends AbstractMessage {
         Optional<VoteMessage> voteMessage = Optional.empty();
 
         if (messageAsString.contains(":")) {
-            final String[] messageParts = messageAsString.split(":");
+            final String[] messageParts = messageAsString.split(":", 2);
             final MessageType type = MessageType.valueOf(messageParts[0]);
             if (type.equals(MessageType.VOTE)) {
                 final Map<String, Object> properties = Message.fromStringToMap(messageParts[1]);

@@ -25,7 +25,7 @@ public class ChallengeOrchestratorMessage extends AbstractMessage {
     public static Optional<ChallengeOrchestratorMessage> parse(String messageAsString) {
         Optional<ChallengeOrchestratorMessage> challengeOrchestratorMessage = Optional.empty();
         if (messageAsString.contains(":")) {
-            final String[] messageParts = messageAsString.split(":");
+            final String[] messageParts = messageAsString.split(":", 2);
             final MessageType type = MessageType.valueOf(messageParts[0]);
             if (type.equals(MessageType.CHALLENGE_ORCHESTRATOR)) {
                 final Map<String, Object> properties = Message.fromStringToMap(messageParts[1]);

@@ -25,7 +25,7 @@ public class ScanNowMessage extends AbstractMessage {
     public static Optional<ScanNowMessage> parse(String messageAsString) {
         Optional<ScanNowMessage> scanNowMessage = Optional.empty();
         if (messageAsString.contains(":")) {
-            final String[] messageParts = messageAsString.split(":");
+            final String[] messageParts = messageAsString.split(":", 2);
             final MessageType type = MessageType.valueOf(messageParts[0]);
             if (type.equals(MessageType.SCAN_NOW)) {
                 final Map<String, Object> properties = Message.fromStringToMap(messageParts[1]);

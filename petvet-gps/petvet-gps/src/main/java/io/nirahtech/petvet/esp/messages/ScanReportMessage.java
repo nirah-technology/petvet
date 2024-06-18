@@ -33,7 +33,7 @@ public class ScanReportMessage extends AbstractMessage {
     public static Optional<ScanReportMessage> parse(final String messageAsString) {
         Optional<ScanReportMessage> scanReportMessage = Optional.empty();
         if (messageAsString.contains(":")) {
-            final String[] messageParts = messageAsString.split(":");
+            final String[] messageParts = messageAsString.split(":", 2);
             final MessageType type = MessageType.valueOf(messageParts[0]);
             if (type.equals(MessageType.SCAN_REPORT)) {
                 final Map<String, Object> properties = Message.fromStringToMap(messageParts[1]);

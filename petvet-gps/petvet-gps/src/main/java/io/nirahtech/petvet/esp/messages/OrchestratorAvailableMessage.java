@@ -24,12 +24,14 @@ public final class OrchestratorAvailableMessage extends AbstractMessage {
     }
 
     public static Optional<OrchestratorAvailableMessage> parse(String messageAsString) {
+        System.out.println(messageAsString);
         Optional<OrchestratorAvailableMessage> orchestratorAvailableMessage = Optional.empty();
         if (messageAsString.contains(":")) {
-            final String[] messageParts = messageAsString.split(":");
+            final String[] messageParts = messageAsString.split(":", 2);
             final MessageType type = MessageType.valueOf(messageParts[0]);
             if (type.equals(MessageType.ORCHESTRATOR_AVAILABLE)) {
                 final Map<String, Object> properties = Message.fromStringToMap(messageParts[1]);
+                System.out.println(properties);
                 try {
                     OrchestratorAvailableMessage message = new OrchestratorAvailableMessage(
                         UUID.fromString(properties.get(Message.ID_PROPERTY_NAME).toString().strip()),
