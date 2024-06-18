@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -34,7 +32,6 @@ public final class UDPMessageBroker implements MessageBroker {
     }
 
     private final Map<MessageType, Consumer<Message>> messagesHandlers = new HashMap<>();
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private final InetAddress groupAddress;
     private final int port;
@@ -69,8 +66,8 @@ public final class UDPMessageBroker implements MessageBroker {
     @Override
     public void send(final Message message) throws IOException {
         final InetSocketAddress group = new InetSocketAddress(this.groupAddress, this.port);
-        try (MulticastSocket multicastSocket = new MulticastSocket(this.port)) {
-            multicastSocket.joinGroup(group, this.networkInterface);
+        try (MulticastSocket multicastSocketToSendMessage = new MulticastSocket(this.port)) {
+            multicastSocketToSendMessage.joinGroup(group, this.networkInterface);
             final String rowMessage = message.toString();
             final byte[] messageAsBytes = rowMessage.getBytes(StandardCharsets.UTF_8);
             final DatagramPacket datagramPacket = new DatagramPacket(
@@ -78,7 +75,7 @@ public final class UDPMessageBroker implements MessageBroker {
                     0,
                     messageAsBytes.length,
                     group);
-            multicastSocket.send(datagramPacket);
+                    multicastSocketToSendMessage.send(datagramPacket);
         }
     }
 

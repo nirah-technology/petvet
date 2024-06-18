@@ -283,11 +283,13 @@ public class Sketch implements Program {
         });
 
         this.messageBroker.subscribe(MessageType.SCAN_NOW, (message) -> {
+            System.out.println("ok..");
             if (message instanceof ScanNowMessage) {
                 final ScanNowMessage realMessage = (ScanNowMessage) message;
                 final Command command = CommandFactory.createScanNowCommand(this.messageBroker, this.id, this.ip,
                         this.mode.get(), this.scanner);
                 try {
+                    System.out.println("I will scan...");
                     command.execute();
                 } catch (IOException e) {
                     e.printStackTrace();
