@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.nirahtech.petvet.esp.MacAddress;
+import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public final class NmCliCommand implements ScannerSystemCommand {
     private static final String DETECT_OTHERS_WIFI_NETWORKS_COMMAND = "nmcli -t -f BSSID,SSID,SIGNAL device wifi list";

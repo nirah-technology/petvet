@@ -2,16 +2,17 @@ package io.nirahtech.petvet.esp.monitor.ui;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.TableModel;
+import javax.swing.SwingUtilities;
 
-import io.nirahtech.petvet.esp.monitor.messages.Message;
+import io.nirahtech.petvet.esp.monitor.MonitorTask;
+import io.nirahtech.petvet.messaging.messages.Message;
 
 public class ReceivedMessagesPanel extends JPanel {
     
@@ -24,10 +25,14 @@ public class ReceivedMessagesPanel extends JPanel {
     private final JComboBox<String> espModeFilterComboBox;
     private final JComboBox<String> messageTypeFilterComboBox;
 
-    private final TableModel receivedMessagesModel;
+    private final ReceivedMessageTableModel receivedMessagesModel;
     private final JTable receviedMessagesTable;
 
-    public ReceivedMessagesPanel() {
+    private final MonitorTask monitorTask;
+
+    public ReceivedMessagesPanel(final List<Message> receivedMessages, MonitorTask monitorTask) {
+        this.receivedMessages = receivedMessages;
+        this.monitorTask = monitorTask;
         super.setLayout(new BorderLayout());
 
         this.espIdFilterComboBox = new JComboBox<>();
@@ -47,9 +52,14 @@ public class ReceivedMessagesPanel extends JPanel {
 
         this.add(this.filterPanel, BorderLayout.NORTH);
 
-        this.receivedMessages = new ArrayList<>();
         this.receivedMessagesModel = new ReceivedMessageTableModel(this.receivedMessages);
         this.receviedMessagesTable = new JTable(this.receivedMessagesModel);
+
+        this.monitorTask.addOnNewMessageHandler((message) -> {
+            SwingUtilities.invokeLater(() -> {this.receivedMessagesModel.fireTableDataChanged();});
+
+        });
+
         this.add(new JScrollPane(this.receviedMessagesTable), BorderLayout.CENTER);
 
     }

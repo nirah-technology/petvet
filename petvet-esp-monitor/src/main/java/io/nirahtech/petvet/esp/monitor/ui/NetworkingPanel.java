@@ -19,7 +19,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import io.nirahtech.petvet.esp.monitor.brokers.MessageBroker;
+import io.nirahtech.petvet.messaging.brokers.MessageBroker;
 
 public class NetworkingPanel extends JPanel {
     private static final String CONNECT = "Connect";
@@ -130,7 +130,8 @@ public class NetworkingPanel extends JPanel {
                                             .setEnabled(!this.multicastGroupAddressTextField.isEnabled());
                                     this.multicastGroupPortSpinner
                                             .setEnabled(!this.multicastGroupPortSpinner.isEnabled());
-
+                                            JOptionPane.showMessageDialog(this, "Connected to the message broker.", "Connection Success",
+                                            JOptionPane.INFORMATION_MESSAGE);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                     JOptionPane.showMessageDialog(this, e.getMessage(), "Connection Error",

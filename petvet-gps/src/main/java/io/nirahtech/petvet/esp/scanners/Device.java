@@ -1,6 +1,6 @@
 package io.nirahtech.petvet.esp.scanners;
 
-import io.nirahtech.petvet.esp.MacAddress;
+import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public record Device(
     MacAddress bssid,

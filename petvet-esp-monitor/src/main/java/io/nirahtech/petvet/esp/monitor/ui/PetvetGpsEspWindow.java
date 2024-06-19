@@ -2,33 +2,33 @@ package io.nirahtech.petvet.esp.monitor.ui;
 
 import java.awt.BorderLayout;
 import java.net.InetAddress;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
+import java.util.SortedSet;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
-import io.nirahtech.petvet.esp.monitor.ESP32;
-import io.nirahtech.petvet.esp.monitor.IPV4Address;
-import io.nirahtech.petvet.esp.monitor.MacAddress;
-import io.nirahtech.petvet.esp.monitor.Mode;
-import io.nirahtech.petvet.esp.monitor.brokers.MessageBroker;
+import io.nirahtech.petvet.esp.monitor.Device;
+import io.nirahtech.petvet.esp.monitor.ElectronicCard;
+import io.nirahtech.petvet.esp.monitor.HeartBeat;
+import io.nirahtech.petvet.esp.monitor.MonitorTask;
+import io.nirahtech.petvet.esp.monitor.ScanReport;
+import io.nirahtech.petvet.messaging.brokers.MessageBroker;
+import io.nirahtech.petvet.messaging.messages.Message;
+import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public class PetvetGpsEspWindow extends JFrame {
 
-    private final Set<ESP32> esps;
-
-    // private final Set<ScanReport> scanReports = new HashSet<>();
-    // private ESP32 selectedESP = null;
-
-    // private AtomicBoolean mustDisplayEspPanel = new AtomicBoolean(true);
-
-    // private final JList<ESP32> espList;
-    // private final JList<Device> devicesList;
-
-    // private final JList<ScanReport> scanReportsList;
+    private final List<Message> receivedMessages;
+    private final Map<MacAddress, Set<HeartBeat>> heartBeats;
+    private final SortedSet<ElectronicCard> esps;
+    private final SortedSet<ScanReport> scanReports;
+    private final SortedSet<Device> detectedDevices;
+    private final MonitorTask monitorTask;
+    
     private final MessageBroker messageBroker;
 
     private final NetworkingPanel networkingPanel;
@@ -36,104 +36,38 @@ public class PetvetGpsEspWindow extends JFrame {
     private final JTabbedPane tabbedPane;
 
     private final ReceivedMessagesPanel receivedMessagesPanel;
-    private final ESPInventoryPanel espInventoryPanel;
-
-    // private final JPanel rootPanel;
-    // private final JPanel espPanel;
-    // private final JPanel devicesPanel;
+    private final ElectronicCardsInventoryPanel espInventoryPanel;
 
 
-    public PetvetGpsEspWindow(final MessageBroker messageBroker, InetAddress multicastGroup, int multicastPort) {
+    public PetvetGpsEspWindow(final MessageBroker messageBroker, final InetAddress multicastGroup, final int multicastPort, final List<Message> receivedMessages, final SortedSet<ElectronicCard> esps, final SortedSet<ScanReport> scanReports, final SortedSet<Device> detectedDevices, final Map<MacAddress, Set<HeartBeat>> heartBeats, final MonitorTask monitorTask) {
         super("PETVET ESP MONITOR");
         this.messageBroker = messageBroker;
+        this.receivedMessages = receivedMessages;
+        this.esps = esps;
+        this.scanReports = scanReports;
+        this.detectedDevices = detectedDevices;
+        this.heartBeats = heartBeats;
+        this.monitorTask = monitorTask;
+
         this.setSize(800, 500);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        this.esps = new HashSet<>();
-        // this.esps.add(new ESP32(UUID.randomUUID(), MacAddress.of("11:11:11:11:11:11"), IPV4Address.of("127.0.0.1"), Mode.NATIVE_NODE));
-
-        // final DefaultListModel<ESP32> espListModel = new DefaultListModel<>();
-        // espListModel.addAll(esps);
-        // this.espList = new JList<>(espListModel);
-        // this.espList.setCellRenderer(new ESP32ListCellRenderer());
         
-        // final DefaultListModel<Device> devicesListModel = new DefaultListModel<>();
-        // this.devicesList = new JList<>(devicesListModel);
-        // this.devicesList.setCellRenderer(new ESP32ListCellRenderer());
-
-        // final DefaultListModel<ScanReport> scanReportsListModel = new DefaultListModel<>();
-        // this.scanReportsList = new JList<>(scanReportsListModel);
-        // this.scanReportsList.setCellRenderer(new ESP32ListCellRenderer());
-
         this.networkingPanel = new NetworkingPanel(this.messageBroker, multicastGroup, multicastPort);
         this.add(this.networkingPanel, BorderLayout.NORTH);
 
-        this.receivedMessagesPanel = new ReceivedMessagesPanel();
-        this.espInventoryPanel = new ESPInventoryPanel(this.esps);
+        this.receivedMessagesPanel = new ReceivedMessagesPanel(this.receivedMessages, this.monitorTask);
+        this.espInventoryPanel = new ElectronicCardsInventoryPanel(this.esps, this.heartBeats, this.monitorTask);
 
         this.tabbedPane = new JTabbedPane();
-        // tabs.setPreferredSize(new Dimension(260, 0));
-        // tabs.setTabPlacement(JTabbedPane.TOP);
-
+        this.tabbedPane.setTabPlacement(JTabbedPane.TOP);
         this.tabbedPane.addTab("Messages", this.receivedMessagesPanel);
-        this.add(this.tabbedPane, BorderLayout.CENTER);
-        this.tabbedPane.addTab("Cluter des ESP", new JScrollPane(this.espInventoryPanel));
+        this.tabbedPane.addTab("Cluster des ESP", new JScrollPane(this.espInventoryPanel));
         this.tabbedPane.addTab("Rapports de Scan", new JScrollPane());
         this.tabbedPane.addTab("Animaux Detectés", new JScrollPane());
-        // this.tabbedPane.addTab("Animaux", new JScrollPane(this.devicesList));
-
-        // tabs.addChangeListener(new ChangeListener() {
-        //     @Override
-        //     public void stateChanged(ChangeEvent e) {
-        //         JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
-        //         int index = sourceTabbedPane.getSelectedIndex();
-        //         if (index == 0) {
-        //             rootPanel.remove(devicesPanel);
-        //             rootPanel.revalidate();
-        //             rootPanel.repaint();
-        //             rootPanel.add(espPanel);
-        //             rootPanel.revalidate();
-        //             rootPanel.repaint();
-        //         } else {
-        //             rootPanel.remove(espPanel);
-        //             rootPanel.revalidate();
-        //             rootPanel.repaint();
-        //             rootPanel.add(devicesPanel);
-        //             rootPanel.revalidate();
-        //             rootPanel.repaint();
-        //         }
-        //     }
-        // });
-
-        // this.rootPanel = new JPanel(new BorderLayout());
-
-        // this.espPanel = this.createEspMainPanel(); 
-        // this.devicesPanel = this.createDevicesMainPanel(); 
-
-        // this.rootPanel.add(this.espPanel, BorderLayout.CENTER);
-
-        // JScrollPane scrollEditor = new JScrollPane(this.rootPanel);
-
-        // JSplitPane splitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tabs, scrollEditor);
-
-        // JPanel contentPane = (JPanel) getContentPane();
-        // contentPane.add(splitter, BorderLayout.CENTER);
-
-        this.esps.add(new ESP32(UUID.randomUUID(), MacAddress.of("AA:AA:AA:AA:AA:AA"), IPV4Address.of("127.0.0.1"), Mode.ORCHESTRATOR_NODE));
+        this.add(this.tabbedPane, BorderLayout.CENTER);
 
     }
-
-    // private final JPanel createEspMainPanel() {
-    //     JPanel panel = new JPanel(new BorderLayout());
-    //     panel.add(this.scanReportsList, BorderLayout.WEST);
-    //     return panel;
-    // }
-
-
-    // private final JPanel createDevicesMainPanel() {
-    //     JPanel panel = new JPanel(new BorderLayout());
-    //     return panel;
-    // }
 
 }

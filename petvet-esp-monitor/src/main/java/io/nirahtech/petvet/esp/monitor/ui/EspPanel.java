@@ -9,12 +9,12 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import io.nirahtech.petvet.esp.monitor.ESP32;
+import io.nirahtech.petvet.esp.monitor.ElectronicCard;
 
 public final class EspPanel extends JPanel {
-    private final ESP32 esp;
+    private final ElectronicCard esp;
 
-    public EspPanel(final ESP32 esp) {
+    public EspPanel(final ElectronicCard esp) {
         this.esp = esp;
         this.setLayout(new GridBagLayout()); 
         

@@ -1,5 +1,7 @@
 package io.nirahtech.petvet.esp.monitor;
 
+import io.nirahtech.petvet.messaging.util.MacAddress;
+
 public final class Device {
     private final MacAddress mac;
     private final IPV4Address ip;

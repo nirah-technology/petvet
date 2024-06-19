@@ -7,43 +7,54 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-import io.nirahtech.petvet.esp.Mode;
-import io.nirahtech.petvet.esp.brokers.MessagePublisher;
 import io.nirahtech.petvet.esp.scanners.Scanner;
+import io.nirahtech.petvet.messaging.brokers.MessagePublisher;
+import io.nirahtech.petvet.messaging.util.EmitterMode;
+import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public final class CommandFactory {
     private CommandFactory() {
 
     }
 
-    public static Command createScanNowCommand(MessagePublisher messageSender, UUID id, InetAddress emitter, Mode mode, Scanner scanner) {
+    public static Command createScanNowCommand(MessagePublisher messageSender, UUID id, MacAddress mac, InetAddress ip, EmitterMode mode, Scanner scanner) {
         Objects.requireNonNull(messageSender, "Multicast Group is required to create a new command.");
         Objects.requireNonNull(messageSender, "Multicast Port is required to create a new command.");
-        return new ScanNowCommand(messageSender, id, emitter, mode, scanner);
+        return new ScanNowCommand(messageSender, id, mac, ip, mode, scanner);
     }
 
 
-    public static Command createCheckIfOrchestratorIsAvailableCommand(MessagePublisher messageSender, UUID id, InetAddress emitter, Mode mode) {
+    public static Command createCheckIfOrchestratorIsAvailableCommand(MessagePublisher messageSender, UUID id, MacAddress mac, InetAddress ip, EmitterMode mode) {
         Objects.requireNonNull(messageSender, "Multicast Group is required to create a new command.");
         Objects.requireNonNull(messageSender, "Multicast Port is required to create a new command.");
-        Objects.requireNonNull(mode, "Mode is required to create a new command.");
-        return new CheckIfOrchestratorIsAvailableCommand(messageSender, id, emitter, mode);
+        Objects.requireNonNull(mode, "mode is required to create a new command.");
+        return new CheckIfOrchestratorIsAvailableCommand(messageSender, id, mac, ip, mode);
     }
     
-    public static Command createChallengeToElectOrchestratorCommand(MessagePublisher messageSender, UUID id, InetAddress emitter, final AtomicLong uptime) {
+    public static Command createChallengeToElectOrchestratorCommand(MessagePublisher messageSender, UUID id, MacAddress mac, InetAddress ip, EmitterMode mode, final AtomicLong uptime) {
         Objects.requireNonNull(messageSender, "Multicast Group is required to create a new command.");
         Objects.requireNonNull(messageSender, "Multicast Port is required to create a new command.");
         Objects.requireNonNull(messageSender, "Local IPV4 is required to create a new command.");
         Objects.requireNonNull(uptime, "Uptime is required to create a new command.");
-        return new ChallengeToElectOrchestratorCommand(messageSender, id, emitter, uptime);
+        return new ChallengeToElectOrchestratorCommand(messageSender, id, mac, ip, mode, uptime);
     }
     
-    public static Command createAnalyseVotesToElectOrchestratorCommand(MessagePublisher messageSender, UUID id, InetAddress emitter, final AtomicReference<Mode> mode, final long uptime, final Map.Entry<Byte, Long> candidacy) {
+    public static Command createAnalyseVotesToElectOrchestratorCommand(MessagePublisher messageSender, UUID id, MacAddress mac, InetAddress ip, final AtomicReference<EmitterMode> mode, final long uptime, final Map.Entry<Byte, Long> candidacy) {
         Objects.requireNonNull(messageSender, "Multicast Group is required to create a new command.");
         Objects.requireNonNull(messageSender, "Multicast Port is required to create a new command.");
-        Objects.requireNonNull(messageSender, "Mode is required to create a new command.");
+        Objects.requireNonNull(messageSender, "mode is required to create a new command.");
         Objects.requireNonNull(messageSender, "Votes are required to create a new command.");
-        return new AnalyseVotesToElectOrchestratorCommand(messageSender, id, emitter, mode, uptime, candidacy);
+        return new AnalyseVotesToElectOrchestratorCommand(messageSender, id, mac, ip, mode, uptime, candidacy);
     }
+
+
+    public static Command createHeartBeatCommand(MessagePublisher messageSender, UUID id, MacAddress mac, InetAddress ip, final EmitterMode mode, final long uptime) {
+        Objects.requireNonNull(messageSender, "Multicast Group is required to create a new command.");
+        Objects.requireNonNull(messageSender, "Multicast Port is required to create a new command.");
+        Objects.requireNonNull(messageSender, "mode is required to create a new command.");
+        Objects.requireNonNull(messageSender, "Votes are required to create a new command.");
+        return new HeartBeatCommand(messageSender, id, mac, ip, mode, uptime);
+    }
+
 
 }

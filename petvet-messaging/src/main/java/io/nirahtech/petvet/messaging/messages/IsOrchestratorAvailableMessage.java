@@ -1,0 +1,60 @@
+package io.nirahtech.petvet.messaging.messages;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import io.nirahtech.petvet.messaging.util.EmitterMode;
+import io.nirahtech.petvet.messaging.util.MacAddress;
+
+public final class IsOrchestratorAvailableMessage extends AbstractMessage {
+    private IsOrchestratorAvailableMessage(
+        final UUID emitterId, 
+        final MacAddress emitterMAC,
+        final InetAddress emitterIP, 
+        final EmitterMode emitterMode, 
+        final LocalDateTime sentAt
+    ) {
+        super(emitterId, emitterMAC, emitterIP, emitterMode, MessageType.IS_ORCHESTRATOR_AVAILABLE, sentAt);
+    }
+
+    public static IsOrchestratorAvailableMessage create(final UUID emitterId, final MacAddress emitterMAC, final InetAddress emitterIP, final EmitterMode emitterMode) {
+        return new IsOrchestratorAvailableMessage(emitterId, emitterMAC, emitterIP, emitterMode, LocalDateTime.now());
+    }
+
+    public static Optional<IsOrchestratorAvailableMessage> parse(String messageAsString) {
+        Optional<IsOrchestratorAvailableMessage> isOrchestratorAvailableMessage = Optional.empty();
+        if (messageAsString.contains(":")) {
+            final String[] messageParts = messageAsString.split(":", 2);
+            final MessageType type = MessageType.valueOf(messageParts[0]);
+            if (type.equals(MessageType.IS_ORCHESTRATOR_AVAILABLE)) {
+                final Map<String, Object> properties = Message.fromStringToMap(messageParts[1]);
+                try {
+                    final UUID id = UUID.fromString(sanitize(properties.get(Message.EMITTER_ID_PROPERTY_NAME).toString()).strip());
+                    final InetAddress ip = InetAddress.getByName(sanitize(properties.get(Message.EMITTER_IP_PROPERTY_NAME).toString()).strip());
+                    final MacAddress mac = MacAddress.of(sanitize(properties.get(Message.EMITTER_MAC_PROPERTY_NAME).toString()).strip());
+                    final EmitterMode mode = EmitterMode.valueOf(sanitize(properties.get(Message.EMITTER_MODE_PROPERTY_NAME).toString()).strip());
+                    final Instant instant = Instant.ofEpochMilli(Long.parseLong(sanitize(properties.get(Message.SENDED_AT_PROPERTY_NAME).toString()).strip()));
+                    final LocalDateTime sendedAt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+                    final IsOrchestratorAvailableMessage message = new IsOrchestratorAvailableMessage(id, mac, ip, mode, sendedAt);
+                        isOrchestratorAvailableMessage = Optional.of(message);
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return isOrchestratorAvailableMessage;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder messageBuilder = new StringBuilder()
+                .append(super.toString());
+        return messageBuilder.toString();
+    }
+}

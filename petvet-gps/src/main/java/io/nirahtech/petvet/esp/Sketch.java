@@ -15,29 +15,29 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-import io.nirahtech.petvet.esp.brokers.MessageBroker;
-import io.nirahtech.petvet.esp.brokers.UDPMessageBroker;
 import io.nirahtech.petvet.esp.commands.Command;
 import io.nirahtech.petvet.esp.commands.CommandFactory;
-import io.nirahtech.petvet.esp.messages.ChallengeOrchestratorMessage;
-import io.nirahtech.petvet.esp.messages.IsOrchestratorAvailableMessage;
-import io.nirahtech.petvet.esp.messages.Message;
-import io.nirahtech.petvet.esp.messages.MessageType;
-import io.nirahtech.petvet.esp.messages.OrchestratorAvailableMessage;
-import io.nirahtech.petvet.esp.messages.ScanNowMessage;
-import io.nirahtech.petvet.esp.messages.VoteMessage;
 import io.nirahtech.petvet.esp.scanners.Scanner;
 import io.nirahtech.petvet.esp.scanners.WifiScanner;
+import io.nirahtech.petvet.messaging.brokers.MessageBroker;
+import io.nirahtech.petvet.messaging.brokers.UDPMessageBroker;
+import io.nirahtech.petvet.messaging.messages.ChallengeOrchestratorMessage;
+import io.nirahtech.petvet.messaging.messages.IsOrchestratorAvailableMessage;
+import io.nirahtech.petvet.messaging.messages.MessageType;
+import io.nirahtech.petvet.messaging.messages.OrchestratorAvailableMessage;
+import io.nirahtech.petvet.messaging.messages.ScanNowMessage;
+import io.nirahtech.petvet.messaging.messages.VoteMessage;
+import io.nirahtech.petvet.messaging.util.EmitterMode;
+import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public class Sketch implements Program {
     private static final byte[] NETWORK_MASK = { (byte) 192, (byte) 168 };
 
     private final UUID id = UUID.randomUUID();
-    private AtomicReference<Mode> mode = new AtomicReference<>(Mode.NATIVE_NODE);
+    private AtomicReference<EmitterMode> mode = new AtomicReference<>(EmitterMode.NATIVE_NODE);
 
     private final Scanner scanner;
     private boolean isRunning = false;
@@ -45,18 +45,28 @@ public class Sketch implements Program {
 
     private NetworkInterface networkInterface;
     private InetAddress ip;
+    private MacAddress mac;
 
     private LocalDateTime lastScanExecutionOrder = LocalDateTime.now();
     private LocalDateTime lastSendedOrchestratorAvailabilityRequest = LocalDateTime.now();
     private LocalDateTime lastReceivedOrchestratorAvailabilityResponse = LocalDateTime.now();
+    private LocalDateTime lastReceivedScanExecutionOrder = LocalDateTime.now();
+    private LocalDateTime lastSendedHeartBeat = LocalDateTime.now();
     private Duration intervalBetweenEachScans = Duration.ofSeconds(10);
     private Duration intervalBetweenEachOrchestratorAvailabilityRequests = Duration.ofSeconds(5);
+    private Duration intervalBetweenEachHeartBeat = Duration.ofSeconds(2);
 
     private final MessageBroker messageBroker;
 
     public Sketch(final InetAddress group, final int port) {
         this.retrieveIpAddress();
-        this.messageBroker = UDPMessageBroker.getOrCreate(this.networkInterface, group, port);
+        this.messageBroker = UDPMessageBroker.newInstance();
+        try {
+            this.messageBroker.connect(this.networkInterface, group, port);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         this.scanner = new WifiScanner();
     }
 
@@ -96,6 +106,7 @@ public class Sketch implements Program {
                         if ((address[0] == NETWORK_MASK[0]) && (address[1] == NETWORK_MASK[1])) {
                             this.networkInterface = networkInterface;
                             this.ip = (Inet4Address) ipAddress;
+                            this.mac  = MacAddress.of(networkInterface.getHardwareAddress());
                             break NICS;
                         }
                     }
@@ -129,8 +140,9 @@ public class Sketch implements Program {
     private final void sendScanNowMessageIfRequired() {
         if (Objects.isNull(this.lastScanExecutionOrder)) {
             System.out.println("Scan is required!");
-            final ScanNowMessage message = ScanNowMessage.create(this.id, this.ip,
-                    this.mode.get().equals(Mode.ORCHESTRATOR_NODE));
+            final ScanNowMessage message = ScanNowMessage.create(
+                this.id, this.mac, this.ip, this.mode.get() 
+            );
             try {
                 this.messageBroker.send(message);
             } catch (IOException e) {
@@ -141,8 +153,7 @@ public class Sketch implements Program {
             if (LocalDateTime.now().isAfter(this.lastScanExecutionOrder
                     .plus(this.intervalBetweenEachScans.toMillis(), ChronoUnit.MILLIS))) {
                 System.out.println("Another Scan is required!");
-                final ScanNowMessage message = ScanNowMessage.create(this.id, this.ip,
-                        this.mode.get().equals(Mode.ORCHESTRATOR_NODE));
+                final ScanNowMessage message = ScanNowMessage.create(id, mac, ip, mode.get());
                 try {
                     this.messageBroker.send(message);
                 } catch (IOException e) {
@@ -178,6 +189,48 @@ public class Sketch implements Program {
         this.triggerNativeTask();
     }
 
+    private final void requestChallenge() {
+        ChallengeOrchestratorMessage message = ChallengeOrchestratorMessage.create(id, mac, ip, this.mode.get());
+        try {
+            this.messageBroker.send(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.lastReceivedOrchestratorAvailabilityResponse = LocalDateTime.now();
+        this.lastReceivedScanExecutionOrder = this.lastReceivedOrchestratorAvailabilityResponse;
+    }
+
+    private final boolean isScanRequestInLate() {
+        if (Objects.isNull(this.lastReceivedScanExecutionOrder)) {
+            return false;
+        }
+        return LocalDateTime.now().isAfter(this.lastReceivedScanExecutionOrder.plus(this.intervalBetweenEachScans));
+    }
+
+    private final boolean isOrchestratorAvailableResponseInLate() {
+        if (Objects.isNull(this.lastReceivedOrchestratorAvailabilityResponse)) {
+            return false;
+        }
+        return LocalDateTime.now().isAfter(this.lastReceivedOrchestratorAvailabilityResponse.plus(this.intervalBetweenEachOrchestratorAvailabilityRequests));
+    }
+
+    private final void sendHeartBeat() {
+        final Command heartBeat = CommandFactory.createHeartBeatCommand(messageBroker, id, mac, ip, this.mode.get(), this.uptime.get());
+        try {
+            heartBeat.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.lastSendedHeartBeat = LocalDateTime.now();
+    }
+
+    private final boolean isHeartBeatInLate() {
+        if (Objects.isNull(this.lastSendedHeartBeat)) {
+            return false;
+        }
+        return LocalDateTime.now().isAfter(this.lastSendedHeartBeat.plus(this.intervalBetweenEachHeartBeat));
+    }
+
     /**
      * Executes the native task operations.
      * <p>
@@ -202,18 +255,20 @@ public class Sketch implements Program {
             e.printStackTrace();
         }
 
-        if (this.lastSendedOrchestratorAvailabilityRequest.isBefore(LocalDateTime.now().minus(this.intervalBetweenEachOrchestratorAvailabilityRequests.toMillis(), ChronoUnit.MILLIS))) {
+        if (this.lastSendedOrchestratorAvailabilityRequest.isBefore(LocalDateTime.now().minus(this.intervalBetweenEachOrchestratorAvailabilityRequests))) {
             this.askIfOrchestratorIsAvailable();
         }
 
-        if (this.lastReceivedOrchestratorAvailabilityResponse.isBefore(LocalDateTime.now().minus(20, ChronoUnit.SECONDS))) {
-            this.mode.set(Mode.ORCHESTRATOR_NODE);
-            OrchestratorAvailableMessage message = OrchestratorAvailableMessage.create(this.id, this.ip, this.mode.get().equals(Mode.ORCHESTRATOR_NODE));
-            try {
-                this.messageBroker.send(message);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (this.isScanRequestInLate()) {
+            this.requestChallenge();
+        }
+
+        if (this.isOrchestratorAvailableResponseInLate()) {
+
+        }
+
+        if (this.isHeartBeatInLate()) {
+            this.sendHeartBeat();
         }
     }
 
@@ -232,8 +287,7 @@ public class Sketch implements Program {
      * </p>
      */
     private final void askIfOrchestratorIsAvailable() {
-        final IsOrchestratorAvailableMessage message = IsOrchestratorAvailableMessage.create(this.id, this.ip,
-                this.mode.get().equals(Mode.ORCHESTRATOR_NODE));
+        final IsOrchestratorAvailableMessage message = IsOrchestratorAvailableMessage.create(id, mac, ip, mode.get());
         try {
             this.messageBroker.send(message);
         } catch (IOException e) {
@@ -262,7 +316,7 @@ public class Sketch implements Program {
             if (message instanceof IsOrchestratorAvailableMessage) {
                 final IsOrchestratorAvailableMessage realMessage = (IsOrchestratorAvailableMessage) message;
                 final Command command = CommandFactory.createCheckIfOrchestratorIsAvailableCommand(this.messageBroker,
-                        this.id, this.ip, this.mode.get());
+                id, mac, ip, mode.get());
                 try {
                     command.execute();
                 } catch (IOException e) {
@@ -276,8 +330,7 @@ public class Sketch implements Program {
                 final ChallengeOrchestratorMessage realMessage = (ChallengeOrchestratorMessage) message;
                 final RuntimeMXBean runtimeMX = ManagementFactory.getRuntimeMXBean();
                 this.uptime.set(runtimeMX.getUptime());
-                final Command command = CommandFactory.createChallengeToElectOrchestratorCommand(messageBroker, id,
-                        this.ip, this.uptime);
+                final Command command = CommandFactory.createChallengeToElectOrchestratorCommand(messageBroker, id, mac, ip, mode.get(), this.uptime);
                 try {
                     command.execute();
                 } catch (IOException e) {
@@ -288,9 +341,9 @@ public class Sketch implements Program {
 
         this.messageBroker.subscribe(MessageType.SCAN_NOW, (message) -> {
             if (message instanceof ScanNowMessage) {
+                this.lastReceivedScanExecutionOrder = LocalDateTime.now();
                 final ScanNowMessage realMessage = (ScanNowMessage) message;
-                final Command command = CommandFactory.createScanNowCommand(this.messageBroker, this.id, this.ip,
-                        this.mode.get(), this.scanner);
+                final Command command = CommandFactory.createScanNowCommand(this.messageBroker, id, mac, ip, mode.get(), this.scanner);
                 try {
                     command.execute();
                 } catch (IOException e) {
@@ -303,8 +356,7 @@ public class Sketch implements Program {
             if (message instanceof VoteMessage) {
                 final VoteMessage realMessage = (VoteMessage) message;
                 final Command command = CommandFactory.createAnalyseVotesToElectOrchestratorCommand(this.messageBroker,
-                        this.id, this.ip,
-                        this.mode, this.uptime.get(), Map.entry(realMessage.getLastIpByte(), realMessage.getUptime()));
+                id, mac, ip, mode, this.uptime.get(), Map.entry(realMessage.getLastIpByte(), realMessage.getUptime()));
                 try {
                     command.execute();
                 } catch (IOException e) {
@@ -317,12 +369,11 @@ public class Sketch implements Program {
             if (message instanceof OrchestratorAvailableMessage) {
                 final OrchestratorAvailableMessage realMessage = (OrchestratorAvailableMessage) message;
                 lastReceivedOrchestratorAvailabilityResponse = LocalDateTime.now();
-                if (realMessage.getEmitter().equals(this.ip) && realMessage.getId().equals(this.id)) {
-                    this.mode.set(Mode.ORCHESTRATOR_NODE);
+                if (realMessage.getEmitterIP().equals(this.ip) && realMessage.getEmitterID().equals(this.id)) {
+                    this.mode.set(EmitterMode.ORCHESTRATOR_NODE);
                 } else {
-                    this.mode.set(Mode.NATIVE_NODE);
+                    this.mode.set(EmitterMode.NATIVE_NODE);
                 }
-                System.out.println("Switching to: " + this.mode.get().name());
             }
         });
 

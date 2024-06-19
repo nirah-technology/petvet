@@ -2,37 +2,39 @@ package io.nirahtech.petvet.esp.commands;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-import io.nirahtech.petvet.esp.Mode;
-import io.nirahtech.petvet.esp.brokers.MessagePublisher;
-import io.nirahtech.petvet.esp.messages.ScanReportMessage;
-import io.nirahtech.petvet.esp.scanners.Device;
 import io.nirahtech.petvet.esp.scanners.Scanner;
+import io.nirahtech.petvet.messaging.brokers.MessagePublisher;
+import io.nirahtech.petvet.messaging.messages.ScanReportMessage;
+import io.nirahtech.petvet.messaging.util.EmitterMode;
+import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public final class ScanNowCommand extends AbstractCommand {
 
 
-    private final InetAddress ipv4Addess;
+    private final InetAddress ip;
     private final MessagePublisher messageSender;
-    private final Mode mode;
+    private final EmitterMode mode;
+    private final MacAddress mac;
     private final UUID id;
     private final Scanner scanner;
 
-    ScanNowCommand(final MessagePublisher messageSender, final UUID id, InetAddress emitter, final Mode mode, final Scanner scanner) {
+    ScanNowCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, InetAddress ip, final EmitterMode mode, final Scanner scanner) {
         this.id = id;
         this.messageSender = messageSender;
-        this.ipv4Addess = emitter;
+        this.ip = ip;
+        this.mac = mac;
         this.mode = mode;
         this.scanner = scanner;
     }
 
-    private void sendScanReport(final Collection<Device> detectedDevices) throws IOException {
-        final ScanReportMessage message = ScanReportMessage.create(this.id, this.ipv4Addess, this.mode.equals(Mode.ORCHESTRATOR_NODE), detectedDevices);
-        System.out.println(message);
+    private void sendScanReport(final Map<MacAddress, Float> detectedDevices) throws IOException {
+        final ScanReportMessage message = ScanReportMessage.create(
+            id, mac, ip, mode, detectedDevices
+        );
         this.messageSender.send(message);
     }
     
@@ -46,9 +48,9 @@ public final class ScanNowCommand extends AbstractCommand {
     @Override
     public void execute() throws IOException {
         super.execute();
-        final Set<Device> detectedDevicesWithDBs = new HashSet<>();    
+        final Map<MacAddress, Float> detectedDevicesWithDBs = new HashMap<>();    
         this.scanner.scan().forEach(device -> {
-            detectedDevicesWithDBs.add(device);
+            detectedDevicesWithDBs.put(device.bssid(), device.signalLevel());
         });
         this.sendScanReport(detectedDevicesWithDBs);
     }

@@ -4,12 +4,11 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import io.nirahtech.petvet.esp.monitor.messages.Message;
+import io.nirahtech.petvet.messaging.messages.Message;
 
 public class ReceivedMessageTableModel extends AbstractTableModel {
 
-    private final String[] columnsNames = { "ESP Emitter ID", "ESP Emitter IP", "Sended At", "ESP Mode", "Message Type",
-            "Data" };
+    private final String[] columnsNames = { "Emitter ID", "MAC",  "IP", "Sended At", "Mode", "Message Type", "Data" };
     private final List<Message> receivedMessages;
 
     public ReceivedMessageTableModel(final List<Message> receivedMessages) {
@@ -36,16 +35,18 @@ public class ReceivedMessageTableModel extends AbstractTableModel {
         Message message = this.receivedMessages.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return message.getId();
-            case 1:
-                return message.getEmitter();
+                return message.getEmitterID();
+                case 1:
+                    return message.getEmitterMAC();
             case 2:
-                return message.sentAt();
+                return message.getEmitterIP();
             case 3:
-                return message.isOrchestrator();
+                return message.getSentedAt();
             case 4:
-                return message.getType();
+                return message.getEmitterMode();
             case 5:
+                return message.getType();
+            case 6:
                 return message.toString();
             default:
                 return null;

@@ -4,26 +4,31 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.UUID;
 
-import io.nirahtech.petvet.esp.Mode;
-import io.nirahtech.petvet.esp.brokers.MessagePublisher;
-import io.nirahtech.petvet.esp.messages.OrchestratorAvailableMessage;
+import io.nirahtech.petvet.messaging.brokers.MessagePublisher;
+import io.nirahtech.petvet.messaging.messages.OrchestratorAvailableMessage;
+import io.nirahtech.petvet.messaging.util.EmitterMode;
+import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public final class CheckIfOrchestratorIsAvailableCommand extends AbstractCommand {
 
-    private final Mode mode;
-    private final InetAddress ipv4Addess;
+    private final EmitterMode mode;
+    private final InetAddress ip;
+    private final MacAddress mac;
     private final MessagePublisher messageSender;
     private final UUID id;
 
-    CheckIfOrchestratorIsAvailableCommand(final MessagePublisher messageSender, final UUID id, InetAddress emitter, final Mode mode) {
+    CheckIfOrchestratorIsAvailableCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, InetAddress ip, final EmitterMode mode) {
         this.mode = mode;
         this.id = id;
+        this.mac = mac;
         this.messageSender = messageSender;
-        this.ipv4Addess = emitter;
+        this.ip = ip;
     }
 
     private final void notifyThatOrchestratorIsAvailable() throws IOException {
-        final OrchestratorAvailableMessage message = OrchestratorAvailableMessage.create(this.id, this.ipv4Addess, this.mode.equals(Mode.ORCHESTRATOR_NODE));
+        final OrchestratorAvailableMessage message = OrchestratorAvailableMessage.create(
+            id, mac, ip, mode
+        );
         this.messageSender.send(message);
     }
 
@@ -35,7 +40,7 @@ public final class CheckIfOrchestratorIsAvailableCommand extends AbstractCommand
     @Override
     public void execute() throws IOException {
         super.execute();
-        if (this.mode == Mode.ORCHESTRATOR_NODE) {
+        if (this.mode.isOrchestratorMode()) {
             this.notifyThatOrchestratorIsAvailable();
         }
     }
