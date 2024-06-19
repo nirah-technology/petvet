@@ -48,7 +48,7 @@ public final class CommandFactory {
     }
 
 
-    public static Command createHeartBeatCommand(MessagePublisher messageSender, UUID id, MacAddress mac, InetAddress ip, final EmitterMode mode, final long uptime) {
+    public static Command createHeartBeatCommand(MessagePublisher messageSender, UUID id, MacAddress mac, InetAddress ip, final EmitterMode mode, final AtomicLong uptime) {
         Objects.requireNonNull(messageSender, "Multicast Group is required to create a new command.");
         Objects.requireNonNull(messageSender, "Multicast Port is required to create a new command.");
         Objects.requireNonNull(messageSender, "mode is required to create a new command.");

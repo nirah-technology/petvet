@@ -7,12 +7,12 @@ import javax.swing.table.AbstractTableModel;
 
 import io.nirahtech.petvet.esp.monitor.HeartBeat;
 
-public class HistoryDetailTableModel extends AbstractTableModel {
+public class HeartBeatHistoryTableModel extends AbstractTableModel {
 
     private final String[] columnsNames = { "Date/Time", "Address IPv4", "EmitterMode", "Uptime", "Température (°C)", "Consomation", "Localisation" };
     private Collection<HeartBeat> heartBeats;
 
-    public HistoryDetailTableModel() {
+    public HeartBeatHistoryTableModel() {
         this.heartBeats = new ArrayList<>();
     }
 
@@ -43,17 +43,17 @@ public class HistoryDetailTableModel extends AbstractTableModel {
             case 0:
             return heartBeat.dateTime();
             case 1:
-            return "";
+            return heartBeat.ip();
             case 2:
-            return "";
+            return heartBeat.mode();
             case 3:
-            return "";
+            return heartBeat.uptime();
             case 4:
-            return "";
+            return heartBeat.temperature();
             case 5:
-            return "";
+            return heartBeat.consumption();
             case 6:
-            return "";
+            return heartBeat.location();
             default:
                 return null;
         }

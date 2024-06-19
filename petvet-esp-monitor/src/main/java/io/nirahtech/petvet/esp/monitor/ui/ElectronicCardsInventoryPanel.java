@@ -35,7 +35,7 @@ public final class ElectronicCardsInventoryPanel extends JPanel {
     private final ElectronicCardTableModel electronicalCardTableModel;
     private final JTable espsInventoryTable;
 
-    private final HistoryDetailTableModel historyDetailTableModel;
+    private final HeartBeatHistoryTableModel historyDetailTableModel;
     private final JTable historyDetailTable;
     private final JPanel detailsHistoryPanel;
 
@@ -51,10 +51,11 @@ public final class ElectronicCardsInventoryPanel extends JPanel {
         this.inventoryPanel = new JPanel(new BorderLayout());
         this.electronicalCardTableModel = new ElectronicCardTableModel(this.esps);
         this.espsInventoryTable = new JTable(this.electronicalCardTableModel);
+        this.espsInventoryTable.setDefaultRenderer(Object.class, new ElectronicCardTableCellRenderer());
         this.inventoryPanel.add(new JScrollPane(this.espsInventoryTable), BorderLayout.CENTER);
 
         this.detailsHistoryPanel = new JPanel(new BorderLayout());
-        this.historyDetailTableModel = new HistoryDetailTableModel();
+        this.historyDetailTableModel = new HeartBeatHistoryTableModel();
         this.historyDetailTable = new JTable(this.historyDetailTableModel);
         this.detailsHistoryPanel.add(new JScrollPane(this.historyDetailTable), BorderLayout.CENTER);
 

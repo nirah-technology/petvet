@@ -47,7 +47,7 @@ public class Sketch implements Program {
     private InetAddress ip;
     private MacAddress mac;
 
-    private LocalDateTime lastScanExecutionOrder = LocalDateTime.now();
+    private LocalDateTime lastScanExecutionOrder = null;
     private LocalDateTime lastSendedOrchestratorAvailabilityRequest = LocalDateTime.now();
     private LocalDateTime lastReceivedOrchestratorAvailabilityResponse = LocalDateTime.now();
     private LocalDateTime lastReceivedScanExecutionOrder = LocalDateTime.now();
@@ -118,6 +118,19 @@ public class Sketch implements Program {
         }
     }
 
+    private final void sendScanNowRequest() {
+        final ScanNowMessage message = ScanNowMessage.create(
+            this.id, this.mac, this.ip, this.mode.get() 
+        );
+        try {
+            this.messageBroker.send(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.lastScanExecutionOrder = LocalDateTime.now();
+
+    }
+
     /**
      * Sends a SCAN_NOW message if required.
      * <p>
@@ -140,26 +153,12 @@ public class Sketch implements Program {
     private final void sendScanNowMessageIfRequired() {
         if (Objects.isNull(this.lastScanExecutionOrder)) {
             System.out.println("Scan is required!");
-            final ScanNowMessage message = ScanNowMessage.create(
-                this.id, this.mac, this.ip, this.mode.get() 
-            );
-            try {
-                this.messageBroker.send(message);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            this.lastScanExecutionOrder = LocalDateTime.now();
+            this.sendScanNowRequest();
         } else {
             if (LocalDateTime.now().isAfter(this.lastScanExecutionOrder
                     .plus(this.intervalBetweenEachScans.toMillis(), ChronoUnit.MILLIS))) {
                 System.out.println("Another Scan is required!");
-                final ScanNowMessage message = ScanNowMessage.create(id, mac, ip, mode.get());
-                try {
-                    this.messageBroker.send(message);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                this.lastScanExecutionOrder = LocalDateTime.now();
+                this.sendScanNowRequest();
             }
         }
     }
@@ -215,7 +214,7 @@ public class Sketch implements Program {
     }
 
     private final void sendHeartBeat() {
-        final Command heartBeat = CommandFactory.createHeartBeatCommand(messageBroker, id, mac, ip, this.mode.get(), this.uptime.get());
+        final Command heartBeat = CommandFactory.createHeartBeatCommand(messageBroker, id, mac, ip, this.mode.get(), this.uptime);
         try {
             heartBeat.execute();
         } catch (IOException e) {
@@ -311,7 +310,7 @@ public class Sketch implements Program {
      * @throws IOException if an I/O error occurs while setting up the multicast
      *                     socket or joining the multicast group.
      */
-    private final void setup() throws IOException {
+    private final void setup() {
         this.messageBroker.subscribe(MessageType.IS_ORCHESTRATOR_AVAILABLE, (message) -> {
             if (message instanceof IsOrchestratorAvailableMessage) {
                 final IsOrchestratorAvailableMessage realMessage = (IsOrchestratorAvailableMessage) message;
@@ -377,7 +376,6 @@ public class Sketch implements Program {
             }
         });
 
-
         this.askIfOrchestratorIsAvailable();
     }
 
@@ -441,12 +439,7 @@ public class Sketch implements Program {
             this.isRunning = true;
 
             // Setup the node
-            try {
-                this.setup();
-            } catch (IOException e) {
-                this.isRunning = false;
-                e.printStackTrace();
-            }
+            this.setup();
 
             while (this.isRunning) {
                 // Execute the main process

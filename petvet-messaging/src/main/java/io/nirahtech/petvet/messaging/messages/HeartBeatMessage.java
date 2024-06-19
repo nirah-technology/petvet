@@ -55,11 +55,11 @@ public final class HeartBeatMessage extends AbstractMessage {
         this.consumptionInVolt = consumptionInVolt;
         this.location = location;
     }
-
+    
     public static HeartBeatMessage create(final UUID emitterId, final MacAddress emitterMAC,
-            final InetAddress emitterIP, final EmitterMode emitterMode, final long uptime, final float temeratureInCelcus,
-            final float consumptionInVolt,
-            final String location) {
+    final InetAddress emitterIP, final EmitterMode emitterMode, final long uptime, final float temeratureInCelcus,
+    final float consumptionInVolt,
+    final String location) {
         return new HeartBeatMessage(emitterId, emitterMAC, emitterIP, emitterMode, LocalDateTime.now(), uptime,
                 temeratureInCelcus, consumptionInVolt, location);
     }
@@ -70,7 +70,7 @@ public final class HeartBeatMessage extends AbstractMessage {
         if (messageAsString.contains(":")) {
             final String[] messageParts = messageAsString.split(":", 2);
             final MessageType type = MessageType.valueOf(messageParts[0]);
-            if (type.equals(MessageType.VOTE)) {
+            if (type.equals(MessageType.HEARTBEAT)) {
                 final Map<String, Object> properties = Message.fromStringToMap(messageParts[1]);
                 try {
 

@@ -1,27 +1,27 @@
 package io.nirahtech.petvet.esp.commands;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.net.InetAddress;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 import io.nirahtech.petvet.messaging.brokers.MessagePublisher;
 import io.nirahtech.petvet.messaging.messages.HeartBeatMessage;
 import io.nirahtech.petvet.messaging.util.EmitterMode;
 import io.nirahtech.petvet.messaging.util.MacAddress;
-import oshi.SystemInfo;
-import oshi.hardware.HardwareAbstractionLayer;
-import oshi.hardware.Sensors;
 
 public final class HeartBeatCommand extends AbstractCommand {
 
-    private final long uptime;
+    private final AtomicLong uptime;
     private final MacAddress mac;
     private final InetAddress ip;
     private final MessagePublisher messageSender;
     private final EmitterMode mode;
     private final UUID id;
 
-    HeartBeatCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, final InetAddress ip, final EmitterMode mode, final long uptime) {
+    HeartBeatCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, final InetAddress ip, final EmitterMode mode, final AtomicLong uptime) {
         this.ip = ip;
         this.mac = mac;
         this.uptime = uptime;
@@ -30,16 +30,16 @@ public final class HeartBeatCommand extends AbstractCommand {
         this.id = id;
     }
 
-    private final void publishInfoToBeElectedAsOrchestrator() {
-        SystemInfo systemInfo = new SystemInfo();
-        HardwareAbstractionLayer hardware = systemInfo.getHardware();
-        Sensors sensors = hardware.getSensors();
-        
-        double cpuTemperature = sensors.getCpuTemperature();
+    private final void publishHealthData() {
+        double cpuTemperature = 0.0D;
         double voltage = 0.0D;
+
+        final RuntimeMXBean runtimeMX = ManagementFactory.getRuntimeMXBean();
+        this.uptime.set(runtimeMX.getUptime());
+
         try {
             final HeartBeatMessage message = HeartBeatMessage.create(
-                id, mac, ip, mode, uptime, (float)cpuTemperature, (float)voltage, null
+                id, mac, ip, mode, uptime.get(), (float)cpuTemperature, (float)voltage, null
             );
             messageSender.send(message);
         } catch (IOException e) {
@@ -50,6 +50,6 @@ public final class HeartBeatCommand extends AbstractCommand {
     @Override
     public void execute() throws IOException {
         super.execute();
-        this.publishInfoToBeElectedAsOrchestrator();
+        this.publishHealthData();
     }
 }

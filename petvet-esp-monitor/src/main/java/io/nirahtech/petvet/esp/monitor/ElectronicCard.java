@@ -3,6 +3,7 @@ package io.nirahtech.petvet.esp.monitor;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
@@ -14,7 +15,10 @@ import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public final class ElectronicCard implements Serializable, Comparator<ElectronicCard>, Comparable<ElectronicCard> {
 
+    private static final Duration DELAY_TO_BE_OBSOLETE = Duration.ofMinutes(1);
     private static final Set<ElectronicCard> INSTANCES = new HashSet<>();
+
+    private LocalDateTime lastUpdate = LocalDateTime.now();
 
     private final UUID id;
     private final MacAddress mac;
@@ -34,6 +38,7 @@ public final class ElectronicCard implements Serializable, Comparator<Electronic
 
     public void setMode(EmitterMode mode) {
         this.mode = mode;
+        this.lastUpdate = LocalDateTime.now();
     }
 
     public UUID getId() {
@@ -54,18 +59,26 @@ public final class ElectronicCard implements Serializable, Comparator<Electronic
 
     public void setUptime(Duration uptime) {
         this.uptime = uptime;
+        this.lastUpdate = LocalDateTime.now();
     }
 
     public void setTemperatureInCelcus(float temperatureInCelcus) {
         this.temperatureInCelcus = temperatureInCelcus;
+        this.lastUpdate = LocalDateTime.now();
     }
 
     public void setConsumptionInVolt(float consumptionInVolt) {
         this.consumptionInVolt = consumptionInVolt;
+        this.lastUpdate = LocalDateTime.now();
     }
 
     public void setLocation(String location) {
         this.location = location;
+        this.lastUpdate = LocalDateTime.now();
+    }
+
+    public boolean isObsolete() {
+        return LocalDateTime.now().isAfter(this.lastUpdate.plus(DELAY_TO_BE_OBSOLETE));
     }
 
     public Optional<Duration> getUptime() {

@@ -34,7 +34,7 @@ public final class ChallengeToElectOrchestratorCommand extends AbstractCommand {
     }
 
     private final Map<Byte, Long> retrieveInfoToBeElectedAsOrchestrator() {
-        final Map<Byte, Long> infos = new HashMap<>();    
+        final Map<Byte, Long> infos = new HashMap<>();
         final RuntimeMXBean runtimeMX = ManagementFactory.getRuntimeMXBean();
         this.uptime.set(runtimeMX.getUptime());
         infos.put(this.ip.getAddress()[3], this.uptime.get());

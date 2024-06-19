@@ -1,6 +1,8 @@
 package io.nirahtech.petvet.esp.monitor.ui;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.SortedSet;
 
 import javax.swing.table.AbstractTableModel;
@@ -14,6 +16,13 @@ public class ElectronicCardTableModel extends AbstractTableModel {
 
     public ElectronicCardTableModel(final SortedSet<ElectronicCard> electronicCards) {
         this.electronicCards = electronicCards;
+    }
+
+    /**
+     * @return the electronicCards
+     */
+    public List<ElectronicCard> getElectronicCards() {
+        return Collections.unmodifiableList(new ArrayList<>(this.electronicCards));
     }
 
     @Override
