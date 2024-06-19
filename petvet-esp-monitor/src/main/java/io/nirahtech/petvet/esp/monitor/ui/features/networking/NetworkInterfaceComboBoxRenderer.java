@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.esp.monitor.ui;
+package io.nirahtech.petvet.esp.monitor.ui.features.networking;
 
 import javax.swing.*;
 import java.awt.*;

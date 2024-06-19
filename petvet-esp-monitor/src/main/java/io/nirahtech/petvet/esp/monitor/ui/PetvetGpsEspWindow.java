@@ -11,11 +11,14 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
-import io.nirahtech.petvet.esp.monitor.Device;
-import io.nirahtech.petvet.esp.monitor.ElectronicCard;
-import io.nirahtech.petvet.esp.monitor.HeartBeat;
 import io.nirahtech.petvet.esp.monitor.MonitorTask;
-import io.nirahtech.petvet.esp.monitor.ScanReport;
+import io.nirahtech.petvet.esp.monitor.data.Device;
+import io.nirahtech.petvet.esp.monitor.data.ElectronicalCard;
+import io.nirahtech.petvet.esp.monitor.data.HeartBeat;
+import io.nirahtech.petvet.esp.monitor.data.ScanReport;
+import io.nirahtech.petvet.esp.monitor.ui.features.cluster.ElectronicCardsInventoryPanel;
+import io.nirahtech.petvet.esp.monitor.ui.features.messages.ReceivedMessagesPanel;
+import io.nirahtech.petvet.esp.monitor.ui.features.networking.NetworkingPanel;
 import io.nirahtech.petvet.messaging.brokers.MessageBroker;
 import io.nirahtech.petvet.messaging.messages.Message;
 import io.nirahtech.petvet.messaging.util.MacAddress;
@@ -24,7 +27,7 @@ public class PetvetGpsEspWindow extends JFrame {
 
     private final List<Message> receivedMessages;
     private final Map<MacAddress, Set<HeartBeat>> heartBeats;
-    private final SortedSet<ElectronicCard> esps;
+    private final SortedSet<ElectronicalCard> esps;
     private final SortedSet<ScanReport> scanReports;
     private final SortedSet<Device> detectedDevices;
     private final MonitorTask monitorTask;
@@ -39,7 +42,7 @@ public class PetvetGpsEspWindow extends JFrame {
     private final ElectronicCardsInventoryPanel espInventoryPanel;
 
 
-    public PetvetGpsEspWindow(final MessageBroker messageBroker, final InetAddress multicastGroup, final int multicastPort, final List<Message> receivedMessages, final SortedSet<ElectronicCard> esps, final SortedSet<ScanReport> scanReports, final SortedSet<Device> detectedDevices, final Map<MacAddress, Set<HeartBeat>> heartBeats, final MonitorTask monitorTask) {
+    public PetvetGpsEspWindow(final MessageBroker messageBroker, final InetAddress multicastGroup, final int multicastPort, final List<Message> receivedMessages, final SortedSet<ElectronicalCard> esps, final SortedSet<ScanReport> scanReports, final SortedSet<Device> detectedDevices, final Map<MacAddress, Set<HeartBeat>> heartBeats, final MonitorTask monitorTask) {
         super("PETVET ESP MONITOR");
         this.messageBroker = messageBroker;
         this.receivedMessages = receivedMessages;

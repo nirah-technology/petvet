@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.esp.monitor.ui;
+package io.nirahtech.petvet.esp.monitor.ui.features.cluster;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -6,7 +6,7 @@ import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import io.nirahtech.petvet.esp.monitor.ElectronicCard;
+import io.nirahtech.petvet.esp.monitor.data.ElectronicalCard;
 
 public class ElectronicCardTableCellRenderer extends DefaultTableCellRenderer {
     @Override
@@ -14,7 +14,7 @@ public class ElectronicCardTableCellRenderer extends DefaultTableCellRenderer {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         
         ElectronicCardTableModel model = (ElectronicCardTableModel) table.getModel();
-        ElectronicCard device = model.getElectronicCards().get(row);
+        ElectronicalCard device = model.getElectronicCards().get(row);
 
         if (device.isObsolete()) {
             c.setBackground(Color.RED);  // Changez la couleur de fond pour les devices obsolètes

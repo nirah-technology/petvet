@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.esp.monitor;
+package io.nirahtech.petvet.esp.monitor.data;
 
 import java.net.InetAddress;
 import java.time.LocalDateTime;

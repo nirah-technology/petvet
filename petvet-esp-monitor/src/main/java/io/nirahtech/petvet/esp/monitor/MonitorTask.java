@@ -10,6 +10,10 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.function.Consumer;
 
+import io.nirahtech.petvet.esp.monitor.data.Device;
+import io.nirahtech.petvet.esp.monitor.data.ElectronicalCard;
+import io.nirahtech.petvet.esp.monitor.data.HeartBeat;
+import io.nirahtech.petvet.esp.monitor.data.ScanReport;
 import io.nirahtech.petvet.messaging.brokers.MessageBroker;
 import io.nirahtech.petvet.messaging.messages.Message;
 import io.nirahtech.petvet.messaging.util.MacAddress;
@@ -18,7 +22,7 @@ public class MonitorTask implements Runnable {
 
     private final MessageBroker messageBroker;
     private final List<Message> receivedMessages;
-    private final SortedSet<ElectronicCard> esps;
+    private final SortedSet<ElectronicalCard> esps;
     private final Map<MacAddress, Set<HeartBeat>> heartBeats;
     private final SortedSet<ScanReport> scanReports;
     private final SortedSet<Device> detectedDevices;
@@ -26,7 +30,7 @@ public class MonitorTask implements Runnable {
     private boolean isRunning = false;
     private Set<Consumer<Message>> onNewMessageHandlers = new HashSet<>();
 
-    public MonitorTask(MessageBroker messageBroker, List<Message> receivedMessages, SortedSet<ElectronicCard> esps,
+    public MonitorTask(MessageBroker messageBroker, List<Message> receivedMessages, SortedSet<ElectronicalCard> esps,
             Map<MacAddress, Set<HeartBeat>> heartBeats, SortedSet<ScanReport> scanReports, SortedSet<Device> detectedDevices) {
         this.messageBroker = messageBroker;
         this.receivedMessages = receivedMessages;

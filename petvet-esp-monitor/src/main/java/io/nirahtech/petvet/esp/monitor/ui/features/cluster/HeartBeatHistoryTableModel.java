@@ -1,11 +1,11 @@
-package io.nirahtech.petvet.esp.monitor.ui;
+package io.nirahtech.petvet.esp.monitor.ui.features.cluster;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.table.AbstractTableModel;
 
-import io.nirahtech.petvet.esp.monitor.HeartBeat;
+import io.nirahtech.petvet.esp.monitor.data.HeartBeat;
 
 public class HeartBeatHistoryTableModel extends AbstractTableModel {
 

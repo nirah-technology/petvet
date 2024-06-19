@@ -16,6 +16,10 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
+import io.nirahtech.petvet.esp.monitor.data.Device;
+import io.nirahtech.petvet.esp.monitor.data.ElectronicalCard;
+import io.nirahtech.petvet.esp.monitor.data.HeartBeat;
+import io.nirahtech.petvet.esp.monitor.data.ScanReport;
 import io.nirahtech.petvet.esp.monitor.ui.PetvetGpsEspWindow;
 import io.nirahtech.petvet.messaging.brokers.MessageBroker;
 import io.nirahtech.petvet.messaging.brokers.UDPMessageBroker;
@@ -33,7 +37,7 @@ public class App {
 
         final Map<MacAddress, Set<HeartBeat>> heartBeats = new HashMap<>();
         final List<Message> receivedMessages = new ArrayList<>();
-        final SortedSet<ElectronicCard> esps = new TreeSet<>();
+        final SortedSet<ElectronicalCard> esps = new TreeSet<>();
         final SortedSet<ScanReport> scanReports = new TreeSet<>();
         final SortedSet<Device> detectedDevices = new TreeSet<>();
 

@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.esp.monitor;
+package io.nirahtech.petvet.esp.monitor.data;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -13,10 +13,10 @@ import java.util.UUID;
 import io.nirahtech.petvet.messaging.util.EmitterMode;
 import io.nirahtech.petvet.messaging.util.MacAddress;
 
-public final class ElectronicCard implements Serializable, Comparator<ElectronicCard>, Comparable<ElectronicCard> {
+public final class ElectronicalCard implements Serializable, Comparator<ElectronicalCard>, Comparable<ElectronicalCard> {
 
     private static final Duration DELAY_TO_BE_OBSOLETE = Duration.ofMinutes(1);
-    private static final Set<ElectronicCard> INSTANCES = new HashSet<>();
+    private static final Set<ElectronicalCard> INSTANCES = new HashSet<>();
 
     private LocalDateTime lastUpdate = LocalDateTime.now();
 
@@ -29,7 +29,7 @@ public final class ElectronicCard implements Serializable, Comparator<Electronic
     private Float consumptionInVolt = null;
     private String location = null;
 
-    private ElectronicCard(UUID id, MacAddress mac, InetAddress ip, EmitterMode mode) {
+    private ElectronicalCard(UUID id, MacAddress mac, InetAddress ip, EmitterMode mode) {
         this.id = id;
         this.mac = mac;
         this.ip = ip;
@@ -97,15 +97,15 @@ public final class ElectronicCard implements Serializable, Comparator<Electronic
         return Optional.ofNullable(this.location);
     }
 
-    public static final ElectronicCard getOrCreate(UUID id, MacAddress mac, InetAddress ip, EmitterMode mode) {
-        ElectronicCard electronicCard = null;
-        Optional<ElectronicCard> cardFound = INSTANCES.stream()
+    public static final ElectronicalCard getOrCreate(UUID id, MacAddress mac, InetAddress ip, EmitterMode mode) {
+        ElectronicalCard electronicCard = null;
+        Optional<ElectronicalCard> cardFound = INSTANCES.stream()
                 .filter(card -> card.getId().equals(id) && card.getMac().equals(mac) && card.ip.equals(ip)).findFirst();
         if (cardFound.isPresent()) {
             electronicCard = cardFound.get();
             electronicCard.setMode(mode);
         } else {
-            electronicCard = new ElectronicCard(id, mac, ip, mode);
+            electronicCard = new ElectronicalCard(id, mac, ip, mode);
             INSTANCES.add(electronicCard);
         }
         return electronicCard;
@@ -134,7 +134,7 @@ public final class ElectronicCard implements Serializable, Comparator<Electronic
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ElectronicCard other = (ElectronicCard) obj;
+        ElectronicalCard other = (ElectronicalCard) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
@@ -176,13 +176,13 @@ public final class ElectronicCard implements Serializable, Comparator<Electronic
     }
 
     @Override
-    public int compareTo(ElectronicCard other) {
+    public int compareTo(ElectronicalCard other) {
         return this.id.compareTo(other.id);
 
     }
 
     @Override
-    public int compare(ElectronicCard arg0, ElectronicCard arg1) {
+    public int compare(ElectronicalCard arg0, ElectronicalCard arg1) {
         return arg0.compareTo(arg1);
 
     }

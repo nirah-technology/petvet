@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.esp.monitor.ui;
+package io.nirahtech.petvet.esp.monitor.ui.features.messages;
 
 import java.awt.BorderLayout;
 import java.util.List;

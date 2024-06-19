@@ -43,9 +43,9 @@ public class Sketch implements Program {
     private boolean isRunning = false;
     private AtomicLong uptime = new AtomicLong(0);
 
-    private NetworkInterface networkInterface;
-    private InetAddress ip;
-    private MacAddress mac;
+    private final NetworkInterface networkInterface;
+    private final InetAddress ip;
+    private final MacAddress mac;
 
     private LocalDateTime lastScanExecutionOrder = null;
     private LocalDateTime lastSendedOrchestratorAvailabilityRequest = LocalDateTime.now();
@@ -58,9 +58,11 @@ public class Sketch implements Program {
 
     private final MessageBroker messageBroker;
 
-    public Sketch(final InetAddress group, final int port) {
-        this.retrieveIpAddress();
+    public Sketch(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip,  final InetAddress group, final int port) {
         this.messageBroker = UDPMessageBroker.newInstance();
+        this.networkInterface = networkInterface;
+        this.mac = mac;
+        this.ip = ip;
         try {
             this.messageBroker.connect(this.networkInterface, group, port);
         } catch (IOException e) {
@@ -68,54 +70,6 @@ public class Sketch implements Program {
             e.printStackTrace();
         }
         this.scanner = new WifiScanner();
-    }
-
-    /**
-     * Retrieves the IP address of the current machine that matches the predefined
-     * network mask.
-     * <p>
-     * This method iterates through all available network interfaces and their
-     * associated IP addresses,
-     * and finds the first IP address that matches the specified network mask
-     * defined by {@link #NETWORK_MASK}.
-     * When a matching IP address is found, it sets the last octet of the IP address
-     * to {@link #lastOctetOfIp}
-     * and the full IP address to {@link #ip}.
-     * <p>
-     * This method is designed to work with IPv4 addresses.
-     * </p>
-     * <p>
-     * If an error occurs while accessing the network interfaces, a
-     * {@link SocketException} is caught
-     * and the stack trace is printed.
-     * </p>
-     * 
-     * @throws SocketException if an I/O error occurs when accessing the network
-     *                         interfaces.
-     */
-    private final void retrieveIpAddress() {
-        try {
-            final Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-            NICS: while (networkInterfaces.hasMoreElements()) {
-                final NetworkInterface networkInterface = (NetworkInterface) networkInterfaces.nextElement();
-                if (!networkInterface.getName().toLowerCase().startsWith("br")) {
-                    final Enumeration<InetAddress> ipAddresses = networkInterface.getInetAddresses();
-                    IPS_FOR_NIC: while (ipAddresses.hasMoreElements()) {
-                        final InetAddress ipAddress = (InetAddress) ipAddresses.nextElement();
-                        final byte[] address = ipAddress.getAddress();
-                        if ((address[0] == NETWORK_MASK[0]) && (address[1] == NETWORK_MASK[1])) {
-                            this.networkInterface = networkInterface;
-                            this.ip = (Inet4Address) ipAddress;
-                            this.mac  = MacAddress.of(networkInterface.getHardwareAddress());
-                            break NICS;
-                        }
-                    }
-                }
-            }
-        } catch (SocketException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
     }
 
     private final void sendScanNowRequest() {

@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.esp.monitor.ui;
+package io.nirahtech.petvet.esp.monitor.ui.features.cluster;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,21 +7,21 @@ import java.util.SortedSet;
 
 import javax.swing.table.AbstractTableModel;
 
-import io.nirahtech.petvet.esp.monitor.ElectronicCard;
+import io.nirahtech.petvet.esp.monitor.data.ElectronicalCard;
 
 public class ElectronicCardTableModel extends AbstractTableModel {
 
     private final String[] columnsNames = { "ID", "MAC", "IP", "Mode", "Uptime", "Température (°C)", "Consomation", "Localisation", "Date/Time Dernier Message" };
-    private final SortedSet<ElectronicCard> electronicCards;
+    private final SortedSet<ElectronicalCard> electronicCards;
 
-    public ElectronicCardTableModel(final SortedSet<ElectronicCard> electronicCards) {
+    public ElectronicCardTableModel(final SortedSet<ElectronicalCard> electronicCards) {
         this.electronicCards = electronicCards;
     }
 
     /**
      * @return the electronicCards
      */
-    public List<ElectronicCard> getElectronicCards() {
+    public List<ElectronicalCard> getElectronicCards() {
         return Collections.unmodifiableList(new ArrayList<>(this.electronicCards));
     }
 
@@ -42,7 +42,7 @@ public class ElectronicCardTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        ElectronicCard electronicCard = new ArrayList<>(this.electronicCards).get(rowIndex);
+        ElectronicalCard electronicCard = new ArrayList<>(this.electronicCards).get(rowIndex);
         switch (columnIndex) {
             case 0:
             return electronicCard.getId();

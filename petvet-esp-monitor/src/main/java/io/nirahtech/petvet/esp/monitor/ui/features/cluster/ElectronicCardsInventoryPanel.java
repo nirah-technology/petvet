@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.esp.monitor.ui;
+package io.nirahtech.petvet.esp.monitor.ui.features.cluster;
 
 import java.awt.BorderLayout;
 import java.time.Duration;
@@ -16,9 +16,9 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
-import io.nirahtech.petvet.esp.monitor.ElectronicCard;
-import io.nirahtech.petvet.esp.monitor.HeartBeat;
 import io.nirahtech.petvet.esp.monitor.MonitorTask;
+import io.nirahtech.petvet.esp.monitor.data.ElectronicalCard;
+import io.nirahtech.petvet.esp.monitor.data.HeartBeat;
 import io.nirahtech.petvet.messaging.messages.HeartBeatMessage;
 import io.nirahtech.petvet.messaging.messages.MessageType;
 import io.nirahtech.petvet.messaging.messages.VoteMessage;
@@ -26,7 +26,7 @@ import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public final class ElectronicCardsInventoryPanel extends JPanel {
 
-    private final SortedSet<ElectronicCard> esps;
+    private final SortedSet<ElectronicalCard> esps;
     private final Map<MacAddress, Set<HeartBeat>> heartBeats;
 
     private final JSplitPane splitPane;
@@ -41,7 +41,7 @@ public final class ElectronicCardsInventoryPanel extends JPanel {
 
     private final MonitorTask monitorTask;
 
-    public ElectronicCardsInventoryPanel(final SortedSet<ElectronicCard> esps,
+    public ElectronicCardsInventoryPanel(final SortedSet<ElectronicalCard> esps,
             final Map<MacAddress, Set<HeartBeat>> heartBeats, final MonitorTask monitorTask) {
         super.setLayout(new BorderLayout());
         this.esps = esps;
@@ -65,7 +65,7 @@ public final class ElectronicCardsInventoryPanel extends JPanel {
             if (!event.getValueIsAdjusting()) {
                 int selectedRow = espsInventoryTable.getSelectedRow();
                 if (selectedRow >= 0) {
-                    final ElectronicCard electronicalCard = new ArrayList<>(esps).get(selectedRow);
+                    final ElectronicalCard electronicalCard = new ArrayList<>(esps).get(selectedRow);
                     if (Objects.nonNull(electronicalCard)) {
                         if (this.heartBeats.containsKey(electronicalCard.getMac())) {
                             Collection<HeartBeat> electronicalCardHeartBeats = this.heartBeats
@@ -79,7 +79,7 @@ public final class ElectronicCardsInventoryPanel extends JPanel {
         });
 
         this.monitorTask.addOnNewMessageHandler((message) -> {
-            final ElectronicCard electronicCard = ElectronicCard.getOrCreate(
+            final ElectronicalCard electronicCard = ElectronicalCard.getOrCreate(
                     message.getEmitterID(), message.getEmitterMAC(), message.getEmitterIP(), message.getEmitterMode());
                     this.esps.add(electronicCard);
             final MacAddress mac = message.getEmitterMAC();
