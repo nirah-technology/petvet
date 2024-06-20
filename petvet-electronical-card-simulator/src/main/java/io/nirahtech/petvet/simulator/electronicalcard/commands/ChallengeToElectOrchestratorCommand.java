@@ -45,13 +45,13 @@ public final class ChallengeToElectOrchestratorCommand extends AbstractCommand {
         
         final Optional<Map.Entry<Byte, Long>> info = infos.entrySet().stream().findFirst();
         info.ifPresent(vote -> {
+            final VoteMessage message = VoteMessage.create(
+                id, mac, ip, mode, vote.getValue(), vote.getKey()
+            );
             try {
-                final VoteMessage message = VoteMessage.create(
-                    id, mac, ip, mode, vote.getValue(), vote.getKey()
-                );
                 messageSender.send(message);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Failed to send message: " + e.getMessage());
             }
         });
     }

@@ -15,6 +15,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+    <mainClass>io.nirahtech.petvet.simulator.electronicalcard.App</mainClass>
   </properties>
 
   <dependencies>
@@ -50,7 +51,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>io.nirahtech.petvet.esp.App</mainClass>
+              <mainClass>${mainClass}</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -69,7 +70,7 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>io.nirahtech.petvet.esp.App</mainClass>
+                  <mainClass>${mainClass}</mainClass>
                 </transformer>
               </transformers>
             </configuration>

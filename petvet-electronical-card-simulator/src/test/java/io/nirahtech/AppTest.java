@@ -25,6 +25,5 @@ public class AppTest
         final byte[] mask = {(byte) 255, (byte) 255, (byte) 255, (byte) 0};
         final InetAddress networkId = InetAddress.getByAddress(id);
         final InetAddress subnetMask = InetAddress.getByAddress(mask);
-        System.out.println(subnetMask);
     }
 }

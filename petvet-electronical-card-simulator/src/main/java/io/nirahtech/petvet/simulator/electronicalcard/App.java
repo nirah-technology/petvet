@@ -1,20 +1,30 @@
 package io.nirahtech.petvet.simulator.electronicalcard;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import io.nirahtech.petvet.messaging.util.EmitterMode;
+
 
 public class App {
-    private static final String CLUSTER_NODES_COUNT = "cluster.nodes.size";
-    private static final String NETWORK_INTERFACE_IP_FILTER = "network.interface.ip.filter";
-    private static final String NETWORK_MULTICAST_GROUP_ADDRESS = "network.multicast.group.address";
-    private static final String NETWORK_MULTICAST_GROUP_PORT = "network.multicast.group.port";
+    private static final String CLUSTER_NODES_COUNT = "cluster.size";
+    private static final String NETWORK_INTERFACE_IP_FILTER = "network.ip.filter";
+    private static final String NETWORK_MULTICAST_GROUP_ADDRESS = "network.multicast.group";
+    private static final String NETWORK_MULTICAST_GROUP_PORT = "network.multicast.port";
+    private static final String NODE_MODE = "node.mode";
+    private static final String SCAN_INTERVAL = "node.interval.scan";
+    private static final String ORCHESTRATOR_AVAILABILITY_INTERVAL = "node.interval.orchestrator.request";
+    private static final String NODE_HEARTBEAT_INTERVAL = "node.interval.heartbeat";
 
     public static void main(String[] args) throws IOException {
         // App configuration
@@ -64,12 +74,28 @@ public class App {
 
         // Continue with application logic if configuration is valid
         if (isConfigurationValid(configuration)) {
-            InetAddress filter = (InetAddress) configuration.get(NETWORK_INTERFACE_IP_FILTER);
-            InetAddress group = (InetAddress) configuration.get(NETWORK_MULTICAST_GROUP_ADDRESS);
-            int port = (int) configuration.get(NETWORK_MULTICAST_GROUP_PORT);
-            int clusterSize = (int) configuration.get(CLUSTER_NODES_COUNT);
+            try (
+                final InputStream bannerStream = App.class.getResourceAsStream("/banner.txt");    
+                final InputStreamReader bannerStreamReader = new InputStreamReader(bannerStream);
+                final BufferedReader bannerReader = new BufferedReader(bannerStreamReader);
+            ) {
+                bannerReader.lines().forEach(System.out::println);
+            } catch (Exception e) {
+                
+            }
 
-            final Cluster cluster = Cluster.create(clusterSize, filter, group, port);
+            System.out.println("Configuration successfully loaded: " + configuration);
+
+            final InetAddress filter = (InetAddress) configuration.get(NETWORK_INTERFACE_IP_FILTER);
+            final InetAddress group = (InetAddress) configuration.get(NETWORK_MULTICAST_GROUP_ADDRESS);
+            final int port = (int) configuration.get(NETWORK_MULTICAST_GROUP_PORT);
+            final int clusterSize = (int) configuration.get(CLUSTER_NODES_COUNT);
+            final EmitterMode mode = (EmitterMode) configuration.get(NODE_MODE);
+            final Duration scanInterval = (Duration) configuration.get(SCAN_INTERVAL);
+            final Duration orchestratorInterval = (Duration) configuration.get(ORCHESTRATOR_AVAILABILITY_INTERVAL);
+            final Duration heartbeatInterval = (Duration) configuration.get(NODE_HEARTBEAT_INTERVAL);
+
+            final Cluster cluster = Cluster.create(clusterSize, filter, group, port, mode, scanInterval, orchestratorInterval, heartbeatInterval);
             cluster.run();
         }
     }
@@ -79,6 +105,12 @@ public class App {
         configuration.put(NETWORK_INTERFACE_IP_FILTER, InetAddress.getByName(resourceBundle.getString(NETWORK_INTERFACE_IP_FILTER)));
         configuration.put(NETWORK_MULTICAST_GROUP_ADDRESS, InetAddress.getByName(resourceBundle.getString(NETWORK_MULTICAST_GROUP_ADDRESS)));
         configuration.put(NETWORK_MULTICAST_GROUP_PORT, Integer.parseInt(resourceBundle.getString(NETWORK_MULTICAST_GROUP_PORT)));
+        configuration.put(NODE_MODE, EmitterMode.valueOf(resourceBundle.getString(NODE_MODE)));
+        configuration.put(SCAN_INTERVAL, Duration.ofMillis(Long.parseLong(resourceBundle.getString(SCAN_INTERVAL))));
+        configuration.put(ORCHESTRATOR_AVAILABILITY_INTERVAL, Duration.ofMillis(Long.parseLong(resourceBundle.getString(ORCHESTRATOR_AVAILABILITY_INTERVAL))));
+        configuration.put(NODE_HEARTBEAT_INTERVAL, Duration.ofMillis(Long.parseLong(resourceBundle.getString(NODE_HEARTBEAT_INTERVAL))));
+
+
     }
 
     private static void loadConfigurationFromFile(Map<String, Object> configuration, String configFile) throws IOException {
@@ -105,12 +137,29 @@ public class App {
         if (properties.containsKey(NETWORK_MULTICAST_GROUP_PORT)) {
             configuration.put(NETWORK_MULTICAST_GROUP_PORT, Integer.parseInt(properties.getProperty(NETWORK_MULTICAST_GROUP_PORT)));
         }
+        if (properties.containsKey(NODE_MODE)) {
+            configuration.put(NODE_MODE, EmitterMode.valueOf(properties.getProperty(NODE_MODE)));
+        }
+        if (properties.containsKey(SCAN_INTERVAL)) {
+            configuration.put(SCAN_INTERVAL, Duration.ofMillis(Long.parseLong(properties.getProperty(SCAN_INTERVAL))));
+        }
+        if (properties.containsKey(ORCHESTRATOR_AVAILABILITY_INTERVAL)) {
+            configuration.put(ORCHESTRATOR_AVAILABILITY_INTERVAL, Duration.ofMillis(Long.parseLong(properties.getProperty(ORCHESTRATOR_AVAILABILITY_INTERVAL))));
+        }
+        if (properties.containsKey(NODE_HEARTBEAT_INTERVAL)) {
+            configuration.put(NODE_HEARTBEAT_INTERVAL, Duration.ofMillis(Long.parseLong(properties.getProperty(NODE_HEARTBEAT_INTERVAL))));
+        }
     }
 
     private static boolean isConfigurationValid(Map<String, Object> configuration) {
         return configuration.containsKey(CLUSTER_NODES_COUNT)
                 && configuration.containsKey(NETWORK_INTERFACE_IP_FILTER)
                 && configuration.containsKey(NETWORK_MULTICAST_GROUP_ADDRESS)
-                && configuration.containsKey(NETWORK_MULTICAST_GROUP_PORT);
+                && configuration.containsKey(NETWORK_MULTICAST_GROUP_PORT)
+                && configuration.containsKey(NODE_MODE)
+                && configuration.containsKey(SCAN_INTERVAL)
+                && configuration.containsKey(ORCHESTRATOR_AVAILABILITY_INTERVAL)
+                && configuration.containsKey(NODE_HEARTBEAT_INTERVAL)
+                ;
     }
 }

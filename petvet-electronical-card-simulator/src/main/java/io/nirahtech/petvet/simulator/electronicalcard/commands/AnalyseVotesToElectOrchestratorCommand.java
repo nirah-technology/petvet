@@ -41,6 +41,7 @@ public final class AnalyseVotesToElectOrchestratorCommand extends AbstractComman
     public void execute() throws IOException {
         super.execute();
         if ((this.candidacy.getValue() == this.uptime) && (this.candidacy.getKey() == this.ip.getAddress()[3])) {
+            System.out.println(String.format("[%s] I become the Orchestrator!", this.id));
             this.mode.set(EmitterMode.ORCHESTRATOR_NODE);
             this.notifyThatTheNewOrchestratorIsFound();
         } else {

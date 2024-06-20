@@ -3,15 +3,12 @@ package io.nirahtech.petvet.simulator.electronicalcard;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -34,14 +31,13 @@ import io.nirahtech.petvet.simulator.electronicalcard.scanners.Scanner;
 import io.nirahtech.petvet.simulator.electronicalcard.scanners.WifiScanner;
 
 public class Sketch implements Program {
-    private static final byte[] NETWORK_MASK = { (byte) 192, (byte) 168 };
 
     private final UUID id = UUID.randomUUID();
-    private AtomicReference<EmitterMode> mode = new AtomicReference<>(EmitterMode.NATIVE_NODE);
+    private final AtomicReference<EmitterMode> mode = new AtomicReference<>();
 
     private final Scanner scanner;
     private boolean isRunning = false;
-    private AtomicLong uptime = new AtomicLong(0);
+    private final AtomicLong uptime = new AtomicLong(0);
 
     private final NetworkInterface networkInterface;
     private final InetAddress ip;
@@ -52,21 +48,24 @@ public class Sketch implements Program {
     private LocalDateTime lastReceivedOrchestratorAvailabilityResponse = LocalDateTime.now();
     private LocalDateTime lastReceivedScanExecutionOrder = LocalDateTime.now();
     private LocalDateTime lastSendedHeartBeat = LocalDateTime.now();
-    private Duration intervalBetweenEachScans = Duration.ofSeconds(10);
-    private Duration intervalBetweenEachOrchestratorAvailabilityRequests = Duration.ofSeconds(5);
-    private Duration intervalBetweenEachHeartBeat = Duration.ofSeconds(2);
+    private final Duration intervalBetweenEachScans;
+    private final Duration intervalBetweenEachOrchestratorAvailabilityRequests;
+    private final Duration intervalBetweenEachHeartBeat;
 
     private final MessageBroker messageBroker;
 
-    public Sketch(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip,  final InetAddress group, final int port) {
+    public Sketch(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip,  final InetAddress group, final int port, EmitterMode mode, Duration scanInterval, Duration orchestratorInterval, Duration heartbeatInterval) {
         this.messageBroker = UDPMessageBroker.newInstance();
         this.networkInterface = networkInterface;
         this.mac = mac;
         this.ip = ip;
+        this.mode.set(mode);
+        this.intervalBetweenEachScans = scanInterval;
+        this.intervalBetweenEachOrchestratorAvailabilityRequests = orchestratorInterval;
+        this.intervalBetweenEachHeartBeat = heartbeatInterval;
         try {
             this.messageBroker.connect(this.networkInterface, group, port);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         this.scanner = new WifiScanner();
@@ -106,12 +105,12 @@ public class Sketch implements Program {
      */
     private final void sendScanNowMessageIfRequired() {
         if (Objects.isNull(this.lastScanExecutionOrder)) {
-            System.out.println("Scan is required!");
+            System.out.println(String.format("[%s] Scan is required!", this.id));
             this.sendScanNowRequest();
         } else {
             if (LocalDateTime.now().isAfter(this.lastScanExecutionOrder
                     .plus(this.intervalBetweenEachScans.toMillis(), ChronoUnit.MILLIS))) {
-                System.out.println("Another Scan is required!");
+                System.out.println(String.format("[%s] Another scan must be executed!", this.id));
                 this.sendScanNowRequest();
             }
         }
@@ -143,6 +142,7 @@ public class Sketch implements Program {
     }
 
     private final void requestChallenge() {
+        System.out.println(String.format("[%s] I want to elect a new orchestrator...", this.id));
         ChallengeOrchestratorMessage message = ChallengeOrchestratorMessage.create(id, mac, ip, this.mode.get());
         try {
             this.messageBroker.send(message);
@@ -157,7 +157,7 @@ public class Sketch implements Program {
         if (Objects.isNull(this.lastReceivedScanExecutionOrder)) {
             return false;
         }
-        return LocalDateTime.now().isAfter(this.lastReceivedScanExecutionOrder.plus(this.intervalBetweenEachScans));
+        return LocalDateTime.now().isAfter(this.lastReceivedScanExecutionOrder.plus(this.intervalBetweenEachScans.plusSeconds(1)));
     }
 
     private final boolean isOrchestratorAvailableResponseInLate() {
@@ -208,19 +208,23 @@ public class Sketch implements Program {
             e.printStackTrace();
         }
 
-        if (this.lastSendedOrchestratorAvailabilityRequest.isBefore(LocalDateTime.now().minus(this.intervalBetweenEachOrchestratorAvailabilityRequests))) {
-            this.askIfOrchestratorIsAvailable();
-        }
+
+        // if (this.lastSendedOrchestratorAvailabilityRequest.isBefore(LocalDateTime.now().minus(this.intervalBetweenEachOrchestratorAvailabilityRequests))) {
+        //     this.askIfOrchestratorIsAvailable();
+        // }
 
         if (this.isScanRequestInLate()) {
+            System.out.println(String.format("[%s] It's seem that scan request is in late...", this.id));
             this.requestChallenge();
         }
 
-        if (this.isOrchestratorAvailableResponseInLate()) {
+        // if (this.isOrchestratorAvailableResponseInLate()) {
+        //     System.out.println(String.format("[%s] It's seem that orchestrator availability response is in late...", this.id));
 
-        }
+        // }
 
         if (this.isHeartBeatInLate()) {
+            System.out.println(String.format("[%s] I'm alive!", this.id));
             this.sendHeartBeat();
         }
     }
@@ -240,6 +244,7 @@ public class Sketch implements Program {
      * </p>
      */
     private final void askIfOrchestratorIsAvailable() {
+        System.out.println(String.format("[%s] I want to know if an orchestrator is available...", this.id));
         final IsOrchestratorAvailableMessage message = IsOrchestratorAvailableMessage.create(id, mac, ip, mode.get());
         try {
             this.messageBroker.send(message);
@@ -273,7 +278,7 @@ public class Sketch implements Program {
                 try {
                     command.execute();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println(String.format("[%s] Command execution failure: %s", this.id, e.getMessage()));
                 }
             }
         });
@@ -287,7 +292,7 @@ public class Sketch implements Program {
                 try {
                     command.execute();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println(String.format("[%s] Command execution failure: %s", this.id, e.getMessage()));
                 }
             }
         });
@@ -295,12 +300,14 @@ public class Sketch implements Program {
         this.messageBroker.subscribe(MessageType.SCAN_NOW, (message) -> {
             if (message instanceof ScanNowMessage) {
                 this.lastReceivedScanExecutionOrder = LocalDateTime.now();
+                this.lastReceivedOrchestratorAvailabilityResponse = this.lastReceivedScanExecutionOrder;
+                this.lastSendedOrchestratorAvailabilityRequest = LocalDateTime.now();
                 final ScanNowMessage realMessage = (ScanNowMessage) message;
                 final Command command = CommandFactory.createScanNowCommand(this.messageBroker, id, mac, ip, mode.get(), this.scanner);
                 try {
                     command.execute();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println(String.format("[%s] Command execution failure: %s", this.id, e.getMessage()));
                 }
             }
         });
@@ -313,7 +320,7 @@ public class Sketch implements Program {
                 try {
                     command.execute();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println(String.format("[%s] Command execution failure: %s", this.id, e.getMessage()));
                 }
             }
         });

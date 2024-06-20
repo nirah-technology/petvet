@@ -66,7 +66,7 @@ public class Network {
                 Inet4Address inetAddress = (Inet4Address) InetAddress.getByAddress(addressBytes);
                 addresses.add(inetAddress);
             } catch (Exception e) {
-                e.printStackTrace();
+                
             }
         }
         

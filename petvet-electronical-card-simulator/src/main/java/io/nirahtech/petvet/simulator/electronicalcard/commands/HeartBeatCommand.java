@@ -37,13 +37,13 @@ public final class HeartBeatCommand extends AbstractCommand {
         final RuntimeMXBean runtimeMX = ManagementFactory.getRuntimeMXBean();
         this.uptime.set(runtimeMX.getUptime());
 
+        final HeartBeatMessage message = HeartBeatMessage.create(
+            id, mac, ip, mode, uptime.get(), (float)cpuTemperature, (float)voltage, null
+        );
         try {
-            final HeartBeatMessage message = HeartBeatMessage.create(
-                id, mac, ip, mode, uptime.get(), (float)cpuTemperature, (float)voltage, null
-            );
             messageSender.send(message);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to send message: " + e.getMessage());
         }
     }
 
