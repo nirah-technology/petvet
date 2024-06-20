@@ -35,6 +35,7 @@ Un microcontrôleur peut :
 - Devenir orchestrateur.
 - Informer qu'il est orchestrateur.
 - Ordonner l'exécution d'un scan.
+- Scanner
 - Diffuser un heartbeat.
 
 
@@ -82,15 +83,15 @@ git clone https://github.com/nirah-technology/petvet.git
 cd petvet/petvet-cluster-simulator
 ```
 
-2. Compilez et packagez le projet avec Maven:
+2. Compilez le projet avec Maven:
 
 ```bash
-mvn clean package
+mvn package
 ```
 
 3. Exécutez le simulateur:
 ```bash
-java -jar target/petvet-cluster-simulator-1.0-SNAPSHOT.jar
+java -jar target/petvet-cluster-simulator.jar
 ```
 
 
@@ -100,10 +101,9 @@ Pour développer ou contribuer au projet, suivez ces étapes :
 
 1. Clonez le dépôt Git :
 
-```bash
-git clone https://github.com/nirah-technology/petvet.git
+```git
+git clone https://github.com/votre-utilisateur/superviser-cluster.
 ```
-
 2. Importez le projet dans votre IDE Java préféré.
 3. Explorez le code source et les tests pour comprendre le fonctionnement de l'application.
 4. Apportez vos modifications et testez-les localement.
