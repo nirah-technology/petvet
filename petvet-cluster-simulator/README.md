@@ -36,6 +36,7 @@ Un microcontrôleur peut :
 - Informer qu'il est orchestrateur.
 - Ordonner l'exécution d'un scan.
 - Scanner
+- Diffuser son rapport de scan.
 - Diffuser un heartbeat.
 
 
