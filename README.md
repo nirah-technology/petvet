@@ -2,19 +2,20 @@
 
 ## **Contexte**
 
-Le projet PETVET est un système qui a pour but de géolocaliser les animaux de compagnie d'une famille.
+Le projet PETVET est un système qui a pour but de suivre l'état de santé des animaux de compagnie au sein d'une famille.
 
 Dans son mode de fonctionnement minimal, le système doit être composé de :
 
-- au moins 1 microcontroleur (Arduino, ESP32, Raspberry, etc...)
 - au moins 1 smartphone
 
-Plus il y aura de microcontroleurs en réseau, plus la précision de géolocalisation des animaux sera précise.
 
 Pour un fonctionnement optimal, le système doit être composé de :
 
 - au moins 3 microcontroleur (Arduino, ESP32, Raspberry, etc...)
 - au moins 1 smartphone
+- au moins 1 puce pour un chat détectable via onde Wifi/Bluetooth
+
+Plus il y aura de microcontroleurs en réseau, plus la précision de géolocalisation des animaux sera précise.
 
 PETVET est un système composé des logiciels suivants:
 
