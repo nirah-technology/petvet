@@ -12,8 +12,4 @@ abstract class AbstractCommand implements Command {
         
     }   
 
-    @Override
-    public void execute(String argument) throws IOException {
-        
-    }
 }
