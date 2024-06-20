@@ -44,27 +44,24 @@ public class Sketch implements Program {
     private final MacAddress mac;
 
     private LocalDateTime lastScanExecutionOrder = null;
-    private LocalDateTime lastSendedOrchestratorAvailabilityRequest = LocalDateTime.now();
     private LocalDateTime lastReceivedOrchestratorAvailabilityResponse = LocalDateTime.now();
     private LocalDateTime lastReceivedScanExecutionOrder = LocalDateTime.now();
     private LocalDateTime lastSendedHeartBeat = LocalDateTime.now();
     private final Duration intervalBetweenEachScans;
-    private final Duration intervalBetweenEachOrchestratorAvailabilityRequests;
     private final Duration intervalBetweenEachHeartBeat;
 
     private final MessageBroker messageBroker;
 
-    public Sketch(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip,  final InetAddress group, final int port, EmitterMode mode, Duration scanInterval, Duration orchestratorInterval, Duration heartbeatInterval) {
+    public Sketch(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip,  final Configuration configuration) {
         this.messageBroker = UDPMessageBroker.newInstance();
         this.networkInterface = networkInterface;
         this.mac = mac;
         this.ip = ip;
-        this.mode.set(mode);
-        this.intervalBetweenEachScans = scanInterval;
-        this.intervalBetweenEachOrchestratorAvailabilityRequests = orchestratorInterval;
-        this.intervalBetweenEachHeartBeat = heartbeatInterval;
+        this.mode.set(configuration.mode());
+        this.intervalBetweenEachScans = configuration.scanInterval();
+        this.intervalBetweenEachHeartBeat = configuration.heartBeatInterval();
         try {
-            this.messageBroker.connect(this.networkInterface, group, port);
+            this.messageBroker.connect(this.networkInterface, configuration.multicastGroup(), configuration.multicastPort());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -160,13 +157,6 @@ public class Sketch implements Program {
         return LocalDateTime.now().isAfter(this.lastReceivedScanExecutionOrder.plus(this.intervalBetweenEachScans.plusSeconds(1)));
     }
 
-    private final boolean isOrchestratorAvailableResponseInLate() {
-        if (Objects.isNull(this.lastReceivedOrchestratorAvailabilityResponse)) {
-            return false;
-        }
-        return LocalDateTime.now().isAfter(this.lastReceivedOrchestratorAvailabilityResponse.plus(this.intervalBetweenEachOrchestratorAvailabilityRequests));
-    }
-
     private final void sendHeartBeat() {
         final Command heartBeat = CommandFactory.createHeartBeatCommand(messageBroker, id, mac, ip, this.mode.get(), this.uptime);
         try {
@@ -208,20 +198,10 @@ public class Sketch implements Program {
             e.printStackTrace();
         }
 
-
-        // if (this.lastSendedOrchestratorAvailabilityRequest.isBefore(LocalDateTime.now().minus(this.intervalBetweenEachOrchestratorAvailabilityRequests))) {
-        //     this.askIfOrchestratorIsAvailable();
-        // }
-
         if (this.isScanRequestInLate()) {
             System.out.println(String.format("[%s] It's seem that scan request is in late...", this.id));
             this.requestChallenge();
         }
-
-        // if (this.isOrchestratorAvailableResponseInLate()) {
-        //     System.out.println(String.format("[%s] It's seem that orchestrator availability response is in late...", this.id));
-
-        // }
 
         if (this.isHeartBeatInLate()) {
             System.out.println(String.format("[%s] I'm alive!", this.id));
@@ -249,10 +229,8 @@ public class Sketch implements Program {
         try {
             this.messageBroker.send(message);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        this.lastSendedOrchestratorAvailabilityRequest = LocalDateTime.now();
     }
 
     /**
@@ -301,7 +279,6 @@ public class Sketch implements Program {
             if (message instanceof ScanNowMessage) {
                 this.lastReceivedScanExecutionOrder = LocalDateTime.now();
                 this.lastReceivedOrchestratorAvailabilityResponse = this.lastReceivedScanExecutionOrder;
-                this.lastSendedOrchestratorAvailabilityRequest = LocalDateTime.now();
                 final ScanNowMessage realMessage = (ScanNowMessage) message;
                 final Command command = CommandFactory.createScanNowCommand(this.messageBroker, id, mac, ip, mode.get(), this.scanner);
                 try {

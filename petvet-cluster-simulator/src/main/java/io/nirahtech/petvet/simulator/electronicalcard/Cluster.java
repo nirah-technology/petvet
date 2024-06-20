@@ -2,8 +2,6 @@ package io.nirahtech.petvet.simulator.electronicalcard;
 
 import java.io.IOException;
 import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +10,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import io.nirahtech.petvet.messaging.util.EmitterMode;
 import io.nirahtech.petvet.messaging.util.MacAddress;
 
 /**
@@ -28,10 +25,10 @@ public final class Cluster implements Runnable {
         this.executorService = Executors.newFixedThreadPool(this.nodes.size());
     }
 
-    public static final Cluster create(final int totalNodes, final InetAddress ipFilter, final InetAddress multicastGroupAddress, final int multicastGroupPort, EmitterMode mode, Duration scanInterval, Duration orchestratorInterval, Duration heartbeatInterval) throws IOException {
+    public static final Cluster create(Configuration configuration) throws IOException {
         final Set<MicroController> nodes = new HashSet<>();
 
-        final Optional<Network> networkFound = Network.retrieveNetworkUsingFilter(ipFilter.getAddress()[0], ipFilter.getAddress()[1], ipFilter.getAddress()[2]);
+        final Optional<Network> networkFound = Network.retrieveNetworkUsingFilter(configuration.ipFilter().getAddress()[0], configuration.ipFilter().getAddress()[1], configuration.ipFilter().getAddress()[2]);
         if (!networkFound.isPresent()) {
             throw new IOException("Unable to found the right network.");
         }
@@ -43,14 +40,13 @@ public final class Cluster implements Runnable {
         availableIP.remove(network.getIp());
         final List<MacAddress> availableMAC = new ArrayList<>(network.getAllAvailableMacAddresses().toList());
 
-        for (int i = 0; i < totalNodes; i++) {
+        for (int i = 0; i < configuration.clusterSize(); i++) {
             Inet4Address ip = availableIP.get(i);
             MacAddress mac = availableMAC.get(i);
-            MicroController node = ElectronicalCard.newInstance(network.getNetworkInterface(), mac, ip, multicastGroupAddress, multicastGroupPort, mode, scanInterval, orchestratorInterval, heartbeatInterval);
+            MicroController node = ElectronicalCard.newInstance(network.getNetworkInterface(), mac, ip, configuration);
             nodes.add(node);
         }
-        final Cluster cluster = new Cluster(nodes);
-        return cluster;
+        return new Cluster(nodes);
     }
 
     @Override

@@ -101,6 +101,7 @@ public class App {
             final MessageBroker messageBroker = UDPMessageBroker.newInstance();
             final InetAddress multicastGroup = (InetAddress) configuration.get(NETWORK_MULTICAST_GROUP_ADDRESS);
             final int multicastPort = (int) configuration.get(NETWORK_MULTICAST_GROUP_PORT);
+
     
             final MonitorTask monitorTask = new MonitorTask(
                     messageBroker,

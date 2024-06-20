@@ -38,9 +38,6 @@ Un microcontrôleur peut :
 - Diffuser un heartbeat.
 
 
-
-
-
 ## **Configuration**
 
 Voici un exemple de fichier de configuration pour le simulateur :
@@ -81,19 +78,19 @@ node.interval.heartbeat=2000
 1. Cloner le dépot:
 
 ```bash
-git clone https://github.com/votre-utilisateur/petvet-electronical-cards-cluster-simulator.git
-cd petvet-electronical-cards-cluster-simulator
+git clone https://github.com/nirah-technology/petvet.git
+cd petvet/petvet-cluster-simulator
 ```
 
-2. Compilez le projet avec Maven:
+2. Compilez et packagez le projet avec Maven:
 
 ```bash
-mvn package
+mvn clean package
 ```
 
 3. Exécutez le simulateur:
 ```bash
-java -jar target/petvet-electronical-cards-cluster-simulator.jar
+java -jar target/petvet-cluster-simulator-1.0-SNAPSHOT.jar
 ```
 
 
@@ -103,9 +100,10 @@ Pour développer ou contribuer au projet, suivez ces étapes :
 
 1. Clonez le dépôt Git :
 
-```git
-git clone https://github.com/votre-utilisateur/superviser-cluster.
+```bash
+git clone https://github.com/nirah-technology/petvet.git
 ```
+
 2. Importez le projet dans votre IDE Java préféré.
 3. Explorez le code source et les tests pour comprendre le fonctionnement de l'application.
 4. Apportez vos modifications et testez-les localement.

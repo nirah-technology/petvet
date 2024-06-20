@@ -35,6 +35,22 @@ Ce projet Java est une application graphique permettant de superviser un cluster
 ![PETVET Cluster Monitor: Connection](./docs/monitor-window-messages-tab.png)
 ![PETVET Cluster Monitor: Connection](./docs/monitor-window-cluster-tab.png)
 
+
+## **Configuration**
+
+Voici un exemple de fichier de configuration pour le simulateur :
+
+```properties
+# Configuration des nodes
+cluster.size=1
+
+# Configuration du réseau
+network.ip.filter=192.168.0.0
+network.multicast.group=224.0.1.128
+network.multicast.port=44666
+```
+
+
 ## **Installation et Utilisation**
 
 Pour utiliser cette application, suivez ces étapes :
@@ -44,7 +60,7 @@ Pour utiliser cette application, suivez ces étapes :
 3. Lancez l'application en exécutant la commande suivante :
 
 ```bash
-java -jar petvet-cluster-monitor.jar
+java -jar petvet-cluster-monitor-1.0-SNAPSHOT.jar
 ```
 4.  Suivez les instructions à l'écran pour commencer la supervision de votre cluster de microcontrôleurs.
 
@@ -54,9 +70,10 @@ Pour développer ou contribuer au projet, suivez ces étapes :
 
 1. Clonez le dépôt Git :
 
-```git
-git clone https://github.com/votre-utilisateur/superviser-cluster.
+```bash
+git clone https://github.com/nirah-technology/petvet.git
 ```
+
 2. Importez le projet dans votre IDE Java préféré.
 3. Explorez le code source et les tests pour comprendre le fonctionnement de l'application.
 4. Apportez vos modifications et testez-les localement.
@@ -73,5 +90,7 @@ git clone https://github.com/votre-utilisateur/superviser-cluster.
 
 Les contributions au projet sont les bienvenues ! N'hésitez pas à ouvrir une issue pour signaler un bug ou à soumettre une pull request pour ajouter de nouvelles fonctionnalités.
 
-Licence
-Ce projet est sous licence [type de licence]. Consultez le fichier LICENSE pour plus de détails.
+
+## **Licence**
+
+Ce projet est sous licence [CC BY-NC 4.0](./LICENSE).
