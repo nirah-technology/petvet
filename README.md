@@ -6,7 +6,7 @@ Le projet PETVET est un système qui a pour but de suivre l'état de santé des 
 
 Dans son mode de fonctionnement minimal, le système doit être composé de :
 
-- au moins 1 smartphone
+- 1 smartphone
 
 
 Pour un fonctionnement optimal, le système doit être composé de :
@@ -19,9 +19,10 @@ Plus il y aura de microcontroleurs en réseau, plus la précision de géolocalis
 
 PETVET est un système composé des logiciels suivants:
 
-- app: Application Mobile (android)
-- petvet-cluster-simulator
-- petvet-cluster-monitor
+- ***app***: Application Mobile (android)
+- ***petvet-esp32-wroom-32***: Le code source qui dout tourner sur les microcontroleurs de type ESP32 WROOM 32
+- ***petvet-cluster-monitor***: Application graphique qui permet de surveiller l'état des microcontroleurs
+- **petvet-cluster-simulator**: Application console qui permet de simuler un ensemble de microcontroleur ayant le code *"petvet-esp32-wroom-32"* chargé.
 
 ## Présentation des Projets
 
