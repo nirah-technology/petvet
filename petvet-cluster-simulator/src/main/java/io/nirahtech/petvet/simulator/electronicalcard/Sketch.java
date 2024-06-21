@@ -280,7 +280,7 @@ public class Sketch implements Program {
                 this.lastReceivedScanExecutionOrder = LocalDateTime.now();
                 this.lastReceivedOrchestratorAvailabilityResponse = this.lastReceivedScanExecutionOrder;
                 final ScanNowMessage realMessage = (ScanNowMessage) message;
-                final Command command = CommandFactory.createScanNowCommand(this.messageBroker, id, mac, ip, mode.get(), this.scanner);
+                final Command command = CommandFactory.createScanNowCommand(this.messageBroker, realMessage.getScanId(), id, mac, ip, mode.get(), this.scanner);
                 try {
                     command.execute();
                 } catch (IOException e) {

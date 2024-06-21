@@ -5,9 +5,9 @@ import java.net.UnknownHostException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,11 +15,14 @@ import io.nirahtech.petvet.messaging.util.EmitterMode;
 import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public class ScanReportMessage extends AbstractMessage {
+    private static final String SCAN_ID_KEY = "scanId";
     private static final String DETECTED_DEVICES_KEY = "report";
 
     private final Map<MacAddress, Float> scanReportResults;
+    private final UUID scanId;
 
     private ScanReportMessage(
+            final UUID scanId,
             final UUID emitterId,
             final MacAddress emitterMAC,
             final InetAddress emitterIP,
@@ -27,6 +30,7 @@ public class ScanReportMessage extends AbstractMessage {
             final LocalDateTime sentAt,
             final Map<MacAddress, Float> scanReportResults) {
         super(emitterId, emitterMAC, emitterIP, emitterMode, MessageType.SCAN_REPORT, sentAt);
+        this.scanId = scanId;
         this.scanReportResults = scanReportResults;
     }
 
@@ -34,9 +38,13 @@ public class ScanReportMessage extends AbstractMessage {
         return Collections.unmodifiableMap(this.scanReportResults);
     }
 
-    public static ScanReportMessage create(final UUID emitterId, final MacAddress emitterMAC,
+    public UUID getScanId() {
+        return scanId;
+    }
+
+    public static ScanReportMessage create(final UUID scanId, final UUID emitterId, final MacAddress emitterMAC,
             final InetAddress emitterIP, final EmitterMode emitterMode, final Map<MacAddress, Float> scanReportResults) {
-        return new ScanReportMessage(emitterId, emitterMAC, emitterIP, emitterMode, LocalDateTime.now(),
+        return new ScanReportMessage(scanId, emitterId, emitterMAC, emitterIP, emitterMode, LocalDateTime.now(),
                 scanReportResults);
     }
 
@@ -48,14 +56,14 @@ public class ScanReportMessage extends AbstractMessage {
             if (type.equals(MessageType.SCAN_REPORT)) {
                 final Map<String, Object> properties = Message.fromStringToMap(messageParts[1]);
                 try {
-                    
+                    final UUID scan = UUID.fromString(sanitize(properties.get(SCAN_ID_KEY).toString()).strip());
                     final UUID id = UUID.fromString(sanitize(properties.get(Message.EMITTER_ID_PROPERTY_NAME).toString()).strip());
                     final InetAddress ip = InetAddress.getByName(sanitize(properties.get(Message.EMITTER_IP_PROPERTY_NAME).toString()).strip());
                     final MacAddress mac = MacAddress.of(sanitize(properties.get(Message.EMITTER_MAC_PROPERTY_NAME).toString()).strip());
                     final EmitterMode mode = EmitterMode.valueOf(sanitize(properties.get(Message.EMITTER_MODE_PROPERTY_NAME).toString()).strip());
                     final LocalDateTime sendedAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(sanitize(properties.get(Message.SENDED_AT_PROPERTY_NAME).toString()).strip())), ZoneOffset.UTC);
                     Map<MacAddress, Float> reports = new HashMap<>();
-                    final ScanReportMessage message = new ScanReportMessage(id, mac, ip, mode, sendedAt, reports);
+                    final ScanReportMessage message = new ScanReportMessage(scan, id, mac, ip, mode, sendedAt, reports);
                     scanReportMessage = Optional.of(message);
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
@@ -74,7 +82,8 @@ public class ScanReportMessage extends AbstractMessage {
 
         StringBuilder messageBuilder = new StringBuilder()
                 .append(super.toString())
-                .append(String.format(",%s=%s", DETECTED_DEVICES_KEY, reportBuilder));
+                .append(String.format(",%s=%s,", SCAN_ID_KEY, this.scanId))
+                .append(String.format("%s=%s", DETECTED_DEVICES_KEY, reportBuilder));
         return messageBuilder.toString();
     }
 

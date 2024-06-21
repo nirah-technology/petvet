@@ -17,10 +17,10 @@ public final class CommandFactory {
 
     }
 
-    public static Command createScanNowCommand(MessagePublisher messageSender, UUID id, MacAddress mac, InetAddress ip, EmitterMode mode, Scanner scanner) {
+    public static Command createScanNowCommand(MessagePublisher messageSender, UUID scan, UUID id, MacAddress mac, InetAddress ip, EmitterMode mode, Scanner scanner) {
         Objects.requireNonNull(messageSender, "Multicast Group is required to create a new command.");
         Objects.requireNonNull(messageSender, "Multicast Port is required to create a new command.");
-        return new ScanNowCommand(messageSender, id, mac, ip, mode, scanner);
+        return new ScanNowCommand(messageSender, scan, id, mac, ip, mode, scanner);
     }
 
 
