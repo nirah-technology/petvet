@@ -17,17 +17,20 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import io.nirahtech.petvet.cluster.monitor.data.Device;
 import io.nirahtech.petvet.cluster.monitor.data.ElectronicalCard;
 import io.nirahtech.petvet.cluster.monitor.data.ScanReport;
+import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public class ScansReportsPointOfViewPanel extends JPanel {
 
     private final DefaultListModel<UUID> scanRequestsIdentifierListModel;
-    private final DefaultListModel<UUID> effectiveScannersListModel;
+    private final DefaultListModel<MacAddress> effectiveScannersListModel;
     private final SortedSet<ElectronicalCard> esps;
     private final SortedSet<ScanReport> scanReports;
     private final List<ScanReport> selectedScanReports = new ArrayList<>();
     private final List<UUID> effectivesScanners = new ArrayList<>();
+    private final Set<Device> detectedDevicesForSelectedScanId = new HashSet<>();
 
     private UUID selectScanId = null;
 
@@ -61,7 +64,10 @@ public class ScansReportsPointOfViewPanel extends JPanel {
 
                     this.effectiveScannersListModel.clear();
                     this.selectedScanReports.forEach(scanReport -> {
-                        this.effectiveScannersListModel.addElement(scanReport.espId());
+                        this.esps.stream().filter(scanner ->scanner.getId().equals(scanReport.espId()))
+                        .findFirst().ifPresent(scanner -> {
+                            this.effectiveScannersListModel.addElement(scanner.getMac());
+                        });
                     });
                     this.repaint();
                 }
@@ -80,9 +86,32 @@ public class ScansReportsPointOfViewPanel extends JPanel {
         scanResumePanel.add(scanersCount);
         scanResumePanel.add(new JLabel("SCAN DURATION: "));
         scanResumePanel.add(scanDuration);
-        final JList<UUID> activeScannersForRequest = new JList<>(this.effectiveScannersListModel);
+
+        final DetectedDeviceTable reportsTable = new DetectedDeviceTable(this.detectedDevicesForSelectedScanId);
+
+        final JList<MacAddress> activeScannersForRequest = new JList<>(this.effectiveScannersListModel);
+        activeScannersForRequest.addListSelectionListener((event) -> {
+            if (!event.getValueIsAdjusting()) {
+                final int selectedIndex = scanRequestsIdentifierList.getSelectedIndex();
+                if (selectedIndex != -1) {
+                    detectedDevicesForSelectedScanId.clear();
+                    UUID scannerId = scanRequestsIdentifierList.getModel().getElementAt(selectedIndex);
+                    this.selectedScanReports
+                            .stream()
+                            .filter(report -> report.espId().equals(scannerId))
+                            .findFirst()
+                            .ifPresent(report -> {
+                                report.detectedDevices().forEach(device -> {
+                                    detectedDevicesForSelectedScanId.add(device);
+                                });
+                            });
+                }
+            }
+
+        });
         final JPanel selectedscanerResumePanel = new JPanel();
-        final JPanel reportDetailPanel = new JPanel();
+        final JPanel reportDetailPanel = new JPanel(new BorderLayout());
+        reportDetailPanel.add(new JScrollPane(reportsTable));
         this.addPanel(new JLabel("Scan Requests Orders"), scanRequestsIdentifierScrollPane);
         this.addPanel(new JLabel("Scan Request Overview"), scanResumePanel);
         this.addPanel(new JLabel("Effective Scanners for Scan Request"), activeScannersForRequest);

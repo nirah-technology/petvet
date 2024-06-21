@@ -1,17 +1,13 @@
 package io.nirahtech.petvet.cluster.monitor.data;
 
-import java.net.InetAddress;
-
 import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public final class Device {
     private final MacAddress mac;
-    private final InetAddress ip;
     private float signalStrengthInDBm;
 
-    public Device(MacAddress mac, InetAddress ip, float signalStrengthInDBm) {
+    public Device(MacAddress mac, float signalStrengthInDBm) {
         this.mac = mac;
-        this.ip = ip;
         this.signalStrengthInDBm = signalStrengthInDBm;
     }
     public void setSignalStrengthInDBm(long signalStrengthInDBm) {
@@ -19,9 +15,6 @@ public final class Device {
     }
     public MacAddress getMac() {
         return mac;
-    }
-    public InetAddress getIp() {
-        return ip;
     }
     public float getSignalStrengthInDBm() {
         return signalStrengthInDBm;
