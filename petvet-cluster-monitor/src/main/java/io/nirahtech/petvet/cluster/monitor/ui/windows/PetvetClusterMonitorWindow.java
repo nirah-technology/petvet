@@ -26,6 +26,7 @@ import io.nirahtech.petvet.cluster.monitor.data.HeartBeat;
 import io.nirahtech.petvet.cluster.monitor.data.ScanReport;
 import io.nirahtech.petvet.cluster.monitor.ui.features.cluster.ClusterPanel;
 import io.nirahtech.petvet.cluster.monitor.ui.features.messages.ReceivedMessagesPanel;
+import io.nirahtech.petvet.cluster.monitor.ui.features.reports.ScanReportsPanel;
 import io.nirahtech.petvet.messaging.brokers.MessageBroker;
 import io.nirahtech.petvet.messaging.messages.Message;
 import io.nirahtech.petvet.messaging.util.MacAddress;
@@ -45,6 +46,7 @@ public class PetvetClusterMonitorWindow extends JFrame {
 
     private final ReceivedMessagesPanel receivedMessagesPanel;
     private final ClusterPanel espInventoryPanel;
+    private final ScanReportsPanel scanReportsPanel;
 
     public PetvetClusterMonitorWindow(final MessageBroker messageBroker, final InetAddress multicastGroup,
             final int multicastPort, final List<Message> receivedMessages, final SortedSet<ElectronicalCard> esps,
@@ -65,13 +67,14 @@ public class PetvetClusterMonitorWindow extends JFrame {
 
         this.receivedMessagesPanel = new ReceivedMessagesPanel(this.receivedMessages, this.monitorTask);
         this.espInventoryPanel = new ClusterPanel(this.esps, this.heartBeats, this.monitorTask);
+        this.scanReportsPanel = new ScanReportsPanel(this.esps, this.scanReports, this.monitorTask);
 
         this.tabbedPane = new JTabbedPane();
         this.tabbedPane.setTabPlacement(JTabbedPane.TOP);
         this.addTabWithIcon(this.tabbedPane, "Messages", "images/message-circle-lines.png", this.receivedMessagesPanel);
         this.addTabWithIcon(this.tabbedPane, "Cluster", "images/server-cluster.png",
                 new JScrollPane(this.espInventoryPanel));
-        this.addTabWithIcon(this.tabbedPane, "Scan Reports", "images/wifi-focus.png", new JScrollPane());
+        this.addTabWithIcon(this.tabbedPane, "Scan Reports", "images/wifi-focus.png", new JScrollPane(this.scanReportsPanel));
         this.add(this.tabbedPane, BorderLayout.CENTER);
 
     }

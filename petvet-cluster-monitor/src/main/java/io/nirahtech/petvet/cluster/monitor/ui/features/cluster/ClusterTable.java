@@ -88,30 +88,32 @@ public final class ClusterTable extends JTable {
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             if (rowIndex >= 0) {
-                ElectronicalCard electronicCard = new ArrayList<>(this.electronicCards).get(rowIndex);
-                switch (columnIndex) {
-                    case 0:
-                        return electronicCard.getId();
-                    case 1:
-                        return electronicCard.getMac();
-                    case 2:
-                        return electronicCard.getIp();
-                    case 3:
-                        return electronicCard.getMode();
-                    case 4:
-                        return (electronicCard.getUptime().isPresent()) ? electronicCard.getUptime().get() : "NC";
-                    case 5:
-                        return (electronicCard.getTemperatureInCelcus().isPresent())
-                                ? electronicCard.getTemperatureInCelcus().get()
-                                : "NC";
-                    case 6:
-                        return (electronicCard.getConsumptionInVolt().isPresent())
-                                ? electronicCard.getConsumptionInVolt().get()
-                                : "NC";
-                    case 7:
-                        return (electronicCard.getLocation().isPresent()) ? electronicCard.getLocation().get() : "NC";
-                    case 8:
-                        return "NC";
+                synchronized(this.electronicCards) {
+                    ElectronicalCard electronicCard = new ArrayList<>(this.electronicCards).get(rowIndex);
+                    switch (columnIndex) {
+                        case 0:
+                            return electronicCard.getId();
+                        case 1:
+                            return electronicCard.getMac();
+                        case 2:
+                            return electronicCard.getIp();
+                        case 3:
+                            return electronicCard.getMode();
+                        case 4:
+                            return (electronicCard.getUptime().isPresent()) ? electronicCard.getUptime().get() : "NC";
+                        case 5:
+                            return (electronicCard.getTemperatureInCelcus().isPresent())
+                                    ? electronicCard.getTemperatureInCelcus().get()
+                                    : "NC";
+                        case 6:
+                            return (electronicCard.getConsumptionInVolt().isPresent())
+                                    ? electronicCard.getConsumptionInVolt().get()
+                                    : "NC";
+                        case 7:
+                            return (electronicCard.getLocation().isPresent()) ? electronicCard.getLocation().get() : "NC";
+                        case 8:
+                            return electronicCard.getLastUpdate();
+                    }
                 }
             }
             return null;

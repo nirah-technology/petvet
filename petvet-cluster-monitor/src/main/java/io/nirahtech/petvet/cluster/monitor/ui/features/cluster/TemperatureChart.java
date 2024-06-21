@@ -14,6 +14,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Millisecond;
@@ -36,12 +37,14 @@ public class TemperatureChart extends JPanel {
 
         final ChartPanel chartPanel = new ChartPanel(timeSeriesChart);
         chartPanel.setBackground(this.getBackground());
-        timeSeriesChart.setBackgroundPaint(getBackground());
+        // timeSeriesChart.setBackgroundPaint(getBackground());
         this.add(chartPanel);
 
         // Personnalisation du graphique
         XYPlot plot = (XYPlot) timeSeriesChart.getPlot();
         DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
+        ValueAxis valueAxis = plot.getRangeAxis();
+        valueAxis.setRange(-50, 150);
         dateAxis.setDateFormatOverride(new java.text.SimpleDateFormat("HH:mm:ss"));
 
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();

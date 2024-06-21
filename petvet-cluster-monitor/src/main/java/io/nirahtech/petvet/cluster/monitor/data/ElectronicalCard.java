@@ -77,6 +77,10 @@ public final class ElectronicalCard implements Serializable, Comparator<Electron
         this.lastUpdate = LocalDateTime.now();
     }
 
+    public LocalDateTime getLastUpdate() {
+        return this.lastUpdate;
+    }
+
     public boolean isObsolete() {
         return LocalDateTime.now().isAfter(this.lastUpdate.plus(DELAY_TO_BE_OBSOLETE));
     }
