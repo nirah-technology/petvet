@@ -1,0 +1,35 @@
+package io.nirahtech.petvet.geopulsetracker.domain;
+
+import java.io.Serializable;
+
+public final class Signal implements Serializable {
+
+    public static final double MINIMUM_SIGNAL_STRENGTH_IN_DBM = -100.0D;
+    public static final double MAXIMUM_SIGNAL_STRENGTH_IN_DBM = -30.0D;
+
+    private double strength;
+
+    public Signal() {
+        this.strength = MINIMUM_SIGNAL_STRENGTH_IN_DBM;
+    }
+
+    public double getStrength() {
+        return strength;
+    }
+
+    public void increaseStrength(double increase) {
+        this.setStrength(strength + increase);
+    }
+
+    public void decreaseStrength(double decrease) {
+        this.setStrength(strength - decrease);
+    }
+
+    private void setStrength(double strength) {
+        // Signal strength should be between -30 and -100 dBm
+        if (strength < MINIMUM_SIGNAL_STRENGTH_IN_DBM || strength > MAXIMUM_SIGNAL_STRENGTH_IN_DBM) {
+            throw new IllegalArgumentException("Signal strength should be between -30 and -100 dBm");
+        }
+        this.strength = strength;
+    }
+}
