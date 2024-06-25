@@ -20,6 +20,31 @@ public final class MacAddress implements Serializable, Comparator<MacAddress> {
         return this.address;
     }
 
+    
+    public byte getFirstByte() {
+        return address[0];
+    }
+
+    public byte getSecondByte() {
+        return address[1];
+    }
+
+    public byte getThirdByte() {
+        return address[2];
+    }
+
+    public byte getFourthByte() {
+        return address[3];
+    }
+
+    public byte getFifthByte() {
+        return address[4];
+    }
+
+    public byte getSixthByte() {
+        return address[5];
+    }
+
     public static final MacAddress of(byte[] address) {
         return new MacAddress(address[0], 
         address[1], 
@@ -87,6 +112,14 @@ public final class MacAddress implements Serializable, Comparator<MacAddress> {
             }
         }
         return 0;
+    }
+
+    public static final MacAddress generate() {
+        final byte[] address = new byte[6];
+        for (int i = 0; i < address.length; i++) {
+            address[i] = (byte) (Math.random() * 256);
+        }
+        return of(address);
     }
     
     @Override

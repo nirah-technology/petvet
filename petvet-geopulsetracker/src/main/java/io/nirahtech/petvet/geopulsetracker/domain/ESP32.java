@@ -2,6 +2,8 @@ package io.nirahtech.petvet.geopulsetracker.domain;
 
 import java.util.UUID;
 
+import io.nirahtech.petvet.messaging.util.MacAddress;
+
 public final class ESP32 extends ElectronicChipBoard {
 
     private final UUID id;
@@ -43,6 +45,21 @@ public final class ESP32 extends ElectronicChipBoard {
     public static final ESP32 generate() {
         final WiFi wifi = new WiFi(MacAddress.generate());
         final Bluetooth bluetooth = new Bluetooth(MacAddress.generate());
+        return new ESP32(UUID.randomUUID(), wifi, bluetooth);
+    }
+    public static final ESP32 generateWithWiFiMacAddress(final MacAddress wifiBSSID) {
+        final WiFi wifi = new WiFi(wifiBSSID);
+        final Bluetooth bluetooth = new Bluetooth(MacAddress.generate());
+        return new ESP32(UUID.randomUUID(), wifi, bluetooth);
+    }
+    public static final ESP32 generateWithBluetoothMacAddress(final MacAddress bluetoothBSSID) {
+        final WiFi wifi = new WiFi(MacAddress.generate());
+        final Bluetooth bluetooth = new Bluetooth(bluetoothBSSID);
+        return new ESP32(UUID.randomUUID(), wifi, bluetooth);
+    }
+    public static final ESP32 generateWithBluetoothAndWiFiMacAddresses(final MacAddress wifiBSSID, final MacAddress bluetoothBSSID) {
+        final WiFi wifi = new WiFi(wifiBSSID);
+        final Bluetooth bluetooth = new Bluetooth(bluetoothBSSID);
         return new ESP32(UUID.randomUUID(), wifi, bluetooth);
     }
 

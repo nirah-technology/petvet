@@ -9,15 +9,20 @@ import javax.swing.JFrame;
 
 import io.nirahtech.petvet.geopulsetracker.domain.ESP32;
 import io.nirahtech.petvet.geopulsetracker.domain.ElectronicChipBoard;
+import io.nirahtech.petvet.messaging.brokers.MessageBroker;
+import io.nirahtech.petvet.messaging.messages.MessageType;
+import io.nirahtech.petvet.messaging.messages.ScanReportMessage;
 
-public final class Window extends JFrame {
+public final class PetvetPulseTrackerWindow extends JFrame {
     private final MapPanel mapPanel;
 
     private final Set<ElectronicChipBoard> electronicChipBoards;
     private final JButton createChipBoardButton;
+    private final MessageBroker messageBroker;
     
-    public Window() {
+    public PetvetPulseTrackerWindow(MessageBroker messageBroker) {
         super("PETVET - Geo Pulse Tracker");
+        this.messageBroker = messageBroker;
         this.electronicChipBoards = new HashSet<>();
         this.setLayout(new BorderLayout());
         this.mapPanel = new MapPanel(this.electronicChipBoards);
@@ -35,5 +40,12 @@ public final class Window extends JFrame {
         this.add(this.createChipBoardButton, BorderLayout.SOUTH);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800, 600);
+
+        this.messageBroker.subscribe(MessageType.SCAN_REPORT, (message) -> {
+            if (message instanceof ScanReportMessage) {
+                final ScanReportMessage realMessage = (ScanReportMessage) message;
+                this.mapPanel.triggerPulse(realMessage.getScanReportResults());
+            }
+        });
     }
 }

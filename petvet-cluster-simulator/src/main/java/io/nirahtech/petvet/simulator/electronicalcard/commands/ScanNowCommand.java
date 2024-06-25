@@ -76,6 +76,8 @@ public final class ScanNowCommand extends AbstractCommand {
                 detectedDevicesWithDBs.put(device.bssid(), device.signalLevel());
             });
         } catch (Exception exception) {
+            
+        } finally {
             detectedDevicesWithDBs.putAll(this.stubScan());
         }
         this.sendScanReport(detectedDevicesWithDBs);

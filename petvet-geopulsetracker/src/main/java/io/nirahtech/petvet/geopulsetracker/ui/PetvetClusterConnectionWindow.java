@@ -153,7 +153,7 @@ public class PetvetClusterConnectionWindow extends JFrame {
                                             .setEnabled(!this.multicastGroupPortSpinner.isEnabled());
                                     System.out.println(String.format("Connected to the multicast group: udp://%s:%s", this.messageBroker.getInetAddress(), this.messageBroker.getPort()));
                                             this.setVisible(false);
-                                            JFrame radarWindow = new Window();
+                                            JFrame radarWindow = new PetvetPulseTrackerWindow(this.messageBroker);
                                             radarWindow.setVisible(true);
                                 } catch (IOException e) {
                                     e.printStackTrace();

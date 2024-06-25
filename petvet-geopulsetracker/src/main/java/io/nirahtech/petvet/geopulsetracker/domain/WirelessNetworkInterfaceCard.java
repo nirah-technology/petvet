@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import io.nirahtech.petvet.messaging.util.MacAddress;
+
 public abstract class WirelessNetworkInterfaceCard implements NetworkInterfaceCard, Wireless {
     private final MacAddress macAddress;
     private boolean isRunning = false;

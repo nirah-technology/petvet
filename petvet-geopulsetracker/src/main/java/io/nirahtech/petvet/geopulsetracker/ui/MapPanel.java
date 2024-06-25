@@ -12,13 +12,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,6 +27,7 @@ import javax.swing.JPanel;
 
 import io.nirahtech.petvet.geopulsetracker.domain.ESP32;
 import io.nirahtech.petvet.geopulsetracker.domain.ElectronicChipBoard;
+import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public class MapPanel extends JPanel {
 
@@ -41,8 +43,8 @@ public class MapPanel extends JPanel {
     private static final Color BLUETOOTH_MAX_SIGNAL_COLOR = new Color(0, 114, 188);
     private static final Color BLUETOOTH_COVERAGE_COLOR = new Color(0, 114, 188, 32);
 
-    private final List<ElectronicChipBoard> electronicChipBoardsWithoutPositions = new ArrayList<>();
-    private final List<ElectronicChipBoard> electronicChipBoards = new ArrayList<>();
+    private final Set<ElectronicChipBoard> electronicChipBoardsWithoutPositions = new HashSet<>();
+    private final Set<ElectronicChipBoard> electronicChipBoards = new HashSet<>();
     private final Map<ElectronicChipBoard, Point> electronicChipBoardsLocations = new HashMap<>();
 
     private ElectronicChipBoard selectedChipBoard = null;
@@ -80,6 +82,7 @@ public class MapPanel extends JPanel {
     public void addElectronicChipBoard(final ElectronicChipBoard electronicalCard) {
         this.electronicChipBoardsWithoutPositions.add(electronicalCard);
         this.electronicChipBoards.add(electronicalCard);
+        System.out.println(this.electronicChipBoardsWithoutPositions.size());
     }
 
     public MapPanel(Collection<ElectronicChipBoard> electronicChipBoards) {
@@ -95,7 +98,7 @@ public class MapPanel extends JPanel {
                     selectedChipBoard = potentialSelectedChipBoard.get();
                 } else {
                     if (!electronicChipBoardsWithoutPositions.isEmpty()) {
-                        ElectronicChipBoard chipBoardWithoutPosition = electronicChipBoardsWithoutPositions.get(0);
+                        ElectronicChipBoard chipBoardWithoutPosition = List.copyOf(electronicChipBoardsWithoutPositions).get(0);
                         electronicChipBoardsLocations.put(chipBoardWithoutPosition, clickedPoint);
                         selectedChipBoard = chipBoardWithoutPosition;
                         electronicChipBoardsWithoutPositions.remove(chipBoardWithoutPosition);
@@ -274,7 +277,8 @@ public class MapPanel extends JPanel {
                 }
             };
 
-            animationTimer.scheduleAtFixedRate(animationTask, 0, 10);
+            // animationTimer.scheduleAtFixedRate(animationTask, 0, 10);
+            animationTimer.schedule(animationTask, 0);
         }
 
         public void draw(Graphics2D g2d) {
@@ -286,6 +290,35 @@ public class MapPanel extends JPanel {
             if (animationTimer != null) {
                 animationTimer.cancel();
             }
+        }
+    }
+
+    public void triggerPulse(Map<MacAddress, Float> scanReportResults) {
+        scanReportResults.entrySet().forEach(report -> {
+            MacAddress detectedDevice = report.getKey();
+            float signal = report.getValue();
+                this.electronicChipBoardsLocations
+                        .keySet()
+                        .stream()
+                        .map(chipBoard -> (ESP32) chipBoard)
+                        .filter(esp -> esp.getWifi().getMacAddress().equals(detectedDevice))
+                        .findFirst()
+                        .ifPresentOrElse((esp) -> {
+
+                        }, () -> {
+                            ESP32 esp = ESP32.generateWithWiFiMacAddress(detectedDevice);
+                            this.addElectronicChipBoard(esp);
+
+                        });
+
+        });
+        if (radarEcho != null) {
+            radarEcho.stop();
+        }
+        if (electronicChipBoardsLocations.containsKey(selectedChipBoard)) {
+            Point center = electronicChipBoardsLocations.get(selectedChipBoard);
+            radarEcho = new RadarEcho(center, WIFI_MAX_COVERAGE_IN_CENTIMETERS / 2);
+            radarEcho.start();
         }
     }
 

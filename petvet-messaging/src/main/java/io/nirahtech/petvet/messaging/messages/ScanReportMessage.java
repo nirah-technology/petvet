@@ -51,7 +51,6 @@ public class ScanReportMessage extends AbstractMessage {
 
     public static Optional<ScanReportMessage> parse(final String messageAsString) {
         Optional<ScanReportMessage> scanReportMessage = Optional.empty();
-        System.out.println("Message received: " + messageAsString);
         if (messageAsString.contains(":")) {
             final String[] messageParts = messageAsString.split(":", 2);
             final MessageType type = MessageType.valueOf(messageParts[0]);
@@ -65,24 +64,17 @@ public class ScanReportMessage extends AbstractMessage {
                     final EmitterMode mode = EmitterMode.valueOf(sanitize(properties.get(Message.EMITTER_MODE_PROPERTY_NAME).toString()).strip());
                     final LocalDateTime sendedAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(sanitize(properties.get(Message.SENDED_AT_PROPERTY_NAME).toString()).strip())), ZoneOffset.UTC);
                     final String rawReportData = sanitize(properties.get(DETECTED_DEVICES_KEY).toString()).strip();
-                    System.out.println(rawReportData);
-                    System.out.println("11111111111111111111");
                     if (rawReportData.contains("|")) {
-                        System.out.println("22222222222");
-                        final String[] rawReports = rawReportData.split("|");
-                        if (rawReports.length == 2) {
-                            System.out.println("333333333333");
-                            Map<MacAddress, Float> reports = new HashMap<>();
-                            for (String rawReport: rawReports) {
-                                if (rawReport.contains(">")) {
-                                    System.out.println("444444444444444");
-                                    String[] reportDetail = rawReport.split(">");
-                                    reports.put(MacAddress.of(reportDetail[0]), Float.parseFloat(reportDetail[1]));
-                                }
+                        Map<MacAddress, Float> reports = new HashMap<>();
+                        final String[] rawReports = rawReportData.split("\\|");
+                        for (String rawReport : rawReports) {
+                            if (rawReport.contains(">")) {
+                                String[] reportDetail = rawReport.split(">");
+                                reports.put(MacAddress.of(reportDetail[0]), Float.parseFloat(reportDetail[1]));
                             }
-                            final ScanReportMessage message = new ScanReportMessage(scan, id, mac, ip, mode, sendedAt, reports);
-                            scanReportMessage = Optional.of(message);
                         }
+                        final ScanReportMessage message = new ScanReportMessage(scan, id, mac, ip, mode, sendedAt, reports);
+                        scanReportMessage = Optional.of(message);
                     }
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
