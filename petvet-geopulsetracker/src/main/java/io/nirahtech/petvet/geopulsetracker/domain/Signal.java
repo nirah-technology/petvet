@@ -12,6 +12,9 @@ public final class Signal implements Serializable {
     public Signal() {
         this.strength = MINIMUM_SIGNAL_STRENGTH_IN_DBM;
     }
+    public Signal(double strengthInDBm) {
+        this.strength = strengthInDBm;
+    }
 
     public double getStrength() {
         return strength;
