@@ -3,6 +3,7 @@ package io.nirahtech.petvet.simulator.electronicalcard.commands;
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -17,10 +18,10 @@ public final class CommandFactory {
 
     }
 
-    public static Command createScanNowCommand(MessagePublisher messageSender, UUID scan, UUID id, MacAddress mac, InetAddress ip, EmitterMode mode, Scanner scanner) {
+    public static Command createScanNowCommand(MessagePublisher messageSender, UUID scan, UUID id, MacAddress mac, InetAddress ip, EmitterMode mode, Scanner scanner, Set<MacAddress> neighborsBSSID) {
         Objects.requireNonNull(messageSender, "Multicast Group is required to create a new command.");
         Objects.requireNonNull(messageSender, "Multicast Port is required to create a new command.");
-        return new ScanNowCommand(messageSender, scan, id, mac, ip, mode, scanner);
+        return new ScanNowCommand(messageSender, scan, id, mac, ip, mode, scanner, neighborsBSSID);
     }
 
 

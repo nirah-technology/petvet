@@ -3,11 +3,13 @@ package io.nirahtech.petvet.simulator.electronicalcard;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.util.Set;
 
 import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public final class ElectronicalCard implements MicroController {
     private final Program program;
+
     private ElectronicalCard(final Program program) {
         this.program = program;
     }
@@ -17,8 +19,9 @@ public final class ElectronicalCard implements MicroController {
         this.program.run();
     }
 
-    public static final ElectronicalCard newInstance(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip, final Configuration configuration) throws UnknownHostException {
-        final Program program = new Sketch(networkInterface, mac, ip, configuration);
+    public static final ElectronicalCard newInstance(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip, final Configuration configuration, Set<MacAddress> neighbors) throws UnknownHostException {
+        final Program program = new Sketch(networkInterface, mac, ip, configuration, neighbors);
         return new ElectronicalCard(program);
     }
+
 }

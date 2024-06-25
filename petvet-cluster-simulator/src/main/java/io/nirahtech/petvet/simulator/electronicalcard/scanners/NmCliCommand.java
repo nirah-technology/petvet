@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import io.nirahtech.petvet.messaging.util.MacAddress;
 
@@ -37,20 +38,34 @@ public final class NmCliCommand implements ScannerSystemCommand {
         final ProcessBuilder processBuilder = new ProcessBuilder(DETECT_OTHERS_WIFI_NETWORKS_COMMAND.split(" "));
         processBuilder.redirectErrorStream(true);
         final Process process = processBuilder.start();
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
         String line;
+        Pattern pattern = Pattern.compile(":");
         while ((line = reader.readLine()) != null) {
-            final String[] wifiInfo = line.split(":");
-            if (wifiInfo.length == 3) {
-                final String bssid = wifiInfo[0].strip();
-                final String ssid = wifiInfo[1].strip();
-                final float signalInDBm = -Float.parseFloat(wifiInfo[2].strip());
-                final Device device = new Device(MacAddress.of(bssid), ssid, 0, signalInDBm);
-                detectedDevices.add(device);
+            line = line.replaceAll("\\\\:", ":");
+            String[] wifiInfo = pattern.split(line, -1); // Utilisation de -1 pour conserver les champs vides
+            if (wifiInfo.length == 8) {
+                // Les trois premiers champs doivent être BSSID, SSID et signalInDBm
+                // respectivement
+                String bssid = line.substring(0, 17).strip();
+                String ssid = wifiInfo[6].strip();
+                try {
+                    float signalInDBm = -Float.parseFloat(wifiInfo[7].strip());
+                    // Création de l'objet Device
+                    Device device = new Device(MacAddress.of(bssid), ssid, 0, signalInDBm);
+                    detectedDevices.add(device);
+                } catch (NumberFormatException e) {
+
+                }
             }
         }
-
         return detectedDevices;
     }
 }

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -51,9 +52,11 @@ public class Sketch implements Program {
     private final Duration intervalBetweenEachHeartBeat;
 
     private final MessageBroker messageBroker;
+    private final Set<MacAddress> neighborsBSSID;
 
-    public Sketch(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip,  final Configuration configuration) {
+    public Sketch(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip,  final Configuration configuration, final Set<MacAddress> neighborsBSSID) {
         this.messageBroker = UDPMessageBroker.newInstance();
+        this.neighborsBSSID = neighborsBSSID;
         this.networkInterface = networkInterface;
         this.mac = mac;
         this.ip = ip;
@@ -67,6 +70,8 @@ public class Sketch implements Program {
         }
         this.scanner = new WifiScanner();
     }
+
+
 
     private final void sendScanNowRequest() {
         final ScanNowMessage message = ScanNowMessage.create(
@@ -280,7 +285,7 @@ public class Sketch implements Program {
                 this.lastReceivedScanExecutionOrder = LocalDateTime.now();
                 this.lastReceivedOrchestratorAvailabilityResponse = this.lastReceivedScanExecutionOrder;
                 final ScanNowMessage realMessage = (ScanNowMessage) message;
-                final Command command = CommandFactory.createScanNowCommand(this.messageBroker, realMessage.getScanId(), id, mac, ip, mode.get(), this.scanner);
+                final Command command = CommandFactory.createScanNowCommand(this.messageBroker, realMessage.getScanId(), id, mac, ip, mode.get(), this.scanner, this.neighborsBSSID);
                 try {
                     command.execute();
                 } catch (IOException e) {

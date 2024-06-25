@@ -40,10 +40,12 @@ public final class Cluster implements Runnable {
         availableIP.remove(network.getIp());
         final List<MacAddress> availableMAC = new ArrayList<>(network.getAllAvailableMacAddresses().toList());
 
+        final Set<MacAddress> neighborsBSSID = new HashSet<>();
         for (int i = 0; i < configuration.clusterSize(); i++) {
-            Inet4Address ip = availableIP.get(i);
-            MacAddress mac = availableMAC.get(i);
-            MicroController node = ElectronicalCard.newInstance(network.getNetworkInterface(), mac, ip, configuration);
+            final Inet4Address ip = availableIP.get(i);
+            final MacAddress mac = availableMAC.get(i);
+            neighborsBSSID.add(mac);
+            final MicroController node = ElectronicalCard.newInstance(network.getNetworkInterface(), mac, ip, configuration, neighborsBSSID);
             nodes.add(node);
         }
         return new Cluster(nodes);
