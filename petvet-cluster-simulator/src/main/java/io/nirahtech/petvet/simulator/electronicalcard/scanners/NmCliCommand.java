@@ -30,6 +30,11 @@ public final class NmCliCommand implements ScannerSystemCommand {
         return isSupported;
     }
 
+    private static float percentageToDbm(float percentage) {
+        return (percentage * 60.0f / 100.0f) - 90.0f;
+    }
+
+
     public Set<Device> execute() throws IOException {
         final Set<Device> detectedDevices = new HashSet<>();
         if (!this.isWifiSupported()) {
@@ -57,7 +62,8 @@ public final class NmCliCommand implements ScannerSystemCommand {
                 String bssid = line.substring(0, 17).strip();
                 String ssid = wifiInfo[6].strip();
                 try {
-                    float signalInDBm = -Float.parseFloat(wifiInfo[7].strip());
+                    final float percentage = Float.parseFloat(wifiInfo[7].strip());
+                    final float signalInDBm = percentageToDbm(percentage);
                     // Création de l'objet Device
                     Device device = new Device(MacAddress.of(bssid), ssid, 0, signalInDBm);
                     detectedDevices.add(device);

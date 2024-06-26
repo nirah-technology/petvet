@@ -2,9 +2,9 @@ package io.nirahtech.petvet.geopulsetracker.ui;
 
 import java.awt.BorderLayout;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import io.nirahtech.petvet.geopulsetracker.domain.ESP32;
@@ -17,7 +17,6 @@ public final class PetvetPulseTrackerWindow extends JFrame {
     private final MapPanel mapPanel;
 
     private final Set<ElectronicChipBoard> electronicChipBoards;
-    private final JButton createChipBoardButton;
     private final MessageBroker messageBroker;
     
     public PetvetPulseTrackerWindow(MessageBroker messageBroker) {
@@ -27,24 +26,30 @@ public final class PetvetPulseTrackerWindow extends JFrame {
         this.setLayout(new BorderLayout());
         this.mapPanel = new MapPanel(this.electronicChipBoards);
 
-        
-        this.createChipBoardButton = new JButton("Create Chip Board");
-        this.createChipBoardButton.addActionListener(event -> {
-            final ESP32 esp = ESP32.generate();
-            esp.powerOn();
-            this.electronicChipBoards.add(esp);
-            this.mapPanel.addElectronicChipBoard(esp);
-        });
 
         this.add(mapPanel, BorderLayout.CENTER);
-        this.add(this.createChipBoardButton, BorderLayout.SOUTH);
+        // this.add(this.createChipBoardButton, BorderLayout.SOUTH);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800, 600);
 
         this.messageBroker.subscribe(MessageType.SCAN_REPORT, (message) -> {
             if (message instanceof ScanReportMessage) {
                 final ScanReportMessage realMessage = (ScanReportMessage) message;
-                this.mapPanel.triggerPulse(realMessage.getScanReportResults());
+                Optional<ESP32> reporter = this.electronicChipBoards
+                        .stream()
+                        .filter(ESP32.class::isInstance)
+                        .map(ESP32.class::cast)
+                        .filter(esp -> esp.getWifi().getMacAddress().equals(realMessage.getEmitterMAC()))
+                        .findFirst();
+                
+                ESP32 scanner;
+                if (reporter.isPresent()) {
+                    scanner = reporter.get();
+                } else {
+                    scanner = ESP32.getOrCreateWithWiFiMacAddress(realMessage.getEmitterMAC());
+                }
+
+                this.mapPanel.triggerPulse(scanner, realMessage.getScanReportResults());
             }
         });
     }

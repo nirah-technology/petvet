@@ -1,10 +1,14 @@
 package io.nirahtech.petvet.geopulsetracker.domain;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import io.nirahtech.petvet.messaging.util.MacAddress;
 
 public final class ESP32 extends ElectronicChipBoard {
+
+    private static final Map<MacAddress, ESP32> INSTANCES = new HashMap<>();
 
     private final UUID id;
     private final WirelessNetworkInterfaceCard wifi;
@@ -47,17 +51,33 @@ public final class ESP32 extends ElectronicChipBoard {
         final Bluetooth bluetooth = new Bluetooth(MacAddress.generate());
         return new ESP32(UUID.randomUUID(), wifi, bluetooth);
     }
-    public static final ESP32 generateWithWiFiMacAddress(final MacAddress wifiBSSID) {
-        final WiFi wifi = new WiFi(wifiBSSID);
-        final Bluetooth bluetooth = new Bluetooth(MacAddress.generate());
-        return new ESP32(UUID.randomUUID(), wifi, bluetooth);
+    public static final ESP32 getOrCreateWithWiFiMacAddress(final MacAddress wifiBSSID) {
+        ESP32 esp;
+        if (INSTANCES.containsKey(wifiBSSID)) {
+            esp = INSTANCES.get(wifiBSSID);
+        } else {
+            final WiFi wifi = new WiFi(wifiBSSID);
+            final Bluetooth bluetooth = new Bluetooth(MacAddress.generate());
+            esp = new ESP32(UUID.randomUUID(), wifi, bluetooth);
+            INSTANCES.put(wifiBSSID, esp);
+            INSTANCES.put(bluetooth.getMacAddress(), esp);
+        }
+        return esp;
     }
-    public static final ESP32 generateWithBluetoothMacAddress(final MacAddress bluetoothBSSID) {
-        final WiFi wifi = new WiFi(MacAddress.generate());
-        final Bluetooth bluetooth = new Bluetooth(bluetoothBSSID);
-        return new ESP32(UUID.randomUUID(), wifi, bluetooth);
+    public static final ESP32 getOrCreateWithBluetoothMacAddress(final MacAddress bluetoothBSSID) {
+        ESP32 esp;
+        if (INSTANCES.containsKey(bluetoothBSSID)) {
+            esp = INSTANCES.get(bluetoothBSSID);
+        } else {
+            final WiFi wifi = new WiFi(MacAddress.generate());
+            final Bluetooth bluetooth = new Bluetooth(bluetoothBSSID);
+            esp = new ESP32(UUID.randomUUID(), wifi, bluetooth);
+            INSTANCES.put(bluetoothBSSID, esp);
+            INSTANCES.put(wifi.getMacAddress(), esp);
+        }
+        return esp;
     }
-    public static final ESP32 generateWithBluetoothAndWiFiMacAddresses(final MacAddress wifiBSSID, final MacAddress bluetoothBSSID) {
+    public static final ESP32 createWithBluetoothAndWiFiMacAddresses(final MacAddress wifiBSSID, final MacAddress bluetoothBSSID) {
         final WiFi wifi = new WiFi(wifiBSSID);
         final Bluetooth bluetooth = new Bluetooth(bluetoothBSSID);
         return new ESP32(UUID.randomUUID(), wifi, bluetooth);

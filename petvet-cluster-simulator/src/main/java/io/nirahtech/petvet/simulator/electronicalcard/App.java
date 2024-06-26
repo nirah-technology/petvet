@@ -72,6 +72,13 @@ public class App {
             System.out.println("Network filter: " + network);
         }
 
+
+        if (parser.hasOption("scan-interval")) {
+            String scanIntervalInMS = parser.getOptionValue("scan-interval");
+            configurationAsMap.put(SCAN_INTERVAL, Duration.ofMillis(Long.parseLong(scanIntervalInMS)));
+            System.out.println("Scan Interval: " + scanIntervalInMS);
+        }
+
         // Continue with application logic if configuration is valid
         if (isConfigurationValid(configurationAsMap)) {
             try (

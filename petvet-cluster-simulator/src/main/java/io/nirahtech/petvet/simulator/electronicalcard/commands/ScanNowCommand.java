@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.nirahtech.petvet.messaging.brokers.MessagePublisher;
 import io.nirahtech.petvet.messaging.messages.ScanReportMessage;
@@ -16,9 +17,11 @@ import io.nirahtech.petvet.simulator.electronicalcard.scanners.Scanner;
 
 public final class ScanNowCommand extends AbstractCommand {
 
+    private static final Map<String, Float> NEIGHBORS_DISTANCES = new ConcurrentHashMap<>();
+
     
-    public static final double MINIMUM_SIGNAL_STRENGTH_IN_DBM = -100.0D;
-    public static final double MAXIMUM_SIGNAL_STRENGTH_IN_DBM = -30.0D;
+    public static final float MINIMUM_SIGNAL_STRENGTH_IN_DBM = -100.0F;
+    public static final float MAXIMUM_SIGNAL_STRENGTH_IN_DBM = -30.0F;
 
     private final InetAddress ip;
     private final MessagePublisher messageSender;
@@ -50,11 +53,22 @@ public final class ScanNowCommand extends AbstractCommand {
     
     private final Map<MacAddress, Float> stubScan() {
         if (this.scanResultCache.isEmpty()) {
-            final Random random = new Random();
             this.neighborsBSSID.forEach(bssid -> {
                 if (!bssid.equals(this.mac)) {
-                    final double strength = MAXIMUM_SIGNAL_STRENGTH_IN_DBM + (MINIMUM_SIGNAL_STRENGTH_IN_DBM + MAXIMUM_SIGNAL_STRENGTH_IN_DBM) * random.nextDouble();
-                    this.scanResultCache.put(bssid, (float)strength);
+                    final String key1 = String.format("%s-%s", this.mac, bssid);
+                    final String key2 = String.format("%s-%s", bssid, this.mac);
+                    if (NEIGHBORS_DISTANCES.containsKey(key1)) {
+                        this.scanResultCache.put(bssid, NEIGHBORS_DISTANCES.get(key1));
+                    } else if (NEIGHBORS_DISTANCES.containsKey(key2)) {
+                        this.scanResultCache.put(bssid, NEIGHBORS_DISTANCES.get(key2));
+                    } else {
+                        // final Random random = new Random();
+                        // final float strength = (float) (MAXIMUM_SIGNAL_STRENGTH_IN_DBM + (MINIMUM_SIGNAL_STRENGTH_IN_DBM + MAXIMUM_SIGNAL_STRENGTH_IN_DBM) * random.nextDouble());
+                        final float strength = (MINIMUM_SIGNAL_STRENGTH_IN_DBM + (new Random().nextFloat() * (MAXIMUM_SIGNAL_STRENGTH_IN_DBM - MINIMUM_SIGNAL_STRENGTH_IN_DBM)));
+                        NEIGHBORS_DISTANCES.put(key1, strength);
+                        NEIGHBORS_DISTANCES.put(key2, strength);
+                        this.scanResultCache.put(bssid, strength);
+                    }
                 }
             });
         }
