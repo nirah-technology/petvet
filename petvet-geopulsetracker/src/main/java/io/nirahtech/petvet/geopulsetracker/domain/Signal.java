@@ -3,6 +3,8 @@ package io.nirahtech.petvet.geopulsetracker.domain;
 import java.io.Serializable;
 
 public final class Signal implements Serializable {
+    public static final int WIFI_MAX_COVERAGE_IN_CENTIMETERS = 20000 / 100;
+    public static final int BLUETOOTH_MAX_COVERAGE_IN_CENTIMETERS = 1000 / 100;
 
     public static final double MINIMUM_SIGNAL_STRENGTH_IN_DBM = -100.0D;
     public static final double MAXIMUM_SIGNAL_STRENGTH_IN_DBM = -30.0D;
