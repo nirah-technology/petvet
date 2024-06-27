@@ -22,7 +22,6 @@ public final class PetvetPulseTrackerWindow extends JFrame {
         this.cluster = new Cluster<>();
         this.mapPanel = new MapPanel(this.cluster);
 
-
         this.add(mapPanel, BorderLayout.CENTER);
         // this.add(this.createChipBoardButton, BorderLayout.SOUTH);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

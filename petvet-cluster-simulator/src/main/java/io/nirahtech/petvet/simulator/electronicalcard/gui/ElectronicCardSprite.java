@@ -12,10 +12,12 @@ import io.nirahtech.petvet.simulator.electronicalcard.ElectronicCard;
 import io.nirahtech.petvet.simulator.electronicalcard.Signal;
 
 
-public final class ElectronicalCardSprite {
+public final class ElectronicCardSprite {
 
     private static final Color UNSELECTED_CHIP_BOARD_COLOR = new Color(4, 99, 7);
     private static final Color SELECTED_CHIP_BOARD_COLOR = new Color(106, 207, 101);
+
+    private static final Color ORCHESTRATOR_HALO_COLOR = new Color(255, 150, 0);
 
     private static final Color WIFI_MAX_SIGNAL_COLOR = new Color(0, 123, 255);
     private static final Color WIFI_COVERAGE_COLOR = new Color(0, 123, 255, 16);
@@ -31,10 +33,9 @@ public final class ElectronicalCardSprite {
     private RadarEcho radarEcho;
     private boolean isSelected = false;
     private float zoomScale = 1.0F;
-    private Graphics graphics;
     private final Runnable repaint;
 
-    public ElectronicalCardSprite(final ElectronicCard electronicCard, Runnable repaint) {
+    public ElectronicCardSprite(final ElectronicCard electronicCard, Runnable repaint) {
         this.electronicCard = electronicCard;
         this.repaint = repaint;
     }
@@ -85,9 +86,16 @@ public final class ElectronicalCardSprite {
         graphics.drawOval(wifiLeft, wifiTop, wifiDiameter, wifiDiameter);
     }
 
+    private final void drawOrchestratorMode(final Graphics graphics) {
+        final int modeLeft = (int) ((this.center.x - (10)) * this.zoomScale);
+        final int modeTop = (int) ((this.center.y - (10)) * this.zoomScale);
+        final int modeDiameter = (int) (20 * this.zoomScale);
+        graphics.setColor(ORCHESTRATOR_HALO_COLOR);
+        graphics.drawOval(modeLeft, modeTop, modeDiameter, modeDiameter);
+    }
+
     public void draw(Graphics graphics) {
-        this.graphics = graphics;
-        
+
         final Graphics2D graphics2D = (Graphics2D) graphics.create();
         if (Objects.nonNull(this.center)) {
             // Draw the WiFi
@@ -98,12 +106,17 @@ public final class ElectronicalCardSprite {
     
             // Draw the board
             drawElectronicalChipBoard(graphics2D);
+
+            if (this.electronicCard.getProcess().getMode().isOrchestratorMode()) {
+                drawOrchestratorMode(graphics2D);
+            }
     
             // Draw the radar echo
             if (Objects.nonNull(this.radarEcho)) {
                 this.radarEcho.draw(graphics2D);
             }
         }
+        this.repaint.run();
 
     }
 

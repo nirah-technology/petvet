@@ -1,6 +1,7 @@
 package io.nirahtech.petvet.simulator.electronicalcard.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.io.IOException;
 
 import javax.swing.JFrame;
@@ -13,7 +14,6 @@ public class PetvetClusterSimumatorWindow extends JFrame {
     private final ConfigurationPanel configurationPanel;
     private final ClusterLandPanel clusterLandPanel;
     private final NodeDetailPanel nodeDetailPanel;
-    private final EventLogsPanel eventLogsPanel;
     private final Cluster cluster;
 
     public PetvetClusterSimumatorWindow(Configuration configuration) {
@@ -25,14 +25,20 @@ public class PetvetClusterSimumatorWindow extends JFrame {
             throw new RuntimeException(e);
         }
 
-        this.configurationPanel = new ConfigurationPanel(configuration);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        final Dimension dimesion = new Dimension(1420, 720);
+        this.setSize(dimesion);
+        this.setMinimumSize(dimesion);
+        this.setMaximumSize(dimesion);
+        this.setResizable(false);
+
+
+        this.configurationPanel = new ConfigurationPanel(configuration, cluster);
         this.clusterLandPanel = new ClusterLandPanel(this.cluster);
         this.nodeDetailPanel  = new NodeDetailPanel();
-        this.eventLogsPanel = new EventLogsPanel();
         this.add(this.configurationPanel, BorderLayout.WEST);
         this.add(this.clusterLandPanel, BorderLayout.CENTER);
         this.add(this.nodeDetailPanel, BorderLayout.EAST);
-        this.add(this.eventLogsPanel, BorderLayout.SOUTH);
         
     }
     

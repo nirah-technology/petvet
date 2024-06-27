@@ -1,40 +1,48 @@
 package io.nirahtech.petvet.simulator.electronicalcard;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
+import io.nirahtech.petvet.messaging.messages.MessageType;
 import io.nirahtech.petvet.messaging.util.MacAddress;
 
 /**
  * Cluster
  */
-public final class Cluster implements Runnable, Closeable {
+public final class Cluster {
 
+    private ExecutorService executorService;
     private final Set<MicroController> nodes;
-    private final ExecutorService executorService;
     private final Network network;
     private final List<Inet4Address> availableIP;
     private final List<MacAddress> availableMAC;
     private final Set<MacAddress> neighborsBSSID;
     private final Configuration configuration;
+    private final Map<MessageType, Consumer<MessageType>> eventListerOnSendedMessages = new HashMap<>();
 
     private Cluster(final Network network, List<Inet4Address> availableIP, List<MacAddress> availableMAC, final Set<MicroController> nodes, Set<MacAddress> neighborsBSSID, Configuration configuration) {
         this.nodes = nodes;
-        this.executorService = Executors.newFixedThreadPool(this.nodes.size());
         this.network = network;
         this.availableIP = availableIP;
         this.availableMAC = availableMAC;
         this.neighborsBSSID = neighborsBSSID;
         this.configuration = configuration;
+    }
+
+    public Stream<MicroController> nodes() {
+        return this.nodes.stream();
     }
 
     public static final Cluster create(Configuration configuration) throws IOException {
@@ -74,20 +82,40 @@ public final class Cluster implements Runnable, Closeable {
         neighborsBSSID.add(mac);
         final ElectronicCard node = ElectronicCard.newInstance(network.getNetworkInterface(), mac, ip, configuration, neighborsBSSID, 5F, 3F);
         this.nodes.add(node);
+        this.refreshEventistenersForNodes();
         return node;
     }
 
 
-    @Override
-    public void run() {
+    public void turnOn() {
+        this.executorService = Executors.newFixedThreadPool(this.nodes.size());
         for (MicroController node : nodes) {
             executorService.submit(node);
         }
         executorService.shutdown();
     }
 
-    @Override
-    public void close() throws IOException {
+    public void turnOff() {
+        for (MicroController node : nodes) {
+            node.powerOff();
+        }
         executorService.shutdownNow();
+    }
+
+    public void deleteNode(ElectronicCard node) {
+        this.nodes.remove(node);
+    }
+
+    private final void refreshEventistenersForNodes() {
+        this.nodes.forEach(node -> {
+            this.eventListerOnSendedMessages.entrySet().forEach(eventListener -> {
+                ((PetVetProcess) node).addEventListenerOn(eventListener.getKey(), eventListener.getValue());
+            });
+        });
+    }
+
+    public final void addEventListenerOn(MessageType messageType, Consumer<MessageType> callback) {
+        this.eventListerOnSendedMessages.put(messageType, callback);
+        this.refreshEventistenersForNodes();
     }
 }

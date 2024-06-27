@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import io.nirahtech.petvet.messaging.brokers.MessagePublisher;
+import io.nirahtech.petvet.messaging.messages.MessageType;
 import io.nirahtech.petvet.messaging.messages.ScanReportMessage;
 import io.nirahtech.petvet.messaging.util.EmitterMode;
 import io.nirahtech.petvet.messaging.util.MacAddress;
@@ -32,8 +35,9 @@ public final class ScanNowCommand extends AbstractCommand {
     private final Scanner scanner;
     private final Set<MacAddress> neighborsBSSID;
     private final Map<MacAddress, Float> scanResultCache = new HashMap<>();
+    private final Consumer<MessageType> eventListerOnSendedMessage;
 
-    ScanNowCommand(final MessagePublisher messageSender, final UUID scanId, final UUID id, final MacAddress mac, InetAddress ip, final EmitterMode mode, final Scanner scanner, Set<MacAddress> neighborsBSSID) {
+    ScanNowCommand(final MessagePublisher messageSender, final UUID scanId, final UUID id, final MacAddress mac, InetAddress ip, final EmitterMode mode, final Scanner scanner, Set<MacAddress> neighborsBSSID, final Consumer<MessageType> eventListerOnSendedMessage) {
         this.neighborsBSSID = neighborsBSSID;
         this.id = id;
         this.messageSender = messageSender;
@@ -42,6 +46,7 @@ public final class ScanNowCommand extends AbstractCommand {
         this.mode = mode;
         this.scanner = scanner;
         this.scanId = scanId;
+        this.eventListerOnSendedMessage = eventListerOnSendedMessage;
     }
 
     private void sendScanReport(final Map<MacAddress, Float> detectedDevices) throws IOException {
@@ -49,6 +54,10 @@ public final class ScanNowCommand extends AbstractCommand {
             scanId, id, mac, ip, mode, detectedDevices
         );
         this.messageSender.send(message);
+
+        if (Objects.nonNull(this.eventListerOnSendedMessage)) {
+            this.eventListerOnSendedMessage.accept(message.getType());
+        }
     }
     
     private final Map<MacAddress, Float> stubScan() {

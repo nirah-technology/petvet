@@ -119,7 +119,7 @@ public class App {
             final Configuration configuration = new Configuration(clusterSize, filter, group, port, mode, scanInterval, orchestratorInterval, heartbeatInterval);
             if (!guiEnabled) {
                 final Cluster cluster = Cluster.create(configuration);
-                cluster.run();
+                cluster.turnOn();
             } else {
                 UIManager.setLookAndFeel(new FlatDarkLaf()); // NimbusLookAndFeel
                 PetvetClusterSimumatorWindow window = new PetvetClusterSimumatorWindow(configuration);

@@ -38,9 +38,20 @@ public class ElectronicCard implements MicroController {
         this.program.run();
     }
 
+    @Override
+    public void powerOff() {
+        this.program.kill();
+    }
+
+    public final PetVetProcess getProcess() {
+        return (PetVetProcess) this.program;
+    }
+
     public static final ElectronicCard newInstance(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip, final Configuration configuration, Set<MacAddress> neighbors, final float width, final float height) throws UnknownHostException {
-        final Program program = new Sketch(networkInterface, mac, ip, configuration, neighbors);
+        final Program program = new PetVetSketch(networkInterface, mac, ip, configuration, neighbors);
         return new ElectronicCard(width, height, program);
     }
+
+
 
 }

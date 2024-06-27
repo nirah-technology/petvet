@@ -6,11 +6,14 @@ import java.lang.management.RuntimeMXBean;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 
 import io.nirahtech.petvet.messaging.brokers.MessagePublisher;
+import io.nirahtech.petvet.messaging.messages.MessageType;
 import io.nirahtech.petvet.messaging.messages.VoteMessage;
 import io.nirahtech.petvet.messaging.util.EmitterMode;
 import io.nirahtech.petvet.messaging.util.MacAddress;
@@ -23,14 +26,17 @@ public final class ChallengeToElectOrchestratorCommand extends AbstractCommand {
     private final MessagePublisher messageSender;
     private final EmitterMode mode;
     private final UUID id;
+    private final Consumer<MessageType> eventListerOnSendedMessage;
 
-    ChallengeToElectOrchestratorCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, final InetAddress ip, final EmitterMode mode, final AtomicLong uptime) {
+    ChallengeToElectOrchestratorCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac,
+            final InetAddress ip, final EmitterMode mode, final AtomicLong uptime, final Consumer<MessageType> eventListerOnSendedMessage) {
         this.ip = ip;
         this.mac = mac;
         this.uptime = uptime;
         this.mode = mode;
         this.messageSender = messageSender;
         this.id = id;
+        this.eventListerOnSendedMessage = eventListerOnSendedMessage;
     }
 
     private final Map<Byte, Long> retrieveInfoToBeElectedAsOrchestrator() {
@@ -42,16 +48,19 @@ public final class ChallengeToElectOrchestratorCommand extends AbstractCommand {
     }
 
     private final void publishInfoToBeElectedAsOrchestrator(final Map<Byte, Long> infos) {
-        
+
         final Optional<Map.Entry<Byte, Long>> info = infos.entrySet().stream().findFirst();
         info.ifPresent(vote -> {
             final VoteMessage message = VoteMessage.create(
-                id, mac, ip, mode, vote.getValue(), vote.getKey()
-            );
+                    id, mac, ip, mode, vote.getValue(), vote.getKey());
             try {
                 messageSender.send(message);
             } catch (IOException e) {
                 System.err.println("Failed to send message: " + e.getMessage());
+            }
+
+            if (Objects.nonNull(this.eventListerOnSendedMessage)) {
+                this.eventListerOnSendedMessage.accept(message.getType());
             }
         });
     }
