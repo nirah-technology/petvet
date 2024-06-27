@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.geopulsetracker.ui;
+package io.nirahtech.petvet.simulator.electronicalcard.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -8,10 +8,11 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import io.nirahtech.petvet.geopulsetracker.domain.ESP32;
-import io.nirahtech.petvet.geopulsetracker.domain.Signal;
+import io.nirahtech.petvet.simulator.electronicalcard.ElectronicCard;
+import io.nirahtech.petvet.simulator.electronicalcard.Signal;
 
-public final class ESP32Sprite {
+
+public final class ElectronicalCardSprite {
 
     private static final Color UNSELECTED_CHIP_BOARD_COLOR = new Color(4, 99, 7);
     private static final Color SELECTED_CHIP_BOARD_COLOR = new Color(106, 207, 101);
@@ -25,7 +26,7 @@ public final class ESP32Sprite {
     private static final int VARIATION_TOLERANCE_IN_DBM = 5;
 
 
-    private final ESP32 esp32;
+    private final ElectronicCard electronicCard;
     private Point center;
     private RadarEcho radarEcho;
     private boolean isSelected = false;
@@ -33,13 +34,13 @@ public final class ESP32Sprite {
     private Graphics graphics;
     private final Runnable repaint;
 
-    public ESP32Sprite(final ESP32 esp32, Runnable repaint) {
-        this.esp32 = esp32;
+    public ElectronicalCardSprite(final ElectronicCard electronicCard, Runnable repaint) {
+        this.electronicCard = electronicCard;
         this.repaint = repaint;
     }
 
-    public final ESP32 getEsp32() {
-        return this.esp32;
+    public final ElectronicCard getElectronicalCard() {
+        return this.electronicCard;
     }
 
     public Point getCenter() {
@@ -50,10 +51,10 @@ public final class ESP32Sprite {
     }
 
     private final void drawElectronicalChipBoard(final Graphics graphics) {
-        final int boardLeft = (int) ((center.x - (this.esp32.getWidthInCm() / 2)) * zoomScale);
-        final int boardTop = (int) ((center.y - (this.esp32.getHeightInCm() / 2)) * zoomScale);
-        final int boardWidth = (int) (this.esp32.getWidthInCm() * zoomScale);
-        final int boardHeight = (int) (this.esp32.getHeightInCm() * zoomScale);
+        final int boardLeft = (int) ((center.x - (this.electronicCard.getWidth() / 2)) * zoomScale);
+        final int boardTop = (int) ((center.y - (this.electronicCard.getHeight() / 2)) * zoomScale);
+        final int boardWidth = (int) (this.electronicCard.getWidth() * zoomScale);
+        final int boardHeight = (int) (this.electronicCard.getHeight() * zoomScale);
         if (this.isSelected) {
             graphics.setColor(SELECTED_CHIP_BOARD_COLOR);
         } else {

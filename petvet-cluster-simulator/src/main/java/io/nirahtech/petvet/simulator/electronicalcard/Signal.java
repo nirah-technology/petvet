@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.geopulsetracker.domain;
+package io.nirahtech.petvet.simulator.electronicalcard;
 
 import java.io.Serializable;
 

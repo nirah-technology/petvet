@@ -83,6 +83,15 @@ public final class CommandLineParser {
                         throw new IllegalArgumentException("Missing value for option: --orchestrator-interval or -o");
                     }
                     break;
+
+                case "--windowed":
+                case "-w":
+                    if (index + 1 < args.length) {
+                        options.put("windowed", args[++index]);
+                    } else {
+                        throw new IllegalArgumentException("Missing value for option: --windowed or -w");
+                    }
+                    break;
                 case "--heartbeat-interval":
                 case "-l":
                     if (index + 1 < args.length) {
@@ -115,6 +124,7 @@ public final class CommandLineParser {
         System.out.println("  --network, -n                 Network filter");
         System.out.println("  --mode, -m                    Dfault mode of nodes");
         System.out.println("  --scan-interval, -a           Scan interval in ms");
+        System.out.println("  --windowed, -w                Display the graphical user interface");
         System.out.println("  --orchestrator-interval, -o   Orchestrator discovery interval in ms");
         System.out.println("  --heartbeat-interval, -l      Node heartbeat interval in ms");
     }

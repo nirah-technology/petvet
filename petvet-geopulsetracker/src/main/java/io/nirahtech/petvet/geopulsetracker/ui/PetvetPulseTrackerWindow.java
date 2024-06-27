@@ -36,8 +36,12 @@ public final class PetvetPulseTrackerWindow extends JFrame {
                     cluster.add(esp32);
                 }
                 final ESP32Sprite sprite = this.mapPanel.useAsSprite(esp32);
+                System.out.println("Scan Report received for " + esp32.getId());
+                // System.out.println("Saving distances...");
                 this.mapPanel.saveDistances(sprite, realMessage.getScanReportResults());
-                this.mapPanel.calculatePosition(sprite);
+                // System.out.println("Computing positions...");
+                this.mapPanel.calculatePosition();
+                // System.out.println("Trigging pulse...");
                 this.mapPanel.triggerPulse(sprite);
             }
         });

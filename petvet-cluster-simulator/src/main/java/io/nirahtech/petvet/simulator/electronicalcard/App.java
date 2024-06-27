@@ -13,7 +13,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import com.formdev.flatlaf.FlatDarkLaf;
+
 import io.nirahtech.petvet.messaging.util.EmitterMode;
+import io.nirahtech.petvet.simulator.electronicalcard.gui.PetvetClusterSimumatorWindow;
 
 
 public class App {
@@ -25,8 +31,9 @@ public class App {
     private static final String SCAN_INTERVAL = "node.interval.scan";
     private static final String ORCHESTRATOR_AVAILABILITY_INTERVAL = "node.interval.orchestrator.request";
     private static final String NODE_HEARTBEAT_INTERVAL = "node.interval.heartbeat";
+    private static final String GUI_ENABLED = "gui.enabled";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, UnsupportedLookAndFeelException {
         // App configuration
         final Map<String, Object> configurationAsMap = new HashMap<>();
 
@@ -72,6 +79,12 @@ public class App {
             System.out.println("Network filter: " + network);
         }
 
+        if (parser.hasOption("windowed")) {
+            String windowed = parser.getOptionValue("windowed");
+            configurationAsMap.put(GUI_ENABLED, Boolean.parseBoolean(windowed));
+            System.out.println("Windowed: " + windowed);
+        }
+
 
         if (parser.hasOption("scan-interval")) {
             String scanIntervalInMS = parser.getOptionValue("scan-interval");
@@ -101,11 +114,17 @@ public class App {
             final Duration scanInterval = (Duration) configurationAsMap.get(SCAN_INTERVAL);
             final Duration orchestratorInterval = (Duration) configurationAsMap.get(ORCHESTRATOR_AVAILABILITY_INTERVAL);
             final Duration heartbeatInterval = (Duration) configurationAsMap.get(NODE_HEARTBEAT_INTERVAL);
+            final boolean guiEnabled = (Boolean) configurationAsMap.get(GUI_ENABLED);
 
             final Configuration configuration = new Configuration(clusterSize, filter, group, port, mode, scanInterval, orchestratorInterval, heartbeatInterval);
-
-            final Cluster cluster = Cluster.create(configuration);
-            cluster.run();
+            if (!guiEnabled) {
+                final Cluster cluster = Cluster.create(configuration);
+                cluster.run();
+            } else {
+                UIManager.setLookAndFeel(new FlatDarkLaf()); // NimbusLookAndFeel
+                PetvetClusterSimumatorWindow window = new PetvetClusterSimumatorWindow(configuration);
+                window.setVisible(true);
+            }
         }
     }
 
@@ -118,6 +137,7 @@ public class App {
         configuration.put(SCAN_INTERVAL, Duration.ofMillis(Long.parseLong(resourceBundle.getString(SCAN_INTERVAL))));
         configuration.put(ORCHESTRATOR_AVAILABILITY_INTERVAL, Duration.ofMillis(Long.parseLong(resourceBundle.getString(ORCHESTRATOR_AVAILABILITY_INTERVAL))));
         configuration.put(NODE_HEARTBEAT_INTERVAL, Duration.ofMillis(Long.parseLong(resourceBundle.getString(NODE_HEARTBEAT_INTERVAL))));
+        configuration.put(GUI_ENABLED, Boolean.parseBoolean(resourceBundle.getString(GUI_ENABLED)));
 
 
     }
@@ -158,6 +178,9 @@ public class App {
         if (properties.containsKey(NODE_HEARTBEAT_INTERVAL)) {
             configuration.put(NODE_HEARTBEAT_INTERVAL, Duration.ofMillis(Long.parseLong(properties.getProperty(NODE_HEARTBEAT_INTERVAL))));
         }
+        if (properties.containsKey(GUI_ENABLED)) {
+            configuration.put(GUI_ENABLED, Boolean.parseBoolean(properties.getProperty(GUI_ENABLED)));
+        }
     }
 
     private static boolean isConfigurationValid(Map<String, Object> configuration) {
@@ -168,6 +191,7 @@ public class App {
                 && configuration.containsKey(NODE_MODE)
                 && configuration.containsKey(SCAN_INTERVAL)
                 && configuration.containsKey(ORCHESTRATOR_AVAILABILITY_INTERVAL)
+                && configuration.containsKey(GUI_ENABLED)
                 && configuration.containsKey(NODE_HEARTBEAT_INTERVAL)
                 ;
     }

@@ -1,7 +1,4 @@
-package io.nirahtech.petvet.geopulsetracker.ui;
-
-import io.nirahtech.petvet.geopulsetracker.domain.DecibelDistanceConverter;
-import io.nirahtech.petvet.geopulsetracker.domain.ElectronicChipBoard;
+package io.nirahtech.petvet.geopulsetracker.domain;
 
 public final class Distance {
     private final ElectronicChipBoard from;
@@ -45,6 +42,22 @@ public final class Distance {
 
     public double computeDistanceInMeters() {
         return DecibelDistanceConverter.wifiSignalToMeters(signalStrenghtInDBM);
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("DISTANCE[")
+                .append("from=")
+                .append(((ESP32)this.from).getWifi().getMacAddress())
+                .append(", to=")
+                .append(((ESP32)this.to).getWifi().getMacAddress())
+                .append(", dbm=")
+                .append(this.signalStrenghtInDBM)
+                .append(", meters=")
+                .append(this.computeDistanceInMeters())
+                .append("]")
+                .toString();
     }
 
 }

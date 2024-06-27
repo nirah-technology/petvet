@@ -16,6 +16,6 @@ public record Configuration(
    EmitterMode mode,
    Duration scanInterval,
    Duration checkOrchestratoryInterval,
-   Duration heartBeatInterval 
+   Duration heartBeatInterval
 ) {
 }
