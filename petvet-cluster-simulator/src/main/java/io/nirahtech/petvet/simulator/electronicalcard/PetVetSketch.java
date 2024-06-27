@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 import io.nirahtech.petvet.messaging.brokers.MessageBroker;
 import io.nirahtech.petvet.messaging.brokers.UDPMessageBroker;
@@ -54,15 +53,20 @@ public final class PetVetSketch extends Sketch implements PetVetProcess {
     private final MessageBroker messageBroker;
     private final Set<MacAddress> neighborsBSSID;
 
-    private final Map<MessageType, Consumer<MessageType>> eventListerOnSendedMessages = new HashMap<>();
+    private final Map<MessageType, Runnable> eventListerOnSendedMessages = new HashMap<>();
+    private Map<ElectronicCard, Float> neigborsNodeSignals;
 
     @Override
-    public final void addEventListenerOn(MessageType messageType, Consumer<MessageType> callback) {
+    public final void addEventListenerOn(MessageType messageType, Runnable callback) {
         this.eventListerOnSendedMessages.put(messageType, callback);
     }
 
+    public void setNeigborsNodeSignals(Map<ElectronicCard, Float> neigborsNodeSignals) {
+        this.neigborsNodeSignals = neigborsNodeSignals;
+    }
+
     public PetVetSketch(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip,
-            final Configuration configuration, final Set<MacAddress> neighborsBSSID) {
+            final Configuration configuration, final Set<MacAddress> neighborsBSSID, final Map<ElectronicCard, Float> neigborsNodeSignals) {
         this.messageBroker = UDPMessageBroker.newInstance();
         this.neighborsBSSID = neighborsBSSID;
         this.networkInterface = networkInterface;
@@ -71,6 +75,7 @@ public final class PetVetSketch extends Sketch implements PetVetProcess {
         this.mode.set(configuration.mode());
         this.intervalBetweenEachScans = configuration.scanInterval();
         this.intervalBetweenEachHeartBeat = configuration.heartBeatInterval();
+        this.neigborsNodeSignals = neigborsNodeSignals;
         try {
             this.messageBroker.connect(this.networkInterface, configuration.multicastGroup(),
                     configuration.multicastPort());
@@ -89,7 +94,7 @@ public final class PetVetSketch extends Sketch implements PetVetProcess {
             e.printStackTrace();
         }
         if (this.eventListerOnSendedMessages.containsKey(message.getType())) {
-            this.eventListerOnSendedMessages.get(message.getType()).accept(message.getType());
+            this.eventListerOnSendedMessages.get(message.getType()).run();
         }
         this.lastScanExecutionOrder = LocalDateTime.now();
 
@@ -162,7 +167,7 @@ public final class PetVetSketch extends Sketch implements PetVetProcess {
         }
 
         if (this.eventListerOnSendedMessages.containsKey(message.getType())) {
-            this.eventListerOnSendedMessages.get(message.getType()).accept(message.getType());
+            this.eventListerOnSendedMessages.get(message.getType()).run();
         }
         this.lastReceivedOrchestratorAvailabilityResponse = LocalDateTime.now();
         this.lastReceivedScanExecutionOrder = this.lastReceivedOrchestratorAvailabilityResponse;
@@ -177,7 +182,7 @@ public final class PetVetSketch extends Sketch implements PetVetProcess {
     }
 
     private final void sendHeartBeat() {
-        final Consumer<MessageType> eventListerOnSendedMessage = this.eventListerOnSendedMessages.getOrDefault(MessageType.HEARTBEAT, null);
+        final Runnable eventListerOnSendedMessage = this.eventListerOnSendedMessages.getOrDefault(MessageType.HEARTBEAT, null);
         final Command heartBeat = CommandFactory.createHeartBeatCommand(messageBroker, id, mac, ip, this.mode.get(),
                 this.uptime, eventListerOnSendedMessage);
         try {
@@ -254,7 +259,7 @@ public final class PetVetSketch extends Sketch implements PetVetProcess {
         }
 
         if (this.eventListerOnSendedMessages.containsKey(message.getType())) {
-            this.eventListerOnSendedMessages.get(message.getType()).accept(message.getType());
+            this.eventListerOnSendedMessages.get(message.getType()).run();
         }
     }
 
@@ -277,7 +282,7 @@ public final class PetVetSketch extends Sketch implements PetVetProcess {
         this.messageBroker.subscribe(MessageType.IS_ORCHESTRATOR_AVAILABLE, (message) -> {
             if (message instanceof IsOrchestratorAvailableMessage) {
                 final IsOrchestratorAvailableMessage realMessage = (IsOrchestratorAvailableMessage) message;
-                final Consumer<MessageType> eventListerOnSendedMessage = this.eventListerOnSendedMessages.getOrDefault(MessageType.ORCHESTRATOR_AVAILABLE, null);
+                final Runnable eventListerOnSendedMessage = this.eventListerOnSendedMessages.getOrDefault(MessageType.ORCHESTRATOR_AVAILABLE, null);
                 final Command command = CommandFactory.createCheckIfOrchestratorIsAvailableCommand(this.messageBroker,
                         id, mac, ip, mode.get(), eventListerOnSendedMessage);
                 try {
@@ -293,7 +298,7 @@ public final class PetVetSketch extends Sketch implements PetVetProcess {
                 final ChallengeOrchestratorMessage realMessage = (ChallengeOrchestratorMessage) message;
                 final RuntimeMXBean runtimeMX = ManagementFactory.getRuntimeMXBean();
                 this.uptime.set(runtimeMX.getUptime());
-                final Consumer<MessageType> eventListerOnSendedMessage = this.eventListerOnSendedMessages.getOrDefault(MessageType.VOTE, null);
+                final Runnable eventListerOnSendedMessage = this.eventListerOnSendedMessages.getOrDefault(MessageType.VOTE, null);
                 final Command command = CommandFactory.createChallengeToElectOrchestratorCommand(messageBroker, id, mac,
                         ip, mode.get(), this.uptime, eventListerOnSendedMessage);
                 try {
@@ -309,9 +314,9 @@ public final class PetVetSketch extends Sketch implements PetVetProcess {
                 this.lastReceivedScanExecutionOrder = LocalDateTime.now();
                 this.lastReceivedOrchestratorAvailabilityResponse = this.lastReceivedScanExecutionOrder;
                 final ScanNowMessage realMessage = (ScanNowMessage) message;
-                final Consumer<MessageType> eventListerOnSendedMessage = this.eventListerOnSendedMessages.getOrDefault(MessageType.SCAN_REPORT, null);
+                final Runnable eventListerOnSendedMessage = this.eventListerOnSendedMessages.getOrDefault(MessageType.SCAN_REPORT, null);
                 final Command command = CommandFactory.createScanNowCommand(this.messageBroker, realMessage.getScanId(),
-                        id, mac, ip, mode.get(), this.scanner, this.neighborsBSSID, eventListerOnSendedMessage);
+                        id, mac, ip, mode.get(), this.scanner, this.neighborsBSSID, this.neigborsNodeSignals, eventListerOnSendedMessage);
                 try {
                     command.execute();
                 } catch (IOException e) {
@@ -323,7 +328,7 @@ public final class PetVetSketch extends Sketch implements PetVetProcess {
         this.messageBroker.subscribe(MessageType.VOTE, (message) -> {
             if (message instanceof VoteMessage) {
                 final VoteMessage realMessage = (VoteMessage) message;
-                final Consumer<MessageType> eventListerOnSendedMessage = this.eventListerOnSendedMessages.getOrDefault(MessageType.ORCHESTRATOR_AVAILABLE, null);
+                final Runnable eventListerOnSendedMessage = this.eventListerOnSendedMessages.getOrDefault(MessageType.ORCHESTRATOR_AVAILABLE, null);
                 final Command command = CommandFactory.createAnalyseVotesToElectOrchestratorCommand(this.messageBroker,
                         id, mac, ip, mode, this.uptime.get(),
                         Map.entry(realMessage.getLastIpByte(), realMessage.getUptime()), eventListerOnSendedMessage);

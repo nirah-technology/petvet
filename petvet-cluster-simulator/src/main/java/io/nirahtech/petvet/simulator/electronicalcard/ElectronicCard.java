@@ -3,6 +3,7 @@ package io.nirahtech.petvet.simulator.electronicalcard;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.util.Map;
 import java.util.Set;
 
 import io.nirahtech.petvet.messaging.util.MacAddress;
@@ -12,6 +13,8 @@ public class ElectronicCard implements MicroController {
 
     private final float width;
     private final float height;
+
+    private float zoom = 2.0F;
 
     private ElectronicCard(final float width, final float height, final Program program) {
         this.width = width;
@@ -23,14 +26,14 @@ public class ElectronicCard implements MicroController {
      * @return the height
      */
     public float getHeight() {
-        return height;
+        return height * zoom;
     }
 
     /**
      * @return the width
      */
     public float getWidth() {
-        return width;
+        return width * zoom;
     }
 
     @Override
@@ -47,8 +50,8 @@ public class ElectronicCard implements MicroController {
         return (PetVetProcess) this.program;
     }
 
-    public static final ElectronicCard newInstance(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip, final Configuration configuration, Set<MacAddress> neighbors, final float width, final float height) throws UnknownHostException {
-        final Program program = new PetVetSketch(networkInterface, mac, ip, configuration, neighbors);
+    public static final ElectronicCard newInstance(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip, final Configuration configuration, Set<MacAddress> neighbors, final float width, final float height, Map<ElectronicCard, Float> neigborsNodeSignals) throws UnknownHostException {
+        final Program program = new PetVetSketch(networkInterface, mac, ip, configuration, neighbors, neigborsNodeSignals);
         return new ElectronicCard(width, height, program);
     }
 

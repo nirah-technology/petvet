@@ -38,4 +38,8 @@ public final class Signal implements Serializable {
         this.strength = strength;
     }
 
+    public static float percentageToDbm(float percentage) {
+        return (percentage * 60.0f / 100.0f) - 90.0f;
+    }
+
 }

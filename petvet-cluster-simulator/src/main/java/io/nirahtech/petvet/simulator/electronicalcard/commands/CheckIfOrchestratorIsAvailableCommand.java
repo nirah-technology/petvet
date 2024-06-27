@@ -19,9 +19,9 @@ public final class CheckIfOrchestratorIsAvailableCommand extends AbstractCommand
     private final MacAddress mac;
     private final MessagePublisher messageSender;
     private final UUID id;
-    private final Consumer<MessageType> eventListerOnSendedMessage;
+    private final Runnable eventListerOnSendedMessage;
 
-    CheckIfOrchestratorIsAvailableCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, InetAddress ip, final EmitterMode mode, final Consumer<MessageType> eventListerOnSendedMessage) {
+    CheckIfOrchestratorIsAvailableCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, InetAddress ip, final EmitterMode mode, final Runnable eventListerOnSendedMessage) {
         this.mode = mode;
         this.id = id;
         this.mac = mac;
@@ -37,7 +37,7 @@ public final class CheckIfOrchestratorIsAvailableCommand extends AbstractCommand
         this.messageSender.send(message);
 
         if (Objects.nonNull(this.eventListerOnSendedMessage)) {
-            this.eventListerOnSendedMessage.accept(message.getType());
+            this.eventListerOnSendedMessage.run();
         }
     }
 

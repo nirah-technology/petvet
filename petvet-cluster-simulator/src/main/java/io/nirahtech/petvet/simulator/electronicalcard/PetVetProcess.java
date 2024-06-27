@@ -14,5 +14,5 @@ public interface PetVetProcess {
     long getUptime();
     InetAddress getIp();
     MacAddress getMac();
-    void addEventListenerOn(MessageType messageType, Consumer<MessageType> callback);
+    void addEventListenerOn(MessageType messageType, Runnable callback);
 }

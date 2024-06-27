@@ -12,11 +12,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import io.nirahtech.petvet.messaging.messages.MessageType;
 import io.nirahtech.petvet.messaging.util.MacAddress;
+import io.nirahtech.petvet.simulator.electronicalcard.gui.ElectronicCardSprite;
 
 /**
  * Cluster
@@ -30,15 +30,24 @@ public final class Cluster {
     private final List<MacAddress> availableMAC;
     private final Set<MacAddress> neighborsBSSID;
     private final Configuration configuration;
-    private final Map<MessageType, Consumer<MessageType>> eventListerOnSendedMessages = new HashMap<>();
+    private final Map<MessageType, Runnable> eventListerOnSendedMessages = new HashMap<>();
+    private Map<ElectronicCard, Map<ElectronicCard, Float>> neigborsNodeSignals;
 
-    private Cluster(final Network network, List<Inet4Address> availableIP, List<MacAddress> availableMAC, final Set<MicroController> nodes, Set<MacAddress> neighborsBSSID, Configuration configuration) {
+    private Cluster(final Network network, List<Inet4Address> availableIP, List<MacAddress> availableMAC, final Set<MicroController> nodes, Set<MacAddress> neighborsBSSID, Map<ElectronicCard, Map<ElectronicCard, Float>> neigborsNodeSignals, Configuration configuration) {
         this.nodes = nodes;
         this.network = network;
         this.availableIP = availableIP;
         this.availableMAC = availableMAC;
         this.neighborsBSSID = neighborsBSSID;
         this.configuration = configuration;
+        this.neigborsNodeSignals = neigborsNodeSignals;
+    }
+
+    public void setNeigborsNodeSignals(Map<ElectronicCard, Map<ElectronicCard, Float>> neigborsNodeSignals) {
+        this.neigborsNodeSignals = neigborsNodeSignals;
+        this.nodes.forEach(node -> {
+            ((PetVetSketch)((ElectronicCard)node).getProcess()).setNeigborsNodeSignals(neigborsNodeSignals.get(node));
+        });
     }
 
     public Stream<MicroController> nodes() {
@@ -59,6 +68,7 @@ public final class Cluster {
         availableIP.remove(availableIP.size()-1);
         availableIP.remove(network.getIp());
         final List<MacAddress> availableMAC = new ArrayList<>(network.getAllAvailableMacAddresses().toList());
+        final Map<ElectronicCard, Map<ElectronicCard, Float>> neigborsNodeSignals = new HashMap<>();
 
         final Set<MacAddress> neighborsBSSID = new HashSet<>();
         for (int i = 0; i < configuration.clusterSize(); i++) {
@@ -67,10 +77,12 @@ public final class Cluster {
             final MacAddress mac = availableMAC.get(i);
             availableMAC.remove(mac);
             neighborsBSSID.add(mac);
-            final MicroController node = ElectronicCard.newInstance(network.getNetworkInterface(), mac, ip, configuration, neighborsBSSID, 5F, 3F);
+            final Map<ElectronicCard, Float> detectedNodeSignals = new HashMap<>();
+            final ElectronicCard node = ElectronicCard.newInstance(network.getNetworkInterface(), mac, ip, configuration, neighborsBSSID, 5F, 3F, detectedNodeSignals);
+            neigborsNodeSignals.put(node, detectedNodeSignals);
             nodes.add(node);
         }
-        return new Cluster(network, availableIP, availableMAC, nodes, neighborsBSSID, configuration);
+        return new Cluster(network, availableIP, availableMAC, nodes, neighborsBSSID, neigborsNodeSignals, configuration);
     }
 
     public ElectronicCard generateNode() throws UnknownHostException {
@@ -80,8 +92,10 @@ public final class Cluster {
         final MacAddress mac = availableMAC.get(0);
         availableMAC.remove(mac);
         neighborsBSSID.add(mac);
-        final ElectronicCard node = ElectronicCard.newInstance(network.getNetworkInterface(), mac, ip, configuration, neighborsBSSID, 5F, 3F);
+        final Map<ElectronicCard, Float> detectedNodeSignals = new HashMap<>();
+        final ElectronicCard node = ElectronicCard.newInstance(network.getNetworkInterface(), mac, ip, configuration, neighborsBSSID, 5F, 3F, detectedNodeSignals);
         this.nodes.add(node);
+        this.neigborsNodeSignals.put(node, detectedNodeSignals);
         this.refreshEventistenersForNodes();
         return node;
     }
@@ -109,12 +123,12 @@ public final class Cluster {
     private final void refreshEventistenersForNodes() {
         this.nodes.forEach(node -> {
             this.eventListerOnSendedMessages.entrySet().forEach(eventListener -> {
-                ((PetVetProcess) node).addEventListenerOn(eventListener.getKey(), eventListener.getValue());
+                ((ElectronicCard) node).getProcess().addEventListenerOn(eventListener.getKey(), eventListener.getValue());
             });
         });
     }
 
-    public final void addEventListenerOn(MessageType messageType, Consumer<MessageType> callback) {
+    public final void addEventListenerOn(MessageType messageType, Runnable callback) {
         this.eventListerOnSendedMessages.put(messageType, callback);
         this.refreshEventistenersForNodes();
     }

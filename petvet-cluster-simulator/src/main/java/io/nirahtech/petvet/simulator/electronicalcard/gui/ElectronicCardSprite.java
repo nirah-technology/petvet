@@ -51,6 +51,27 @@ public final class ElectronicCardSprite {
         this.center = center;
     }
 
+    private double computeDistance(final Point a, final Point b) {
+        return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
+    }
+
+    private boolean areOverlap(double distance, double radius) {
+        return distance <= 2 * radius;
+    }
+
+    public float getSignalPercent(final ElectronicCardSprite other) {
+        float percent = 0.0F;
+        final double radius = Signal.WIFI_MAX_COVERAGE_IN_CENTIMETERS/2;
+        final double distance = this.computeDistance(this.center, other.getCenter());
+        if (this.areOverlap(distance, radius)) {
+            // Calcul de la longueur du segment commun
+            final double segmentLength = 2 * Math.sqrt(radius * radius - Math.pow(distance / 2, 2));
+            final double overlapPercentage = (segmentLength / (2 * radius)) * 100;
+            percent = (float) overlapPercentage;
+        }
+        return percent;
+    }
+
     private final void drawElectronicalChipBoard(final Graphics graphics) {
         final int boardLeft = (int) ((center.x - (this.electronicCard.getWidth() / 2)) * zoomScale);
         final int boardTop = (int) ((center.y - (this.electronicCard.getHeight() / 2)) * zoomScale);

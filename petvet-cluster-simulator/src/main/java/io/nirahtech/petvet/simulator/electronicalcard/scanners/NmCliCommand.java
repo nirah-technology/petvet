@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import io.nirahtech.petvet.messaging.util.MacAddress;
+import io.nirahtech.petvet.simulator.electronicalcard.Signal;
 
 public final class NmCliCommand implements ScannerSystemCommand {
     private static final String DETECT_OTHERS_WIFI_NETWORKS_COMMAND = "nmcli -t -f BSSID,SSID,SIGNAL device wifi list";
@@ -30,9 +31,7 @@ public final class NmCliCommand implements ScannerSystemCommand {
         return isSupported;
     }
 
-    private static float percentageToDbm(float percentage) {
-        return (percentage * 60.0f / 100.0f) - 90.0f;
-    }
+    
 
 
     public Set<Device> execute() throws IOException {
@@ -63,7 +62,7 @@ public final class NmCliCommand implements ScannerSystemCommand {
                 String ssid = wifiInfo[6].strip();
                 try {
                     final float percentage = Float.parseFloat(wifiInfo[7].strip());
-                    final float signalInDBm = percentageToDbm(percentage);
+                    final float signalInDBm = Signal.percentageToDbm(percentage);
                     // Création de l'objet Device
                     Device device = new Device(MacAddress.of(bssid), ssid, 0, signalInDBm);
                     detectedDevices.add(device);

@@ -24,9 +24,9 @@ public final class AnalyseVotesToElectOrchestratorCommand extends AbstractComman
     private final MessagePublisher messageSender;
     private final long uptime;
     private final UUID id;
-    private final Consumer<MessageType> eventListerOnSendedMessage;
+    private final Runnable eventListerOnSendedMessage;
 
-    AnalyseVotesToElectOrchestratorCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, final InetAddress ip, final AtomicReference<EmitterMode> mode, final long uptime, final Map.Entry<Byte, Long> candidacy, final Consumer<MessageType> eventListerOnSendedMessage) {
+    AnalyseVotesToElectOrchestratorCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, final InetAddress ip, final AtomicReference<EmitterMode> mode, final long uptime, final Map.Entry<Byte, Long> candidacy, final Runnable eventListerOnSendedMessage) {
         this.candidacy = candidacy;
         this.mode = mode;
         this.mac = mac;
@@ -42,7 +42,7 @@ public final class AnalyseVotesToElectOrchestratorCommand extends AbstractComman
         this.messageSender.send(message);
 
         if (Objects.nonNull(this.eventListerOnSendedMessage)) {
-            this.eventListerOnSendedMessage.accept(message.getType());
+            this.eventListerOnSendedMessage.run();
         }
     }
 

@@ -23,9 +23,9 @@ public final class HeartBeatCommand extends AbstractCommand {
     private final MessagePublisher messageSender;
     private final EmitterMode mode;
     private final UUID id;
-    private final Consumer<MessageType> eventListerOnSendedMessage;
+    private final Runnable eventListerOnSendedMessage;
 
-    HeartBeatCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, final InetAddress ip, final EmitterMode mode, final AtomicLong uptime, final Consumer<MessageType> eventListerOnSendedMessage) {
+    HeartBeatCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, final InetAddress ip, final EmitterMode mode, final AtomicLong uptime, final Runnable eventListerOnSendedMessage) {
         this.ip = ip;
         this.mac = mac;
         this.uptime = uptime;
@@ -52,7 +52,7 @@ public final class HeartBeatCommand extends AbstractCommand {
         }
 
         if (Objects.nonNull(this.eventListerOnSendedMessage)) {
-            this.eventListerOnSendedMessage.accept(message.getType());
+            this.eventListerOnSendedMessage.run();
         }
     }
 
