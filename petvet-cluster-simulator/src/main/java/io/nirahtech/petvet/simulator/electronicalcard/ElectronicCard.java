@@ -55,6 +55,8 @@ public class ElectronicCard implements MicroController {
         return new ElectronicCard(width, height, program);
     }
 
-
-
+    @Override
+    public boolean isRunning() {
+        return this.program.isRunning();
+    }
 }

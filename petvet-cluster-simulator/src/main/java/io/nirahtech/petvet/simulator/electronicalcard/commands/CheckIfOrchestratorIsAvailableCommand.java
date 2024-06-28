@@ -7,7 +7,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import io.nirahtech.petvet.messaging.brokers.MessagePublisher;
-import io.nirahtech.petvet.messaging.messages.MessageType;
 import io.nirahtech.petvet.messaging.messages.OrchestratorAvailableMessage;
 import io.nirahtech.petvet.messaging.util.EmitterMode;
 import io.nirahtech.petvet.messaging.util.MacAddress;
@@ -19,9 +18,9 @@ public final class CheckIfOrchestratorIsAvailableCommand extends AbstractCommand
     private final MacAddress mac;
     private final MessagePublisher messageSender;
     private final UUID id;
-    private final Runnable eventListerOnSendedMessage;
+    private final Consumer<UUID> eventListerOnSendedMessage;
 
-    CheckIfOrchestratorIsAvailableCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, InetAddress ip, final EmitterMode mode, final Runnable eventListerOnSendedMessage) {
+    CheckIfOrchestratorIsAvailableCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, InetAddress ip, final EmitterMode mode, final Consumer<UUID> eventListerOnSendedMessage) {
         this.mode = mode;
         this.id = id;
         this.mac = mac;
@@ -37,7 +36,7 @@ public final class CheckIfOrchestratorIsAvailableCommand extends AbstractCommand
         this.messageSender.send(message);
 
         if (Objects.nonNull(this.eventListerOnSendedMessage)) {
-            this.eventListerOnSendedMessage.run();
+            this.eventListerOnSendedMessage.accept(id);
         }
     }
 

@@ -40,6 +40,8 @@ public class PetvetClusterSimumatorWindow extends JFrame {
             this.nodeDetailPanel.setElectronicCard(electronicCardSelected);
         });
 
+
+
         this.add(this.configurationPanel, BorderLayout.WEST);
         this.add(this.clusterLandPanel, BorderLayout.CENTER);
         this.add(this.nodeDetailPanel, BorderLayout.EAST);

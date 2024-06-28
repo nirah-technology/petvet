@@ -71,7 +71,7 @@ public abstract class Sketch implements Program {
     public final void run() {
         System.out.println("Running the sketch...");
         // Prevent for multiples executions
-        if (!this.isRunning) {
+        if (!this.isRunning()) {
             System.out.println("Sketch not yet running...");
             // The following boilerplate is similar of an Arduino Activity (setup, loop).
             this.isRunning = true;
@@ -79,11 +79,16 @@ public abstract class Sketch implements Program {
             // Setup the node
             this.setup();
 
-            while (this.isRunning) {
+            while (this.isRunning()) {
                 // Execute the main process
                 this.loop();
             }
         }
+    }
+
+    @Override
+    public final boolean isRunning() {
+        return this.isRunning;
     }
 
     @Override

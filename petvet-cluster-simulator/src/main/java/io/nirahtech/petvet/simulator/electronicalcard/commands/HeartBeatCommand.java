@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 
 import io.nirahtech.petvet.messaging.brokers.MessagePublisher;
 import io.nirahtech.petvet.messaging.messages.HeartBeatMessage;
-import io.nirahtech.petvet.messaging.messages.MessageType;
 import io.nirahtech.petvet.messaging.util.EmitterMode;
 import io.nirahtech.petvet.messaging.util.MacAddress;
 
@@ -23,9 +22,9 @@ public final class HeartBeatCommand extends AbstractCommand {
     private final MessagePublisher messageSender;
     private final EmitterMode mode;
     private final UUID id;
-    private final Runnable eventListerOnSendedMessage;
+    private final Consumer<UUID> eventListerOnSendedMessage;
 
-    HeartBeatCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, final InetAddress ip, final EmitterMode mode, final AtomicLong uptime, final Runnable eventListerOnSendedMessage) {
+    HeartBeatCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, final InetAddress ip, final EmitterMode mode, final AtomicLong uptime, final Consumer<UUID> eventListerOnSendedMessage) {
         this.ip = ip;
         this.mac = mac;
         this.uptime = uptime;
@@ -52,7 +51,7 @@ public final class HeartBeatCommand extends AbstractCommand {
         }
 
         if (Objects.nonNull(this.eventListerOnSendedMessage)) {
-            this.eventListerOnSendedMessage.run();
+            this.eventListerOnSendedMessage.accept(id);
         }
     }
 

@@ -72,6 +72,10 @@ public final class ElectronicCardSprite {
         return percent;
     }
 
+    public void setSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+    }
+
     private final void drawElectronicalChipBoard(final Graphics graphics) {
         final int boardLeft = (int) ((center.x - (this.electronicCard.getWidth() / 2)) * zoomScale);
         final int boardTop = (int) ((center.y - (this.electronicCard.getHeight() / 2)) * zoomScale);

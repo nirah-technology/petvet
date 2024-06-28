@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import io.nirahtech.petvet.messaging.brokers.MessagePublisher;
 import io.nirahtech.petvet.messaging.messages.ScanReportMessage;
@@ -31,9 +32,9 @@ public final class ScanNowCommand extends AbstractCommand {
     private final Scanner scanner;
     private final Set<MacAddress> neighborsBSSID;
     private final Map<ElectronicCard, Float> neigborsNodeSignals;
-    private final Runnable eventListerOnSendedMessage;
+    private final Consumer<UUID> eventListerOnSendedMessage;
 
-    ScanNowCommand(final MessagePublisher messageSender, final UUID scanId, final UUID id, final MacAddress mac, InetAddress ip, final EmitterMode mode, final Scanner scanner, Set<MacAddress> neighborsBSSID, Map<ElectronicCard, Float> neigborsNodeSignals, final Runnable eventListerOnSendedMessage) {
+    ScanNowCommand(final MessagePublisher messageSender, final UUID scanId, final UUID id, final MacAddress mac, InetAddress ip, final EmitterMode mode, final Scanner scanner, Set<MacAddress> neighborsBSSID, Map<ElectronicCard, Float> neigborsNodeSignals, final Consumer<UUID> eventListerOnSendedMessage) {
         this.neighborsBSSID = neighborsBSSID;
         this.id = id;
         this.messageSender = messageSender;
@@ -53,7 +54,7 @@ public final class ScanNowCommand extends AbstractCommand {
         this.messageSender.send(message);
 
         if (Objects.nonNull(this.eventListerOnSendedMessage)) {
-            this.eventListerOnSendedMessage.run();
+            this.eventListerOnSendedMessage.accept(id);
         }
     }
 

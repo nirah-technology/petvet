@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import io.nirahtech.petvet.messaging.brokers.MessagePublisher;
-import io.nirahtech.petvet.messaging.messages.MessageType;
 import io.nirahtech.petvet.messaging.messages.OrchestratorAvailableMessage;
 import io.nirahtech.petvet.messaging.util.EmitterMode;
 import io.nirahtech.petvet.messaging.util.MacAddress;
@@ -24,9 +23,9 @@ public final class AnalyseVotesToElectOrchestratorCommand extends AbstractComman
     private final MessagePublisher messageSender;
     private final long uptime;
     private final UUID id;
-    private final Runnable eventListerOnSendedMessage;
+    private final Consumer<UUID> eventListerOnSendedMessage;
 
-    AnalyseVotesToElectOrchestratorCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, final InetAddress ip, final AtomicReference<EmitterMode> mode, final long uptime, final Map.Entry<Byte, Long> candidacy, final Runnable eventListerOnSendedMessage) {
+    AnalyseVotesToElectOrchestratorCommand(final MessagePublisher messageSender, final UUID id, final MacAddress mac, final InetAddress ip, final AtomicReference<EmitterMode> mode, final long uptime, final Map.Entry<Byte, Long> candidacy, final Consumer<UUID> eventListerOnSendedMessage) {
         this.candidacy = candidacy;
         this.mode = mode;
         this.mac = mac;
@@ -42,7 +41,7 @@ public final class AnalyseVotesToElectOrchestratorCommand extends AbstractComman
         this.messageSender.send(message);
 
         if (Objects.nonNull(this.eventListerOnSendedMessage)) {
-            this.eventListerOnSendedMessage.run();
+            this.eventListerOnSendedMessage.accept(id);
         }
     }
 

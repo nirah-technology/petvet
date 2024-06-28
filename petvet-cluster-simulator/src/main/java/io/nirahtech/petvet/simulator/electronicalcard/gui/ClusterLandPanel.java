@@ -29,7 +29,7 @@ public class ClusterLandPanel extends JPanel {
 
     private final Set<ElectronicCardSprite> electronicCardSprites = new HashSet<>();
 
-    private ElectronicCard selectedElectronicCard;
+    private ElectronicCardSprite selectedElectronicCardSprite;
     private boolean isMousePressedOnChipBoard = false;
     private Consumer<ElectronicCard> eventListerOnElectronicCarSelected = null;
     private final Map<ElectronicCardSprite, Map<ElectronicCardSprite, Float>> detectedSignalsStrenghtsBySprite = new HashMap<>();
@@ -44,9 +44,13 @@ public class ClusterLandPanel extends JPanel {
             this.detectedSignalsStrenghtsBySprite.put(sprite, new HashMap<>());
             sprite.setCenter(new Point(200, 200));
             this.electronicCardSprites.add(sprite);
-            this.selectedElectronicCard = sprite.getElectronicalCard();
+            if (Objects.nonNull(this.selectedElectronicCardSprite)) {
+                this.selectedElectronicCardSprite.setSelected(false);
+            }
+            this.selectedElectronicCardSprite = sprite;
+            this.selectedElectronicCardSprite.setSelected(true);
             if (Objects.nonNull(this.eventListerOnElectronicCarSelected)) {
-                this.eventListerOnElectronicCarSelected.accept(this.selectedElectronicCard);
+                this.eventListerOnElectronicCarSelected.accept(sprite.getElectronicalCard());
             }
         });
         this.updateSignalStrengthsBetweenSprites();
@@ -56,11 +60,15 @@ public class ClusterLandPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent event) {
                 final Point clickedPoint = event.getPoint();
-                final Optional<ElectronicCard> potentialSelectedChipBoard = retriveSelectedChipBoard(clickedPoint);
+                final Optional<ElectronicCardSprite> potentialSelectedChipBoard = retriveSelectedChipBoard(clickedPoint);
                 if (potentialSelectedChipBoard.isPresent()) {
-                    selectedElectronicCard = potentialSelectedChipBoard.get();
+                    if (Objects.nonNull(selectedElectronicCardSprite)) {
+                        selectedElectronicCardSprite.setSelected(false);
+                    }
+                    selectedElectronicCardSprite = potentialSelectedChipBoard.get();
+                    selectedElectronicCardSprite.setSelected(true);
                     if (Objects.nonNull(eventListerOnElectronicCarSelected)) {
-                        eventListerOnElectronicCarSelected.accept(selectedElectronicCard);
+                        eventListerOnElectronicCarSelected.accept(selectedElectronicCardSprite.getElectronicalCard());
                     }
                 } else {
                     try {
@@ -69,10 +77,14 @@ public class ClusterLandPanel extends JPanel {
                         detectedSignalsStrenghtsBySprite.put(newSprite, new HashMap<>());
                         newSprite.setCenter(clickedPoint);
                         electronicCardSprites.add(newSprite);
-                        selectedElectronicCard = newSprite.getElectronicalCard();
-                        if (Objects.nonNull(eventListerOnElectronicCarSelected)) {
-                            eventListerOnElectronicCarSelected.accept(selectedElectronicCard);
+                        if (Objects.nonNull(selectedElectronicCardSprite)) {
+                            selectedElectronicCardSprite.setSelected(false);
                         }
+                            selectedElectronicCardSprite = newSprite;
+                            selectedElectronicCardSprite.setSelected(true);
+                            if (Objects.nonNull(eventListerOnElectronicCarSelected)) {
+                                eventListerOnElectronicCarSelected.accept(selectedElectronicCardSprite.getElectronicalCard());
+                            }
                         updateSignalStrengthsBetweenSprites();
                     } catch (UnknownHostException e) {
                         
@@ -84,10 +96,14 @@ public class ClusterLandPanel extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent event) {
-                retriveSelectedChipBoard(event.getPoint()).ifPresent((electronicalCard) -> {
-                    selectedElectronicCard = electronicalCard;
+                retriveSelectedChipBoard(event.getPoint()).ifPresent((selectedSprite) -> {
+                    if (Objects.nonNull(selectedElectronicCardSprite)) {
+                        selectedElectronicCardSprite.setSelected(false);
+                    }
+                    selectedElectronicCardSprite = selectedSprite;
+                    selectedElectronicCardSprite.setSelected(true);
                     if (Objects.nonNull(eventListerOnElectronicCarSelected)) {
-                        eventListerOnElectronicCarSelected.accept(selectedElectronicCard);
+                        eventListerOnElectronicCarSelected.accept(selectedElectronicCardSprite.getElectronicalCard());
                     }
                     isMousePressedOnChipBoard = true;
                     repaint();
@@ -107,8 +123,8 @@ public class ClusterLandPanel extends JPanel {
         this.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent event) {
-                if (Objects.nonNull(selectedElectronicCard) && isMousePressedOnChipBoard) {
-                    electronicCardSprites.stream().filter(sprite -> sprite.getElectronicalCard().equals(selectedElectronicCard)).findFirst().ifPresent((sprite) -> {
+                if (Objects.nonNull(selectedElectronicCardSprite) && isMousePressedOnChipBoard) {
+                    electronicCardSprites.stream().filter(sprite -> sprite.getElectronicalCard().equals(selectedElectronicCardSprite.getElectronicalCard())).findFirst().ifPresent((sprite) -> {
                         sprite.setCenter(event.getPoint());
 
                         repaint();
@@ -125,13 +141,13 @@ public class ClusterLandPanel extends JPanel {
             @Override
             public void keyPressed(KeyEvent event) {
                 if (event.getKeyCode() == KeyEvent.VK_DELETE) {
-                    if (Objects.nonNull(selectedElectronicCard)) {
-                        cluster.deleteNode(selectedElectronicCard);
-                        ElectronicCardSprite spriteToDelete = electronicCardSprites.stream().filter(sprite -> sprite.getElectronicalCard().equals(selectedElectronicCard)).findFirst().get();
+                    if (Objects.nonNull(selectedElectronicCardSprite)) {
+                        cluster.deleteNode(selectedElectronicCardSprite.getElectronicalCard());
+                        ElectronicCardSprite spriteToDelete = electronicCardSprites.stream().filter(sprite -> sprite.getElectronicalCard().equals(selectedElectronicCardSprite.getElectronicalCard())).findFirst().get();
                         electronicCardSprites.remove(spriteToDelete);
-                        selectedElectronicCard = null;
+                        selectedElectronicCardSprite = null;
                         if (Objects.nonNull(eventListerOnElectronicCarSelected)) {
-                            eventListerOnElectronicCarSelected.accept(selectedElectronicCard);
+                            eventListerOnElectronicCarSelected.accept(null);
                         }
                         repaint();
                     }
@@ -139,13 +155,13 @@ public class ClusterLandPanel extends JPanel {
             }
         });
 
-        this.cluster.addEventListenerOn(MessageType.HEARTBEAT, () -> {
+        this.cluster.addEventListenerOn(MessageType.HEARTBEAT, (emitterId) -> {
+            System.out.println("Heartbeat: " + emitterId);
+        });
+        this.cluster.addEventListenerOn(MessageType.SCAN_NOW, (emitterId) -> {
 
         });
-        this.cluster.addEventListenerOn(MessageType.SCAN_NOW, () -> {
-
-        });
-        this.cluster.addEventListenerOn(MessageType.SCAN_REPORT, () -> {
+        this.cluster.addEventListenerOn(MessageType.SCAN_REPORT, (emitterId) -> {
 
         });
 
@@ -180,17 +196,17 @@ public class ClusterLandPanel extends JPanel {
         }
     }
 
-    private Optional<ElectronicCard> retriveSelectedChipBoard(Point clickedPoint) {
-        Optional<ElectronicCard> potentialSelectedChipBoard = Optional.empty();
-        for (ElectronicCardSprite chipBoardSprite : this.electronicCardSprites) {
-            final Point point = chipBoardSprite.getCenter();
-            final ElectronicCard chipBoard = chipBoardSprite.getElectronicalCard();
+    private Optional<ElectronicCardSprite> retriveSelectedChipBoard(Point clickedPoint) {
+        Optional<ElectronicCardSprite> potentialSelectedChipBoard = Optional.empty();
+        for (ElectronicCardSprite sprite : this.electronicCardSprites) {
+            final Point point = sprite.getCenter();
+            final ElectronicCard chipBoard = sprite.getElectronicalCard();
             final int zoneX = (int) ((point.x - (chipBoard.getWidth() / 2)));
             final int zoneY = (int) ((point.y - (chipBoard.getHeight() / 2)));
             final Rectangle collisionArea = new Rectangle(zoneX, zoneY, (int) (chipBoard.getWidth()),
                     (int) (chipBoard.getHeight()));
             if (collisionArea.contains(clickedPoint)) {
-                potentialSelectedChipBoard = Optional.of(chipBoard);
+                potentialSelectedChipBoard = Optional.of(sprite);
                 break;
             }
         }

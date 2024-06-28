@@ -10,13 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import io.nirahtech.petvet.messaging.messages.MessageType;
 import io.nirahtech.petvet.messaging.util.MacAddress;
-import io.nirahtech.petvet.simulator.electronicalcard.gui.ElectronicCardSprite;
 
 /**
  * Cluster
@@ -30,7 +31,7 @@ public final class Cluster {
     private final List<MacAddress> availableMAC;
     private final Set<MacAddress> neighborsBSSID;
     private final Configuration configuration;
-    private final Map<MessageType, Runnable> eventListerOnSendedMessages = new HashMap<>();
+    private final Map<MessageType, Consumer<UUID>> eventListerOnSendedMessages = new HashMap<>();
     private Map<ElectronicCard, Map<ElectronicCard, Float>> neigborsNodeSignals;
 
     private Cluster(final Network network, List<Inet4Address> availableIP, List<MacAddress> availableMAC, final Set<MicroController> nodes, Set<MacAddress> neighborsBSSID, Map<ElectronicCard, Map<ElectronicCard, Float>> neigborsNodeSignals, Configuration configuration) {
@@ -128,7 +129,7 @@ public final class Cluster {
         });
     }
 
-    public final void addEventListenerOn(MessageType messageType, Runnable callback) {
+    public final void addEventListenerOn(MessageType messageType, Consumer<UUID> callback) {
         this.eventListerOnSendedMessages.put(messageType, callback);
         this.refreshEventistenersForNodes();
     }
