@@ -1,4 +1,11 @@
 # **PETVET**
+![Static Badge](https://img.shields.io/badge/petvet-grey)
+![Static Badge](https://img.shields.io/badge/java-17-c74634)
+![Static Badge](https://img.shields.io/badge/maven-005580)
+![Static Badge](https://img.shields.io/badge/gradle-005580)
+![Static Badge](https://img.shields.io/badge/android-A4C639)
+![Static Badge](https://img.shields.io/badge/arduino-0088CC)
+
 
 ## **Contexte**
 
