@@ -18,6 +18,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 
+import io.nirahtech.petvet.argparse.ArgumentParser;
 import io.nirahtech.petvet.messaging.util.EmitterMode;
 import io.nirahtech.petvet.simulator.electronicalcard.gui.PetvetClusterSimumatorWindow;
 
@@ -42,6 +43,24 @@ public class App {
         loadDefaultConfiguration(configurationAsMap, resourceBundle);
 
         // Parse command line arguments
+        final ArgumentParser argumentParser = new ArgumentParser();
+        argumentParser.add("config", "c", "Configuration file", false, true);
+        argumentParser.add("size", "s", "Nodes count in the cluster", false, true);
+        argumentParser.add("group", "g", "Multicast group address", false, true);
+        argumentParser.add("port", "p", "Multicast port number", false, true);
+        argumentParser.add("network", "n", "Network filter", false, true);
+        argumentParser.add("windowed", "w", "Display the graphical user interface", false, true);
+        argumentParser.add("scan-interval", "a", "Scan interval in ms", false, true);
+        argumentParser.add("orchestrator-interval", "o", "Orchestrator discovery interval in ms", false, true);
+        argumentParser.add("mode", "m", "Default mode of nodes", false, true);
+        argumentParser.add("heartbeat-interval", "l", "Node heartbeat interval in ms", false, true);
+
+        try {
+            argumentParser.parse(args);
+        } catch (Exception e) {
+            System.err.println(argumentParser.getHelp());
+            return;
+        }
         final CommandLineParser parser = new CommandLineParser(args);
 
         if (parser.hasOption("help")) {
