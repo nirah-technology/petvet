@@ -61,52 +61,51 @@ public class App {
             System.err.println(argumentParser.getHelp());
             return;
         }
-        final CommandLineParser parser = new CommandLineParser(args);
 
-        if (parser.hasOption("help")) {
+        if (argumentParser.get("help").isPresent()) {
             CommandLineParser.printHelp();
             return;
         }
 
-        if (parser.hasOption("config")) {
-            String configFile = parser.getOptionValue("config");
+        if (argumentParser.get("config").isPresent()) {
+            String configFile = argumentParser.getOptionValue("config");
             loadConfigurationFromFile(configurationAsMap, configFile);
         }
 
         // Override configuration with command line arguments
-        if (parser.hasOption("size")) {
-            String size = parser.getOptionValue("size");
+        if (argumentParser.get("size").isPresent()) {
+            String size = argumentParser.getOptionValue("size");
             configurationAsMap.put(CLUSTER_NODES_COUNT, Integer.parseInt(size));
             System.out.println("Cluster size: " + size);
         }
 
-        if (parser.hasOption("group")) {
-            String group = parser.getOptionValue("group");
+        if (argumentParser.get("group").isPresent()) {
+            String group = argumentParser.getOptionValue("group");
             configurationAsMap.put(NETWORK_MULTICAST_GROUP_ADDRESS, InetAddress.getByName(group));
             System.out.println("Multicast group: " + group);
         }
 
-        if (parser.hasOption("port")) {
-            String port = parser.getOptionValue("port");
+        if (argumentParser.get("port").isPresent()) {
+            String port = argumentParser.getOptionValue("port");
             configurationAsMap.put(NETWORK_MULTICAST_GROUP_PORT, Integer.parseInt(port));
             System.out.println("Port number: " + port);
         }
 
-        if (parser.hasOption("network")) {
-            String network = parser.getOptionValue("network");
+        if (argumentParser.get("network").isPresent()) {
+            String network = argumentParser.getOptionValue("network");
             configurationAsMap.put(NETWORK_INTERFACE_IP_FILTER, InetAddress.getByName(network));
             System.out.println("Network filter: " + network);
         }
 
-        if (parser.hasOption("windowed")) {
-            String windowed = parser.getOptionValue("windowed");
+        if (argumentParser.get("windowed").isPresent()) {
+            String windowed = argumentParser.getOptionValue("windowed");
             configurationAsMap.put(GUI_ENABLED, Boolean.parseBoolean(windowed));
             System.out.println("Windowed: " + windowed);
         }
 
 
-        if (parser.hasOption("scan-interval")) {
-            String scanIntervalInMS = parser.getOptionValue("scan-interval");
+        if (argumentParser.get("scan-interval").isPresent()) {
+            String scanIntervalInMS = argumentParser.getOptionValue("scan-interval");
             configurationAsMap.put(SCAN_INTERVAL, Duration.ofMillis(Long.parseLong(scanIntervalInMS)));
             System.out.println("Scan Interval: " + scanIntervalInMS);
         }
