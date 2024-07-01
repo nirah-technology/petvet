@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -16,6 +17,7 @@ import javax.swing.JScrollPane;
 
 import io.nirahtech.petvet.messaging.util.MacAddress;
 import io.nirahtech.petvet.simulator.electronicalcard.ElectronicCard;
+import io.nirahtech.petvet.simulator.electronicalcard.PetVetSketch;
 
 public class NodeDetailPanel extends JPanel {
 
@@ -35,7 +37,6 @@ public class NodeDetailPanel extends JPanel {
 
     private final List<Map.Entry<MacAddress, Float>> signals = new ArrayList<>();
     private final SignalsStrengthsTable signalsTables;
-    
 
     private final JButton powerOnButton;
     private final JButton powerOffButton;
@@ -50,7 +51,18 @@ public class NodeDetailPanel extends JPanel {
             this.powerOffButton.setEnabled(false);
         }
         this.repaintPanel();
+    }
 
+    private final Map<MacAddress, Float> checkAndTransform(Map<ElectronicCard, Float> inputMap) {
+        Map<MacAddress, Float> result = new HashMap<>();
+        for (Map.Entry<ElectronicCard, Float> entry : inputMap.entrySet()) {
+            result.put(entry.getKey().getProcess().getMac(), entry.getValue());
+        }
+        return result;
+    }
+
+    public void refresh() {
+        this.repaintPanel();
     }
 
     private void repaintPanel() {
@@ -61,9 +73,10 @@ public class NodeDetailPanel extends JPanel {
             this.modeValue.setText(this.electronicCard.getProcess().getMode().toString());
             this.uptimeValue.setText(String.valueOf(Duration.ofMillis(this.electronicCard.getProcess().getUptime())));
 
+            this.signalsTables.setSignals(checkAndTransform(((PetVetSketch)this.electronicCard.getProcess()).getNeigborsNodeSignals()));
+
             this.powerOnButton.setEnabled(!this.electronicCard.isRunning());
             this.powerOffButton.setEnabled(!this.powerOnButton.isEnabled());
-
         } else {
             this.idValue.setText("-");
             this.macValue.setText("-");
@@ -75,14 +88,13 @@ public class NodeDetailPanel extends JPanel {
         }
     }
 
-
     private final String title(final String text) {
         return String.format("<html><h3>%s</h3></html>", text.toUpperCase());
     }
 
     NodeDetailPanel() {
         super(new BorderLayout());
-        final Dimension dimension = new Dimension(300, this.getPreferredSize().height);
+        final Dimension dimension = new Dimension(450, this.getPreferredSize().height);
         this.setPreferredSize(dimension); 
         this.setMinimumSize(dimension); 
         this.setMaximumSize(dimension);
@@ -124,7 +136,6 @@ public class NodeDetailPanel extends JPanel {
         });
 
         final JPanel detailsPanel = new JPanel(new GridLayout(5, 2));
-        
         detailsPanel.add(this.idLabel);
         detailsPanel.add(this.idValue);
         detailsPanel.add(this.macLabel);
@@ -146,5 +157,4 @@ public class NodeDetailPanel extends JPanel {
         actionsPanel.add(this.powerOffButton);
         this.add(actionsPanel, BorderLayout.SOUTH);
     }
-
 }

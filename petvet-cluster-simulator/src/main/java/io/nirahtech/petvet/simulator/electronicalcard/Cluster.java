@@ -47,7 +47,9 @@ public final class Cluster {
     public void setNeigborsNodeSignals(Map<ElectronicCard, Map<ElectronicCard, Float>> neigborsNodeSignals) {
         this.neigborsNodeSignals = neigborsNodeSignals;
         this.nodes.forEach(node -> {
-            ((PetVetSketch)((ElectronicCard)node).getProcess()).setNeigborsNodeSignals(neigborsNodeSignals.get(node));
+            final PetVetSketch sketch = (PetVetSketch)((ElectronicCard)node).getProcess();
+            final Map<ElectronicCard, Float> signalsReceivedByNode = neigborsNodeSignals.get(node);
+            sketch.setNeigborsNodeSignals(signalsReceivedByNode);
         });
     }
 

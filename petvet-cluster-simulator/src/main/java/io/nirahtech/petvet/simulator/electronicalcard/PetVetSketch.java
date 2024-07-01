@@ -66,6 +66,13 @@ public final class PetVetSketch extends Sketch implements PetVetProcess {
         this.neigborsNodeSignals = neigborsNodeSignals;
     }
 
+    /**
+     * @return the neigborsNodeSignals
+     */
+    public Map<ElectronicCard, Float> getNeigborsNodeSignals() {
+        return neigborsNodeSignals;
+    }
+
     public PetVetSketch(final NetworkInterface networkInterface, final MacAddress mac, final InetAddress ip,
             final Configuration configuration, final Set<MacAddress> neighborsBSSID, final Map<ElectronicCard, Float> neigborsNodeSignals) {
         this.messageBroker = UDPMessageBroker.newInstance();
