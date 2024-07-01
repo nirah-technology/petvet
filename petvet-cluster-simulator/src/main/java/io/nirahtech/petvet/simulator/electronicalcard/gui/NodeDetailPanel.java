@@ -1,14 +1,20 @@
 package io.nirahtech.petvet.simulator.electronicalcard.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
+import io.nirahtech.petvet.messaging.util.MacAddress;
 import io.nirahtech.petvet.simulator.electronicalcard.ElectronicCard;
 
 public class NodeDetailPanel extends JPanel {
@@ -26,6 +32,10 @@ public class NodeDetailPanel extends JPanel {
     private final JLabel ipValue;
     private final JLabel modeValue;
     private final JLabel uptimeValue;
+
+    private final List<Map.Entry<MacAddress, Float>> signals = new ArrayList<>();
+    private final SignalsStrengthsTable signalsTables;
+    
 
     private final JButton powerOnButton;
     private final JButton powerOffButton;
@@ -71,7 +81,7 @@ public class NodeDetailPanel extends JPanel {
     }
 
     NodeDetailPanel() {
-        super(new GridLayout(6, 2));
+        super(new BorderLayout());
         final Dimension dimension = new Dimension(300, this.getPreferredSize().height);
         this.setPreferredSize(dimension); 
         this.setMinimumSize(dimension); 
@@ -88,6 +98,8 @@ public class NodeDetailPanel extends JPanel {
         this.ipValue = new JLabel("");
         this.modeValue = new JLabel("");
         this.uptimeValue = new JLabel("");
+
+        this.signalsTables = new SignalsStrengthsTable(this.signals);
 
         this.powerOnButton = new JButton("Power On");
         this.powerOffButton = new JButton("Power Off");
@@ -111,20 +123,28 @@ public class NodeDetailPanel extends JPanel {
             }
         });
 
-        this.add(this.idLabel);
-        this.add(this.idValue);
+        final JPanel detailsPanel = new JPanel(new GridLayout(5, 2));
+        
+        detailsPanel.add(this.idLabel);
+        detailsPanel.add(this.idValue);
+        detailsPanel.add(this.macLabel);
+        detailsPanel.add(this.macValue);
+        detailsPanel.add(this.ipLabel);
+        detailsPanel.add(this.ipValue);
+        detailsPanel.add(this.modeLabel);
+        detailsPanel.add(this.modeValue);
+        detailsPanel.add(this.uptimeLabel);
+        detailsPanel.add(this.uptimeValue);
+        this.add(detailsPanel, BorderLayout.NORTH);
+        
+        final JPanel signalsPanel = new JPanel(new BorderLayout());
+        signalsPanel.add(new JScrollPane(this.signalsTables), BorderLayout.CENTER);
+        this.add(signalsPanel, BorderLayout.CENTER);
 
-        this.add(this.macLabel);
-        this.add(this.macValue);
-
-        this.add(this.ipLabel);
-        this.add(this.ipValue);
-        this.add(this.modeLabel);
-        this.add(this.modeValue);
-        this.add(this.uptimeLabel);
-        this.add(this.uptimeValue);
-        this.add(this.powerOnButton);
-        this.add(this.powerOffButton);
+        final JPanel actionsPanel = new JPanel(new GridLayout(1, 2));
+        actionsPanel.add(this.powerOnButton);
+        actionsPanel.add(this.powerOffButton);
+        this.add(actionsPanel, BorderLayout.SOUTH);
     }
 
 }
