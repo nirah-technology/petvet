@@ -86,6 +86,9 @@ public final class ScanNowCommand extends AbstractCommand {
             this.scanNeigborsNodes().entrySet().forEach(set -> {
                 detectedDevicesWithDBs.put(set.getKey().getProcess().getMac(), set.getValue());
             });
+            this.neigborsNodeSignals.entrySet().forEach(set -> {
+                detectedDevicesWithDBs.put(set.getKey().getProcess().getMac(), set.getValue());
+            });
         }
         this.sendScanReport(detectedDevicesWithDBs);
     }
