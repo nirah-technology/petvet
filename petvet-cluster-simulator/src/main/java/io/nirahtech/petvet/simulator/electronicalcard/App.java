@@ -68,44 +68,44 @@ public class App {
         }
 
         if (argumentParser.get("config").isPresent()) {
-            String configFile = argumentParser.getOptionValue("config");
+            String configFile = argumentParser.get("config").get();
             loadConfigurationFromFile(configurationAsMap, configFile);
         }
 
         // Override configuration with command line arguments
         if (argumentParser.get("size").isPresent()) {
-            String size = argumentParser.getOptionValue("size");
+            String size = argumentParser.get("size").get();
             configurationAsMap.put(CLUSTER_NODES_COUNT, Integer.parseInt(size));
             System.out.println("Cluster size: " + size);
         }
 
         if (argumentParser.get("group").isPresent()) {
-            String group = argumentParser.getOptionValue("group");
+            String group = argumentParser.get("group").get();
             configurationAsMap.put(NETWORK_MULTICAST_GROUP_ADDRESS, InetAddress.getByName(group));
             System.out.println("Multicast group: " + group);
         }
 
         if (argumentParser.get("port").isPresent()) {
-            String port = argumentParser.getOptionValue("port");
+            String port = argumentParser.get("port").get();
             configurationAsMap.put(NETWORK_MULTICAST_GROUP_PORT, Integer.parseInt(port));
             System.out.println("Port number: " + port);
         }
 
         if (argumentParser.get("network").isPresent()) {
-            String network = argumentParser.getOptionValue("network");
+            String network = argumentParser.get("network").get();
             configurationAsMap.put(NETWORK_INTERFACE_IP_FILTER, InetAddress.getByName(network));
             System.out.println("Network filter: " + network);
         }
 
         if (argumentParser.get("windowed").isPresent()) {
-            String windowed = argumentParser.getOptionValue("windowed");
+            String windowed = argumentParser.get("windowed").get();
             configurationAsMap.put(GUI_ENABLED, Boolean.parseBoolean(windowed));
             System.out.println("Windowed: " + windowed);
         }
 
 
         if (argumentParser.get("scan-interval").isPresent()) {
-            String scanIntervalInMS = argumentParser.getOptionValue("scan-interval");
+            String scanIntervalInMS = argumentParser.get("scan-interval").get();
             configurationAsMap.put(SCAN_INTERVAL, Duration.ofMillis(Long.parseLong(scanIntervalInMS)));
             System.out.println("Scan Interval: " + scanIntervalInMS);
         }
