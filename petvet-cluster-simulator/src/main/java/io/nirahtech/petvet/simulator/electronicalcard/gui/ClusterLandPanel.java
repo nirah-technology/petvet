@@ -74,6 +74,9 @@ public class ClusterLandPanel extends JPanel {
                             eventListerOnElectronicCarSelected.accept(selectedElectronicCardSprite.getElectronicalCard());
                         }
                     updateSignalStrengthsBetweenSprites();
+                    if (Objects.nonNull(eventListerOnElectronicCarMoved)) {
+                        eventListerOnElectronicCarMoved.run();
+                    }
                 } catch (UnknownHostException e) {
                     
                 }
