@@ -1,11 +1,14 @@
 package io.nirahtech.petvet.simulator.electronicalcard.gui;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import io.nirahtech.petvet.messaging.util.MacAddress;
 import io.nirahtech.petvet.simulator.electronicalcard.Signal;
@@ -18,6 +21,8 @@ public final class SignalsStrengthsTable extends JTable {
         super();
         this.tableModel = new SignalsStrenghtsTableModel(signals);
         super.setModel(this.tableModel);
+        this.getColumnModel().getColumn(1).setCellRenderer(new SignalCellRenderer());
+
     }
 
     private final class SignalsStrenghtsTableModel extends AbstractTableModel {
@@ -68,7 +73,24 @@ public final class SignalsStrengthsTable extends JTable {
 
     public void setSignals(Map<MacAddress, Float> signalsAsMap) {
         this.tableModel.clear();
-        List<Map.Entry<MacAddress, Float>> signals = new ArrayList<>(signalsAsMap.entrySet());
-        this.tableModel.addAll(signals);
+        if (Objects.nonNull(signalsAsMap)) {
+            List<Map.Entry<MacAddress, Float>> signals = new ArrayList<>(signalsAsMap.entrySet());
+            this.tableModel.addAll(signals);
+        }
     }
+
+    private static class SignalCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if (value != null) {
+                String text = value.toString();
+                final float percentage = Float.parseFloat(text.substring(0, text.indexOf('%')));
+                c.setForeground(SignalColor.getSignalColor(percentage));
+            }
+            return c;
+        }
+    }
+
+
 }

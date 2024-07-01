@@ -16,12 +16,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import io.nirahtech.petvet.messaging.util.MacAddress;
+import io.nirahtech.petvet.simulator.electronicalcard.Cluster;
 import io.nirahtech.petvet.simulator.electronicalcard.ElectronicCard;
 import io.nirahtech.petvet.simulator.electronicalcard.PetVetSketch;
 
 public class NodeDetailPanel extends JPanel {
 
-    private ElectronicCard electronicCard = null;;
+    private ElectronicCard electronicCard = null;
+    private final Cluster cluster;
 
     private final JLabel idLabel;
     private final JLabel macLabel;
@@ -55,8 +57,10 @@ public class NodeDetailPanel extends JPanel {
 
     private final Map<MacAddress, Float> checkAndTransform(Map<ElectronicCard, Float> inputMap) {
         Map<MacAddress, Float> result = new HashMap<>();
-        for (Map.Entry<ElectronicCard, Float> entry : inputMap.entrySet()) {
-            result.put(entry.getKey().getProcess().getMac(), entry.getValue());
+        if (Objects.nonNull(inputMap)) {
+            for (Map.Entry<ElectronicCard, Float> entry : inputMap.entrySet()) {
+                result.put(entry.getKey().getProcess().getMac(), entry.getValue());
+            }
         }
         return result;
     }
@@ -92,8 +96,9 @@ public class NodeDetailPanel extends JPanel {
         return String.format("<html><h3>%s</h3></html>", text.toUpperCase());
     }
 
-    NodeDetailPanel() {
+    NodeDetailPanel(final Cluster cluster) {
         super(new BorderLayout());
+        this.cluster = cluster;
         final Dimension dimension = new Dimension(450, this.getPreferredSize().height);
         this.setPreferredSize(dimension); 
         this.setMinimumSize(dimension); 
@@ -122,7 +127,7 @@ public class NodeDetailPanel extends JPanel {
         this.powerOnButton.addActionListener((event) -> {
             if (Objects.nonNull(this.electronicCard)) {
                 if (!this.electronicCard.isRunning()) {
-                    System.out.println("Must start: " + this.electronicCard.getProcess().getId());
+                    this.cluster.startNode(this.electronicCard);
                 }
             }
         });
@@ -130,7 +135,7 @@ public class NodeDetailPanel extends JPanel {
         this.powerOffButton.addActionListener((event) -> {
             if (Objects.nonNull(this.electronicCard)) {
                 if (this.electronicCard.isRunning()) {
-                    System.out.println("Must stop: " + this.electronicCard.getProcess().getId());
+                    this.cluster.stopNode(this.electronicCard);
                 }
             }
         });
@@ -156,5 +161,9 @@ public class NodeDetailPanel extends JPanel {
         actionsPanel.add(this.powerOnButton);
         actionsPanel.add(this.powerOffButton);
         this.add(actionsPanel, BorderLayout.SOUTH);
+    }
+
+    public void updateSignalsStrenghts() {
+        this.repaintPanel();
     }
 }

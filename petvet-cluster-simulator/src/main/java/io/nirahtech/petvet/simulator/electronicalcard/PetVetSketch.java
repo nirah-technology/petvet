@@ -55,7 +55,7 @@ public final class PetVetSketch extends Sketch implements PetVetProcess {
     private final Set<MacAddress> neighborsBSSID;
 
     private final Map<MessageType, Consumer<UUID>> eventListerOnSendedMessages = new HashMap<>();
-    private Map<ElectronicCard, Float> neigborsNodeSignals;
+    private Map<ElectronicCard, Float> neigborsNodeSignals = new HashMap<>();
 
     @Override
     public final void addEventListenerOn(MessageType messageType, Consumer<UUID> callback) {

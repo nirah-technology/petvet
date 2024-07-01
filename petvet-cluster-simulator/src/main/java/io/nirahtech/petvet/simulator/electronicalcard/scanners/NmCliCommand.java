@@ -45,8 +45,7 @@ public final class NmCliCommand implements ScannerSystemCommand {
         try {
             process.waitFor();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            
         }
         final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 

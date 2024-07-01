@@ -32,6 +32,8 @@ public class ClusterLandPanel extends JPanel {
     private ElectronicCardSprite selectedElectronicCardSprite;
     private boolean isMousePressedOnChipBoard = false;
     private Consumer<ElectronicCard> eventListerOnElectronicCarSelected = null;
+    private Runnable eventListerOnElectronicCarMoved = null;
+    
     private final Map<ElectronicCardSprite, Map<ElectronicCardSprite, Float>> detectedSignalsStrenghtsBySprite = new HashMap<>();
     private final Cluster cluster;
 
@@ -128,6 +130,9 @@ public class ClusterLandPanel extends JPanel {
                     });
 
                     updateSignalStrengthsBetweenSprites();
+                    if (Objects.nonNull(eventListerOnElectronicCarMoved)) {
+                        eventListerOnElectronicCarMoved.run();
+                    }
                     repaint();
 
                 }
@@ -157,13 +162,19 @@ public class ClusterLandPanel extends JPanel {
         });
 
         this.cluster.addEventListenerOn(MessageType.HEARTBEAT, (emitterId) -> {
-            System.out.println("Heartbeat: " + emitterId);
+            electronicCardSprites.stream().filter(sprite -> sprite.getElectronicalCard().getProcess().getId().equals(emitterId)).findFirst().ifPresent((sprite) -> {
+                sprite.triggerHeartBeat();
+            });
         });
         this.cluster.addEventListenerOn(MessageType.SCAN_NOW, (emitterId) -> {
-
+            electronicCardSprites.stream().filter(sprite -> sprite.getElectronicalCard().getProcess().getId().equals(emitterId)).findFirst().ifPresent((sprite) -> {
+                sprite.triggerScanOrder();
+            });
         });
         this.cluster.addEventListenerOn(MessageType.SCAN_REPORT, (emitterId) -> {
-
+            electronicCardSprites.stream().filter(sprite -> sprite.getElectronicalCard().getProcess().getId().equals(emitterId)).findFirst().ifPresent((sprite) -> {
+                sprite.triggerEchoRadar();
+            });
         });
 
 
@@ -212,6 +223,7 @@ public class ClusterLandPanel extends JPanel {
                 signals.put(set.getKey().getElectronicalCard(), map);
             });
             this.cluster.setNeigborsNodeSignals(signals);
+            
         }
     }
 
@@ -243,14 +255,16 @@ public class ClusterLandPanel extends JPanel {
             sprite.draw(graphics2D);
         }
 
-        this.detectedSignalsStrenghtsBySprite.entrySet().forEach(group -> {
-            group.getValue().entrySet().forEach(neighbor -> {
-                final ElectronicCardSprite current = group.getKey();
-                final ElectronicCardSprite other = neighbor.getKey();
-                graphics2D.setColor(SignalColor.getSignalColor(neighbor.getValue()));
-                graphics2D.drawLine(current.getCenter().x, current.getCenter().y,other.getCenter().x, other.getCenter().y );
-            });
-        });
+        // for (Map.Entry<ElectronicCardSprite, Map<ElectronicCardSprite, Float>> entry : detectedSignalsStrenghtsBySprite.entrySet()) {
+        //     ElectronicCardSprite current = entry.getKey();
+        //     for (Map.Entry<ElectronicCardSprite, Float> neighborEntry : entry.getValue().entrySet()) {
+        //         ElectronicCardSprite other = neighborEntry.getKey();
+        //         float signalStrength = neighborEntry.getValue();
+    
+        //         graphics2D.setColor(SignalColor.getSignalColor(signalStrength));
+        //         graphics2D.drawLine(current.getCenter().x, current.getCenter().y, other.getCenter().x, other.getCenter().y);
+        //     }
+        // }
 
         graphics2D.dispose();
     }
@@ -258,4 +272,10 @@ public class ClusterLandPanel extends JPanel {
     public void setOnElectronicCardSelected(Consumer<ElectronicCard> eventListerOnElectronicCarSelected) {
         this.eventListerOnElectronicCarSelected = eventListerOnElectronicCarSelected;
     }
+
+
+    public void setOnElectronicCardMoved(Runnable eventListerOnElectronicCarMoved) {
+        this.eventListerOnElectronicCarMoved = eventListerOnElectronicCarMoved;
+    }
+
 }

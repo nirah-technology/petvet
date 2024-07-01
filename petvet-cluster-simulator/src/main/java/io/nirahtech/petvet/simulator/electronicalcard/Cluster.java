@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -24,7 +25,6 @@ import io.nirahtech.petvet.messaging.util.MacAddress;
  */
 public final class Cluster {
 
-    private ExecutorService executorService;
     private final Set<MicroController> nodes;
     private final Network network;
     private final List<Inet4Address> availableIP;
@@ -33,6 +33,7 @@ public final class Cluster {
     private final Configuration configuration;
     private final Map<MessageType, Consumer<UUID>> eventListerOnSendedMessages = new HashMap<>();
     private Map<ElectronicCard, Map<ElectronicCard, Float>> neigborsNodeSignals;
+    private final Map<ElectronicCard, ExecutorService> executorsByNodes = new HashMap<>();
 
     private Cluster(final Network network, List<Inet4Address> availableIP, List<MacAddress> availableMAC, final Set<MicroController> nodes, Set<MacAddress> neighborsBSSID, Map<ElectronicCard, Map<ElectronicCard, Float>> neigborsNodeSignals, Configuration configuration) {
         this.nodes = nodes;
@@ -103,20 +104,38 @@ public final class Cluster {
         return node;
     }
 
-
     public void turnOn() {
-        this.executorService = Executors.newFixedThreadPool(this.nodes.size());
         for (MicroController node : nodes) {
-            executorService.submit(node);
+            this.startNode((ElectronicCard) node);
         }
-        executorService.shutdown();
     }
+
+    public void startNode(ElectronicCard node) {
+        if (Objects.nonNull(node)) {
+            if (!this.executorsByNodes.containsKey(node)) {
+                ExecutorService singleNodeExecutor = Executors.newSingleThreadExecutor();
+                singleNodeExecutor.submit(node);
+                singleNodeExecutor.shutdown();
+                this.executorsByNodes.put(node, singleNodeExecutor);
+            }
+        }
+    }
+
+    public void stopNode(ElectronicCard node) {
+        if (Objects.nonNull(node)) {
+            if (this.executorsByNodes.containsKey(node)) {
+                node.powerOff();
+                this.executorsByNodes.get(node).shutdownNow();
+                this.executorsByNodes.remove(node);
+            }
+        }
+    }
+    
 
     public void turnOff() {
         for (MicroController node : nodes) {
-            node.powerOff();
+            this.stopNode((ElectronicCard) node);
         }
-        executorService.shutdownNow();
     }
 
     public void deleteNode(ElectronicCard node) {

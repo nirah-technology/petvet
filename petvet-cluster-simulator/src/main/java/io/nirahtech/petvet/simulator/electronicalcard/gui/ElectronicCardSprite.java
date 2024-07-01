@@ -8,9 +8,10 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.SwingUtilities;
+
 import io.nirahtech.petvet.simulator.electronicalcard.ElectronicCard;
 import io.nirahtech.petvet.simulator.electronicalcard.Signal;
-
 
 public final class ElectronicCardSprite {
 
@@ -27,10 +28,10 @@ public final class ElectronicCardSprite {
 
     private static final int VARIATION_TOLERANCE_IN_DBM = 5;
 
-
     private final ElectronicCard electronicCard;
     private Point center;
     private RadarEcho radarEcho;
+    private HeartBeat heartBeat;
     private boolean isSelected = false;
     private float zoomScale = 1.0F;
     private final Runnable repaint;
@@ -47,6 +48,7 @@ public final class ElectronicCardSprite {
     public Point getCenter() {
         return center;
     }
+
     public void setCenter(Point center) {
         this.center = center;
     }
@@ -61,7 +63,7 @@ public final class ElectronicCardSprite {
 
     public float getSignalPercent(final ElectronicCardSprite other) {
         float percent = 0.0F;
-        final double radius = Signal.WIFI_MAX_COVERAGE_IN_CENTIMETERS/2;
+        final double radius = Signal.WIFI_MAX_COVERAGE_IN_CENTIMETERS / 2;
         final double distance = this.computeDistance(this.center, other.getCenter());
         if (this.areOverlap(distance, radius)) {
             // Calcul de la longueur du segment commun
@@ -125,27 +127,29 @@ public final class ElectronicCardSprite {
         if (Objects.nonNull(this.center)) {
             // Draw the WiFi
             drawWiFiSignal(graphics2D);
-    
+
             // Draw the Bluetooth
             drawBluetoothSignal(graphics2D);
-    
+
             // Draw the board
             drawElectronicalChipBoard(graphics2D);
 
             if (this.electronicCard.getProcess().getMode().isOrchestratorMode()) {
                 drawOrchestratorMode(graphics2D);
             }
-    
+
             // Draw the radar echo
             if (Objects.nonNull(this.radarEcho)) {
                 this.radarEcho.draw(graphics2D);
             }
+            if (Objects.nonNull(this.heartBeat)) {
+                this.heartBeat.draw(graphics2D);
+            }
         }
-        this.repaint.run();
 
     }
 
-    public void triggerPulse() {
+    public void triggerEchoRadar() {
         if (Objects.nonNull(this.center)) {
             this.radarEcho = new RadarEcho(this.center, Signal.WIFI_MAX_COVERAGE_IN_CENTIMETERS / 2);
             this.radarEcho.start();
@@ -155,6 +159,25 @@ public final class ElectronicCardSprite {
         }
     }
 
+    public void triggerHeartBeat() {
+        if (Objects.nonNull(this.center)) {
+            this.heartBeat = new HeartBeat(this.center, Signal.WIFI_MAX_COVERAGE_IN_CENTIMETERS / 2);
+            this.heartBeat.start();
+            this.repaint.run();
+        } else {
+            this.heartBeat = null;
+        }
+    }
+
+    public void triggerScanOrder() {
+        // if (Objects.nonNull(this.center)) {
+        //     this.radarEcho = new RadarEcho(this.center, Signal.WIFI_MAX_COVERAGE_IN_CENTIMETERS / 2);
+        //     this.radarEcho.start();
+        //     this.repaint.run();
+        // } else {
+        //     this.radarEcho = null;
+        // }
+    }
 
     private final class RadarEcho {
 
@@ -175,7 +198,7 @@ public final class ElectronicCardSprite {
             TimerTask animationTask = new TimerTask() {
                 @Override
                 public void run() {
-                    currentRadius += (maxRadius / 40); // 40 steps over 2 seconds (50ms interval)
+                    currentRadius += (maxRadius / 40);
                     if (currentRadius > maxRadius) {
                         currentRadius = 0;
                         stop();
@@ -189,7 +212,8 @@ public final class ElectronicCardSprite {
 
         private void draw(final Graphics2D g2d) {
             g2d.setColor(RADAR_ECHO_COLOR); // Vert translucide pour l'écho
-            g2d.drawOval(this.center.x - currentRadius, this.center.y - currentRadius, currentRadius * 2, currentRadius * 2);
+            g2d.drawOval(this.center.x - currentRadius, this.center.y - currentRadius, currentRadius * 2,
+                    currentRadius * 2);
         }
 
         private void stop() {
@@ -200,5 +224,68 @@ public final class ElectronicCardSprite {
         }
     }
 
+    private final class HeartBeat {
+
+        private static final Color HEART_BEAT_COLOR = new Color(255, 0, 0); // Couleur verte pour le battement de coeur
+        private final Point center;
+        private final int maxRadius;
+        private Timer animationTimer;
+        private boolean increasing = true;
+        private int colorAlpha = 0;
+
+        public HeartBeat(final Point center, final int maxRadius) {
+            this.center = center;
+            this.maxRadius = maxRadius;
+        }
+
+        public void start() {
+            stop();
+            animationTimer = new Timer();
+            TimerTask animationTask = new TimerTask() {
+                @Override
+                public void run() {
+                    updateColor();
+                    // Redessiner le composant où le coeur est dessiné
+                    SwingUtilities.invokeLater(() -> {
+                        if (animationTimer != null) {
+                            repaint.run();
+                        }
+                    });
+                }
+            };
+
+            animationTimer.scheduleAtFixedRate(animationTask, 0, 10);
+        }
+
+        private void updateColor() {
+            if (increasing) {
+                colorAlpha += 50;
+                if (colorAlpha >= 255) {
+                    colorAlpha = 255;
+                    increasing = false;
+                }
+            } else {
+                colorAlpha -= 50;
+                if (colorAlpha <= 0) {
+                    colorAlpha = 0;
+                    increasing = true;
+                    stop();
+                }
+            }
+        }
+
+        public void draw(Graphics2D g2d) {
+            final Color currentColor = new Color(HEART_BEAT_COLOR.getRed(), HEART_BEAT_COLOR.getGreen(), HEART_BEAT_COLOR.getBlue(), colorAlpha);
+            g2d.setColor(currentColor);
+            g2d.fillOval(center.x - maxRadius, center.y - maxRadius, maxRadius * 2, maxRadius * 2);
+        }
+
+        public void stop() {
+            if (animationTimer != null) {
+                animationTimer.cancel();
+                animationTimer = null;
+            }
+        }
+    }
 
 }
