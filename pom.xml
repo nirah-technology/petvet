@@ -21,6 +21,7 @@
     <module>petvet-cluster-simulator</module>
     <module>petvet-phytotanica</module>
     <module>petvet-geopulsetracker</module>
+    <module>petvet-esp32-installer</module>
 </modules>
 
   <description></description>
