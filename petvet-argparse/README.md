@@ -38,7 +38,6 @@ Ajoutez cette dépendance à votre ***pom.xml*** situé à la racine de votre pr
         <version>1.0.0</version>
     </dependency>
 <dependencies>
-
 ```
 
 ### **Gradle**
