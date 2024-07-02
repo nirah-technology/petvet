@@ -24,15 +24,30 @@ Lorsqu'un programme est exécuté depuis la ligne de commande, il peut accepter 
 
 ## **Installation**
 
-Pour utiliser cette bibliothèque dans votre projet, ajoutez simplement les fichiers source à votre répertoire de projet Java. Si vous utilisez Maven, ajoutez cette dépendance à votre ***pom.xml*** situé à la racine de votre projet Java :
+Pour utiliser cette bibliothèque dans votre projet, ajoutez simplement les fichiers source à votre répertoire de projet Java. 
+
+### **Maven**
+
+Ajoutez cette dépendance à votre ***pom.xml*** situé à la racine de votre projet Java :
 
 ```xml
-<dependency>
-  <groupId>io.nirahtech</groupId>
-  <artifactId>petvet-argparse</artifactId>
-  <version>1.0.0</version>
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>io.nirahtech</groupId>
+        <artifactId>petvet-argparse</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+<dependencies>
 
+```
+
+### **Gradle**
+ajoutez cette dépendance à votre ***build.gradle.kts*** situé à la racine de votre projet Java :
+
+```kotlin
+dependencies {
+    implementation("io.nirahtech:argparse:1.0-SNAPSHOT")
+}
 ```
 
 ## **Fonctionnement**

@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>io.nirahtech</groupId>
-    <artifactId>petvet-argparse</artifactId>
+    <artifactId>argparse</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
