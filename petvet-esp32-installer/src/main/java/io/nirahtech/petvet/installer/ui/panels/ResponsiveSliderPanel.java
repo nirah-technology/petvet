@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.installer.ui;
+package io.nirahtech.petvet.installer.ui.panels;
 
 import java.awt.Dimension;
 

@@ -1,9 +1,8 @@
-package io.nirahtech.petvet.installer.ui;
+package io.nirahtech.petvet.installer.ui.stepper;
 
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -15,33 +14,40 @@ public final class StepperPanel extends JPanel {
 
     private AtomicReference<Step> currentStep = new AtomicReference<>(null);
 
-    private Consumer<Step> onStepChangeChangeEventHandler = null;
+    private Consumer<Step> onSelectedStepEventListenerHandler = null;
+    private Consumer<Step> onUnselectedStepEventListenerHandler = null;
+    
     private final List<StepPanel> stepsPanels = new ArrayList<>();
     
-    StepperPanel(final Stepper stepper) {
+    public StepperPanel(final Stepper stepper) {
         super(new GridLayout(1, 5));
         this.stepper = stepper;
         this.currentStep.set(this.stepper.getSelectedStep());
         
         this.stepper.getSteps().forEach(step -> {
             final StepPanel stepPanel = new StepPanel(step);
-            stepPanel.setOnSelectedStep((selectedStep) -> {
-                if (Objects.nonNull(this.onStepChangeChangeEventHandler)) {
-                    this.onStepChangeChangeEventHandler.accept(selectedStep);
-                }
-            });
             this.stepsPanels.add(stepPanel);
             this.add(stepPanel);
+            this.updateEventListeners();
         });
-        
+    }
+
+    private void updateEventListeners() {
+        this.stepper.setOnSelectedEventHandler(this.onSelectedStepEventListenerHandler);
+        this.stepper.setOnUnselectedEventHandler(this.onUnselectedStepEventListenerHandler);
     }
 
     public final int getTotalSteps() {
         return this.stepper.getSteps().size();
     }
 
-    public void onStepChanged(Consumer<Step> callback) {
-        this.onStepChangeChangeEventHandler = callback;
+    public void onSelectedStepEventListenerHandler(Consumer<Step> callback) {
+        this.onSelectedStepEventListenerHandler = callback;
+        this.updateEventListeners();
+    }
+    public void onUnselectedStepEventListenerHandler(Consumer<Step> callback) {
+        this.onUnselectedStepEventListenerHandler = callback;
+        this.updateEventListeners();
     }
 
     public void redraw() {

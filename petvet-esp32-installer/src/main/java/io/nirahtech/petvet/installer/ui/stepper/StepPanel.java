@@ -1,10 +1,8 @@
-package io.nirahtech.petvet.installer.ui;
+package io.nirahtech.petvet.installer.ui.stepper;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -20,8 +18,6 @@ public final class StepPanel extends JPanel {
     private final JButton button;
     private final JLabel label;
 
-    private Consumer<Step> onSelectedStepEventHandler = null;
-
     public StepPanel(final Step step) {
         super(new BorderLayout());
         this.step = step;
@@ -31,10 +27,7 @@ public final class StepPanel extends JPanel {
         this.label = new JLabel(this.step.getDescription());
         this.label.setHorizontalAlignment(SwingConstants.CENTER);
         this.button.addActionListener(event -> {
-            if (Objects.nonNull(this.onSelectedStepEventHandler)) {
-                onSelectedStepEventHandler.accept(step);
-            }
-            this.step.getGraphicComponent().setVisible(this.step.isSelected());            
+            this.step.select();
         });
         button.setEnabled(this.step.isSelected());
         
@@ -49,11 +42,7 @@ public final class StepPanel extends JPanel {
     public final Step getStep() {
         return this.step;
     }
-
-    public final void setOnSelectedStep(final Consumer<Step> onSelectedStepEventHandler) {
-        this.onSelectedStepEventHandler = onSelectedStepEventHandler;
-    }
-
+    
     public final void redraw() {
         this.button.setEnabled(this.step.isSelected());
         if (this.step.isSelected()) {

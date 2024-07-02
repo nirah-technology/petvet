@@ -1,12 +1,18 @@
-package io.nirahtech.petvet.installer.ui;
+package io.nirahtech.petvet.installer.ui.stepper;
 
 import java.awt.Component;
+import java.util.Objects;
+import java.util.function.Consumer;
 
-public class Step {
+public final class Step {
+
     private final int value;
     private final String description;
     private final Component graphicComponent;
     private boolean isSelected;
+
+    private Consumer<Step> onSelectedEventHandler;
+    private Consumer<Step> onUnselectedEventHandler;
     
 
     /**
@@ -21,6 +27,7 @@ public class Step {
         this.description = description;
         this.graphicComponent = graphicComponent;
         this.isSelected = isSelected;
+        this.graphicComponent.setVisible(this.isSelected);
     }
 
     /**
@@ -46,19 +53,35 @@ public class Step {
     /**
      * @return the isSelected
      */
-    public boolean isSelected() {
+    public final boolean isSelected() {
         return isSelected;
     }
 
-    public void setSelected(boolean isSelected) {
+    private final void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
         this.graphicComponent.setVisible(isSelected);
+        if (this.isSelected) {
+            if (Objects.nonNull(this.onSelectedEventHandler)) {
+                this.onSelectedEventHandler.accept(this);
+            }
+        } else {
+            if (Objects.nonNull(this.onUnselectedEventHandler)) {
+                this.onUnselectedEventHandler.accept(this);
+            }
+        }
     }
 
-    public void select() {
+    public final void select() {
         this.setSelected(true);
     }
-    public void unselect() {
+    public final void unselect() {
         this.setSelected(false);
+    }
+
+    void setOnSelectedEventHandler(Consumer<Step> onSelectedEventHandler) {
+        this.onSelectedEventHandler = onSelectedEventHandler;
+    }
+    void setOnUnselectedEventHandler(Consumer<Step> onUnselectedEventHandler) {
+        this.onUnselectedEventHandler = onUnselectedEventHandler;
     }
 }

@@ -1,12 +1,20 @@
-package io.nirahtech.petvet.installer.ui;
+package io.nirahtech.petvet.installer.ui.stepper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public final class Stepper {
-    private final List<Step> steps = new ArrayList<>();
+    private final List<Step> steps;
+
+    private Consumer<Step> onSelectedEventHandler;
+    private Consumer<Step> onUnselectedEventHandler;
+
+    public Stepper() {
+        this.steps = new ArrayList<>();
+    }
 
     /**
      * @return the steps
@@ -19,8 +27,16 @@ public final class Stepper {
         if (Objects.nonNull(step)) {
             if (!this.steps.contains(step)) {
                 this.steps.add(step);
+                this.updateEventsListeners();
             }
         }
+    }
+
+    private final void updateEventsListeners() {
+        this.steps.forEach(step -> {
+            step.setOnSelectedEventHandler(this.onSelectedEventHandler);
+            step.setOnUnselectedEventHandler(this.onUnselectedEventHandler);
+        });
     }
 
     public Step getSelectedStep() {
@@ -41,5 +57,14 @@ public final class Stepper {
             current.unselect();
             previous.select();
         }));
+    }
+
+    void setOnSelectedEventHandler(Consumer<Step> onSelectedEventHandler) {
+        this.onSelectedEventHandler = onSelectedEventHandler;
+        this.updateEventsListeners();
+    }
+    void setOnUnselectedEventHandler(Consumer<Step> onUnselectedEventHandler) {
+        this.onUnselectedEventHandler = onUnselectedEventHandler;
+        this.updateEventsListeners();
     }
 }

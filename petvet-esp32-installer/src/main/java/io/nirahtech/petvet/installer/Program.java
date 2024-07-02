@@ -5,7 +5,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 
-import io.nirahtech.petvet.installer.ui.PetvetInstallerWindow;
+import io.nirahtech.petvet.installer.ui.window.PetvetInstallerWindow;
 
 public final class Program {
 
