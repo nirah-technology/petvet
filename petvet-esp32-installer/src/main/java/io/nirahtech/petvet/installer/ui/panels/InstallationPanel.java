@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import io.nirahtech.petvet.installer.ui.stepper.Stepper;
+import io.nirahtech.petvet.installer.ui.components.stepper.Stepper;
 
 public class InstallationPanel extends JPanel {
     

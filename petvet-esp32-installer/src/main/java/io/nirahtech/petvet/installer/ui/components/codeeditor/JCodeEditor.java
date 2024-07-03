@@ -8,12 +8,12 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
-public class CodeEditor extends JTextPane {
+public class JCodeEditor extends JTextPane {
 
     private Theme theme = new DarkPlusTheme();
     private String sourceCode = null;
 
-    public CodeEditor() {
+    public JCodeEditor() {
         super();
         this.setBackground(theme.getBackgroundColor());
         this.setFont(new Font("Monospaced", Font.PLAIN, 14)); // Police monospacée pour maintenir l'alignement

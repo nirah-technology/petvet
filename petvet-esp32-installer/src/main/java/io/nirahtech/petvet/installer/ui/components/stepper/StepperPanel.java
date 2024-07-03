@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.installer.ui.stepper;
+package io.nirahtech.petvet.installer.ui.components.stepper;
 
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public final class StepperPanel extends JPanel {
     private Consumer<Step> onSelectedStepEventListenerHandler = null;
     private Consumer<Step> onUnselectedStepEventListenerHandler = null;
     
-    private final List<StepPanel> stepsPanels = new ArrayList<>();
+    private final List<JStepPanel> stepsPanels = new ArrayList<>();
     
     public StepperPanel(final Stepper stepper) {
         super(new GridLayout(1, 5));
@@ -25,7 +25,7 @@ public final class StepperPanel extends JPanel {
         this.currentStep.set(this.stepper.getSelectedStep());
         
         this.stepper.getSteps().forEach(step -> {
-            final StepPanel stepPanel = new StepPanel(step);
+            final JStepPanel stepPanel = new JStepPanel(step);
             this.stepsPanels.add(stepPanel);
             this.add(stepPanel);
             this.updateEventListeners();

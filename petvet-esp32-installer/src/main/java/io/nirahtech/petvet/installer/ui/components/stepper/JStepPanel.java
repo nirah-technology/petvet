@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.installer.ui.stepper;
+package io.nirahtech.petvet.installer.ui.components.stepper;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-public final class StepPanel extends JPanel {
+public final class JStepPanel extends JPanel {
 
     private final Color SELECT_STEP_LABEL_COLOR = new Color(255,255,255);
     private final Color UNSELECT_STEP_LABEL_COLOR = new Color(175,175,175, 100);
@@ -18,7 +18,7 @@ public final class StepPanel extends JPanel {
     private final JButton button;
     private final JLabel label;
 
-    public StepPanel(final Step step) {
+    public JStepPanel(final Step step) {
         super(new BorderLayout());
         this.step = step;
 

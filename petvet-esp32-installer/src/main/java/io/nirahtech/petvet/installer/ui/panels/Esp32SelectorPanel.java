@@ -22,7 +22,7 @@ import io.nirahtech.petvet.installer.domain.ESP32;
 import io.nirahtech.petvet.installer.infrastructure.out.ports.USB;
 import io.nirahtech.petvet.installer.ui.components.AvailableEsp32UsbTable;
 import io.nirahtech.petvet.installer.ui.components.SelectedEsp32UsbTable;
-import io.nirahtech.petvet.installer.ui.stepper.Stepper;
+import io.nirahtech.petvet.installer.ui.components.stepper.Stepper;
 
 public class Esp32SelectorPanel extends JPanel {
 

@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.installer.ui.stepper;
+package io.nirahtech.petvet.installer.ui.components.stepper;
 
 import java.awt.Component;
 import java.util.Objects;

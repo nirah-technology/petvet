@@ -8,14 +8,14 @@ import javax.swing.JPanel;
 
 import io.nirahtech.petvet.installer.infrastructure.out.adapters.ESP32Usb;
 import io.nirahtech.petvet.installer.infrastructure.out.ports.USB;
+import io.nirahtech.petvet.installer.ui.components.stepper.Step;
+import io.nirahtech.petvet.installer.ui.components.stepper.Stepper;
+import io.nirahtech.petvet.installer.ui.components.stepper.StepperPanel;
 import io.nirahtech.petvet.installer.ui.panels.ConfigureInstallationPanel;
 import io.nirahtech.petvet.installer.ui.panels.Esp32SelectorPanel;
 import io.nirahtech.petvet.installer.ui.panels.InstallationPanel;
 import io.nirahtech.petvet.installer.ui.panels.ResumeAfterInstallationPanel;
 import io.nirahtech.petvet.installer.ui.panels.SketchSelectorPanel;
-import io.nirahtech.petvet.installer.ui.stepper.Step;
-import io.nirahtech.petvet.installer.ui.stepper.Stepper;
-import io.nirahtech.petvet.installer.ui.stepper.StepperPanel;
 
 public class PetvetInstallerWindow extends JFrame {
     
@@ -76,6 +76,9 @@ public class PetvetInstallerWindow extends JFrame {
             this.stepperPanel.redraw();
         });
 
+        this.sketchSelectorPanel.addOnSourceCodeChangedEventListener(sourceCode -> {
+            this.configureInstallationPanel.setSourceCode(sourceCode);
+        });
         
 
         this.add(mainPanel, BorderLayout.CENTER);
