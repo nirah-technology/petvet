@@ -1,4 +1,8 @@
+const String ID = "{{esp.id}}";
+const String SOTFWARE_NAME = "{{esp.software.name}}";
+const String SOTFWARE_VERSION = "{{esp.software.version}}";
 const int HELLO_INTERVAL_IN_MILLISECONDS = 1000;
+
 unsigned long lastCheckTimestampInMillis = 0;
 
 void setup() {
@@ -16,7 +20,7 @@ bool isAllowedToSendHello() {
 }
 
 void sendHelloToSerial() {
-  Serial.println("<id=1908eb78-ddcd-4b1f-a74a-66f80769f215;softwareName=TOTO;softwareVersion=1.2.3-RELEASE>");
+  Serial.println("<id="+ID+";softwareName="+SOTFWARE_NAME+";softwareVersion="+SOTFWARE_VERSION+">");
 }
 
 void loop() {

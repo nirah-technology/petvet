@@ -2,6 +2,9 @@ package io.nirahtech.petvet.installer.ui.panels;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.swing.JButton;
@@ -12,10 +15,15 @@ import io.nirahtech.petvet.installer.ui.stepper.Stepper;
 
 public class ConfigureInstallationPanel extends JPanel {
     
+    private final Map<String, Object> configuration = new HashMap<>();
+
     private final JButton nextStepButton;
     private final JButton previousStepButton;
     private Runnable onNext = null;
     private Runnable onPrevious = null;
+
+    private String sourceCode;
+    private final Map<String, Object> configurationTokens = new HashMap<>();
 
     public ConfigureInstallationPanel(final Stepper stepper) {
         super(new BorderLayout());
@@ -45,6 +53,19 @@ public class ConfigureInstallationPanel extends JPanel {
         this.add(navigatorPanel, BorderLayout.SOUTH);
     }
 
+
+
+    private final void updateTemplateTokensFromSourceCode() {
+        this.configurationTokens.clear();
+        if (Objects.nonNull(this.sourceCode)) {
+            
+        }
+    }
+
+    public void setSourceCode(String sourceCode) {
+        this.sourceCode = sourceCode;
+        this.updateTemplateTokensFromSourceCode();
+    }
 
 
     /**
