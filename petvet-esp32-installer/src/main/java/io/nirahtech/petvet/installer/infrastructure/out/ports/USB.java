@@ -1,9 +1,8 @@
 package io.nirahtech.petvet.installer.infrastructure.out.ports;
 
-import java.nio.file.Path;
-import java.util.Set;
+import java.util.Collection;
 
-public interface USB {
-    Set<Path> list();
+public interface USB<T> {
+    Collection<T> list();
     void upload();
 }

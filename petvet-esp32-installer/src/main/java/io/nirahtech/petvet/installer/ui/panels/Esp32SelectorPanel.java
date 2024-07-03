@@ -5,7 +5,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +26,7 @@ import io.nirahtech.petvet.installer.ui.stepper.Stepper;
 
 public class Esp32SelectorPanel extends JPanel {
 
-    private final USB usb;
+    private final USB<ESP32> usb;
     private final JButton nextStepButton;
     private Runnable onNext = null;
     private ScheduledExecutorService scheduledExecutorService;
@@ -38,7 +37,7 @@ public class Esp32SelectorPanel extends JPanel {
     private final List<ESP32> esp32sAvailable = new ArrayList<>();
     private final List<ESP32> esp32sToConfigure = new ArrayList<>();
 
-    public Esp32SelectorPanel(final USB usb, final Stepper stepper) {
+    public Esp32SelectorPanel(final USB<ESP32> usb, final Stepper stepper) {
         super(new BorderLayout());
         this.usb = usb;
 
@@ -105,29 +104,28 @@ public class Esp32SelectorPanel extends JPanel {
         navigatorPanel.add(this.nextStepButton);
         this.add(navigatorPanel, BorderLayout.SOUTH);
 
+        addToInstall.addActionListener((event) -> {
+            this.availableEsp32UsbTable.getSelection().ifPresent(esp -> {
+                if (!this.esp32sToConfigure.contains(esp)) {
+                    this.esp32sToConfigure.add(esp);
+                    selectedesp32UsbTable.refresh();
+                }
+
+            });
+        });
+
         this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         this.startMonitoring();
     }
 
     private void startMonitoring() {
         this.scheduledExecutorService.scheduleAtFixedRate(() -> {
-            Set<Path> connectedESP32AsUSB = new HashSet<>(this.usb.list());
-
-            // Delete missing ESP32s
-            this.esp32sAvailable.removeIf(esp32 -> !connectedESP32AsUSB.contains(esp32.getUsbPort()));
-
-            // Add new ESP32s
-            connectedESP32AsUSB.forEach(port -> {
-                if (this.esp32sAvailable.stream().noneMatch(esp32 -> esp32.getUsbPort().equals(port))) {
-                    ESP32 newEsp32 = new ESP32(port, null);
-                    this.esp32sAvailable.add(newEsp32);
-                }
-            });
-
+            esp32sAvailable.clear();
+            final Set<ESP32> connectedESP32AsUSB = new HashSet<>(this.usb.list());
+            esp32sAvailable.addAll(connectedESP32AsUSB);
             availableEsp32UsbTable.refresh();
         }, 0, 1, TimeUnit.SECONDS);
     }
-
 
     /**
      * @param onNext the onNext to set
