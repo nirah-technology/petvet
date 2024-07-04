@@ -5,6 +5,7 @@ import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
+import io.nirahtech.petvet.installer.domain.ESP32;
 import io.nirahtech.petvet.installer.infrastructure.out.adapters.ESP32Usb;
 import io.nirahtech.petvet.installer.infrastructure.out.ports.USB;
 import io.nirahtech.petvet.installer.ui.panels.ConfigureInstallationPanel;
@@ -16,7 +17,7 @@ import io.nirahtech.petvet.installer.ui.widgets.jstepper.JStepPanel;
 
 public class PetvetInstallerWindow extends JFrame {
     
-    private final USB usb;
+    private final USB<ESP32> usb;
 
     private final JStepPanel stepPanel;
 

@@ -24,6 +24,7 @@ public class JStepPanel extends JPanel {
         this.stepper.setOnSelectedStepChanged(step -> {
             stepPanel.removeAll();
             stepPanel.add(step.getPanel(), BorderLayout.CENTER);
+            this.redraw();
         });
         
         this.add(this.jStepperMenuPanel, BorderLayout.NORTH);
@@ -36,6 +37,13 @@ public class JStepPanel extends JPanel {
         final Step step = this.stepper.addStep(title, description, panel);
         step.setSelected(isSelected);
         this.jStepperMenuPanel.addStep(step);
+        this.redraw();
+    }
+
+
+    final void redraw() {
+        this.jStepperMenuPanel.redraw();
+        this.jStepperNavigationPanel.redraw();
     }
 
 }

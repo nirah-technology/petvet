@@ -1,4 +1,4 @@
-const String ID = "{{esp.id}}";
+const String ID = "{{ esp.id }}";
 const String SOTFWARE_NAME = "{{esp.software.name}}";
 const String SOTFWARE_VERSION = "{{esp.software.version}}";
 const int HELLO_INTERVAL_IN_MILLISECONDS = 1000;

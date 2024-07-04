@@ -41,12 +41,14 @@ abstract class AbstractTemplateEngine implements TemplateEngine {
         Set<String> tokensFound = new HashSet<>();
     
         // Define the regular expression pattern to find values between "{{" and "}}"
-        Pattern pattern = Pattern.compile("\\{\\{\\s*(.*?)\\s*\\}\\}");
+        Pattern pattern = Pattern.compile("\\{\\{s*(.*?)s*\\}\\}");
         Matcher matcher = pattern.matcher(template);
 
         // Find all matches and add them to the set
         while (matcher.find()) {
-            tokensFound.add(matcher.group(1).trim());
+            final String token = matcher.group(1).trim();
+            System.out.println(token);
+            tokensFound.add(token);
         }
 
         return tokensFound;

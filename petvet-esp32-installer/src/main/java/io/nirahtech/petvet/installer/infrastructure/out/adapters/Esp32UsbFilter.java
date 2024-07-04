@@ -10,7 +10,6 @@ public final class Esp32UsbFilter implements Predicate<SerialPort> {
     private static final String DESCRIPTION = "CP2102 USB to UART Bridge Controller";
     private static final String MANUFACTURER = "Silicon Labs";
     private static final int VENDOR_ID = 4_292;
-    private static final String VERSION = "2.11.0";
 
 
     @Override
@@ -25,9 +24,6 @@ public final class Esp32UsbFilter implements Predicate<SerialPort> {
         }
         if (isEsp) {
             isEsp = serialPort.getVendorID() == VENDOR_ID;
-        }
-        if (isEsp) {
-            isEsp = serialPort.getVersion().equals(VERSION);
         }
         return isEsp;
     }

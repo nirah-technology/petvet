@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,7 +24,6 @@ public class SketchSelectorPanel extends JPanel {
     private final JDropZone dropZone;
     private final JLabel pathLabel;
     private final JFileChooser sketchFileChooser;
-    private final JButton sketchSelectorButton;
     private final JCodeEditorPanel codeArea;
 
 
@@ -39,22 +37,8 @@ public class SketchSelectorPanel extends JPanel {
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Arduino File (*.ino)", "ino");
         this.sketchFileChooser = new JFileChooser();
         this.sketchFileChooser.setFileFilter(filter);
-        this.sketchSelectorButton = new JButton("Choose a Sketch");
 
-        final JPanel leftPanel = new JPanel(new GridLayout(4, 1));
-        leftPanel.add(selectedSketchTitle);
-        leftPanel.add(dropZone);
-        leftPanel.add(pathLabel);
-        leftPanel.add(sketchSelectorButton);
-
-        this.codeArea = new JCodeEditorPanel();
-        this.codeArea.setEditable(false);
-        
-        this.dropZone.setOnDroppedFileEventHandler(file -> {
-            selectFileAndDisplaySourceCode(file);
-        });
-
-        this.sketchSelectorButton.addActionListener((event) -> {
+        this.dropZone.setOnClick(() -> {
             final int choice = sketchFileChooser.showDialog(this, "Select");
             if (choice == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = sketchFileChooser.getSelectedFile();
@@ -64,6 +48,18 @@ public class SketchSelectorPanel extends JPanel {
                     }
                 }
             }
+        });
+
+        final JPanel leftPanel = new JPanel(new GridLayout(4, 1));
+        leftPanel.add(selectedSketchTitle);
+        leftPanel.add(dropZone);
+        leftPanel.add(pathLabel);
+
+        this.codeArea = new JCodeEditorPanel();
+        this.codeArea.setEditable(false);
+        
+        this.dropZone.setOnDroppedFileEventHandler(file -> {
+            selectFileAndDisplaySourceCode(file);
         });
 
         this.add(leftPanel, BorderLayout.WEST);

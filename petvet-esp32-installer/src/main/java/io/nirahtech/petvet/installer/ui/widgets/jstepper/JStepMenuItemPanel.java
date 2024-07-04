@@ -43,11 +43,13 @@ final class JStepMenuItemPanel extends JPanel {
         return this.step;
     }
 
-    public final void redraw() {
+    final void redraw() {
         if (this.step.isSelected()) {
+            this.title.setText(String.valueOf(this.step.getTitle()).toUpperCase());
             this.order.setForeground(SELECT_STEP_LABEL_COLOR);
             this.title.setForeground(SELECT_STEP_LABEL_COLOR);
         } else {
+            this.title.setText(String.valueOf(this.step.getTitle()));
             this.order.setForeground(UNSELECT_STEP_LABEL_COLOR);
             this.title.setForeground(UNSELECT_STEP_LABEL_COLOR);
 

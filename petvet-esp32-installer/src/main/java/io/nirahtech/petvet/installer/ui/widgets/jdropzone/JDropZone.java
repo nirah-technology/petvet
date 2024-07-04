@@ -2,6 +2,7 @@ package io.nirahtech.petvet.installer.ui.widgets.jdropzone;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
@@ -10,6 +11,8 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +26,8 @@ import javax.swing.border.EmptyBorder;
 
 public class JDropZone extends JPanel {
 
+
+    private Runnable onClick = null;
     private File file = null;
     private Consumer<File> onDroppedFileEventHandler = null;
     private final Color defaultBackgroundColor = getBackground();
@@ -51,7 +56,7 @@ public class JDropZone extends JPanel {
 
             @Override
             public void dragOver(DropTargetDragEvent dtde) {
-                // No specific action needed while dragging over
+                
             }
 
             @Override
@@ -70,12 +75,13 @@ public class JDropZone extends JPanel {
                     if (dtde.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                         dtde.acceptDrop(DnDConstants.ACTION_COPY);
                         Transferable transferable = dtde.getTransferable();
+
+                        @SuppressWarnings("unchecked")
                         List<File> droppedFiles = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                         if (!droppedFiles.isEmpty()) {
-                            file = droppedFiles.get(0); // Get the first file only
+                            file = droppedFiles.get(0);
                             System.out.println(file.getName());
                             if (file.getName().endsWith(".ino")) {
-                                label.setText(file.getName()); 
                                 if (Objects.nonNull(onDroppedFileEventHandler)) {
                                     onDroppedFileEventHandler.accept(file);
                                 }
@@ -92,6 +98,43 @@ public class JDropZone extends JPanel {
                 }
             }
         }));
+
+        this.addMouseListener(new MouseListener() {
+
+            private final int delta = 10;
+            private final Color defaultColor = getBackground();
+            private final Color hoverColor = new Color(this.defaultColor.getRed()+delta, this.defaultColor.getGreen()+delta, this.defaultColor.getBlue()+delta);
+
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                setBackground(this.hoverColor);
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                setBackground(this.defaultColor);
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (Objects.nonNull(onClick)) {
+                    onClick.run();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                
+            }
+        });
     }
 
     public void setOnDroppedFileEventHandler(Consumer<File> onDroppedFileEventHandler) {
@@ -100,5 +143,9 @@ public class JDropZone extends JPanel {
 
     public Optional<File> getFile() {
         return Optional.ofNullable(this.file);
+    }
+
+    public void setOnClick(final Runnable onClick) {
+        this.onClick = onClick;
     }
 }

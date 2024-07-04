@@ -22,7 +22,7 @@ final class JStepperMenuPanel extends JPanel {
 
     }
 
-    public final void redraw() {
+    final void redraw() {
         this.stepsPanels.forEach(stepPanel -> stepPanel.redraw());
     }
 }

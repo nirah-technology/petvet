@@ -57,6 +57,15 @@ final class Stepper {
         }));
     }
 
+
+    public boolean isFirstSelected() {
+        return this.getSelectedStep().equals(this.steps.get(0));
+    }
+
+    public boolean isLastSelected() {
+        return this.getSelectedStep().equals(this.steps.get(this.steps.size()-1));
+    }
+ 
     /**
      * @param onNextStepSelected the onNextStepSelected to set
      */
