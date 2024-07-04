@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.installer.ui.components.dropzone;
+package io.nirahtech.petvet.installer.ui.widgets.jdropzone;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

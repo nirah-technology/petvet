@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -16,7 +15,6 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import io.nirahtech.petvet.installer.ui.components.stepper.Stepper;
 import io.nirahtech.templateprocessor.JinjaEngine;
 import io.nirahtech.templateprocessor.TemplateEngine;
 
@@ -24,43 +22,17 @@ public class ConfigureInstallationPanel extends JPanel {
 
     private final TemplateEngine templateEngine = new JinjaEngine();
 
-    private final JButton nextStepButton;
-    private final JButton previousStepButton;
-    private Runnable onNext = null;
-    private Runnable onPrevious = null;
-
     private final JPanel basePanel = new JPanel();
 
     private String sourceCode;
     private final Map<String, Object> configurationTokens = new HashMap<>();
 
-    public ConfigureInstallationPanel(final Stepper stepper) {
+    public ConfigureInstallationPanel() {
         super(new BorderLayout());
         basePanel.setLayout(new BoxLayout(basePanel, BoxLayout.Y_AXIS));
         basePanel.add(new JLabel("No template file to parse."));
 
         this.add(new JScrollPane(basePanel), BorderLayout.CENTER);
-
-        this.previousStepButton = new JButton("Previous");
-        this.previousStepButton.addActionListener(event -> {
-            stepper.selectPreviousStep();
-            if (Objects.nonNull(this.onPrevious)) {
-                this.onPrevious.run();
-            }
-        });
-
-        this.nextStepButton = new JButton("Next");
-        this.nextStepButton.addActionListener(event -> {
-            stepper.selectNextStep();
-            if (Objects.nonNull(this.onNext)) {
-                this.onNext.run();
-            }
-        });
-
-        final JPanel navigatorPanel = new JPanel(new GridLayout(1, 2));
-        navigatorPanel.add(this.previousStepButton);
-        navigatorPanel.add(this.nextStepButton);
-        this.add(navigatorPanel, BorderLayout.SOUTH);
     }
 
     private JPanel createTokenPanel(final String token) {
@@ -116,11 +88,4 @@ public class ConfigureInstallationPanel extends JPanel {
         this.updateTemplateTokensFromSourceCode();
     }
 
-    public void setOnNextEventHandler(Runnable onNext) {
-        this.onNext = onNext;
-    }
-
-    public void setOnPreviousEventHandler(Runnable onPrevious) {
-        this.onPrevious = onPrevious;
-    }
 }

@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.installer.ui.components.codeeditor;
+package io.nirahtech.petvet.installer.ui.widgets.jcodeeditor;
 
 import java.awt.Font;
 import java.util.Objects;
@@ -8,12 +8,12 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
-public class JCodeEditor extends JTextPane {
+public class JCodeEditorPanel extends JTextPane {
 
     private Theme theme = new DarkPlusTheme();
     private String sourceCode = null;
 
-    public JCodeEditor() {
+    public JCodeEditorPanel() {
         super();
         this.setBackground(theme.getBackgroundColor());
         this.setFont(new Font("Monospaced", Font.PLAIN, 14)); // Police monospacée pour maintenir l'alignement

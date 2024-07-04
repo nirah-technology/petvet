@@ -17,9 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import io.nirahtech.petvet.installer.ui.components.codeeditor.JCodeEditor;
-import io.nirahtech.petvet.installer.ui.components.dropzone.JDropZone;
-import io.nirahtech.petvet.installer.ui.components.stepper.Stepper;
+import io.nirahtech.petvet.installer.ui.widgets.jcodeeditor.JCodeEditorPanel;
+import io.nirahtech.petvet.installer.ui.widgets.jdropzone.JDropZone;
 
 public class SketchSelectorPanel extends JPanel {
 
@@ -27,17 +26,12 @@ public class SketchSelectorPanel extends JPanel {
     private final JLabel pathLabel;
     private final JFileChooser sketchFileChooser;
     private final JButton sketchSelectorButton;
-    private final JCodeEditor codeArea;
+    private final JCodeEditorPanel codeArea;
 
-
-    private final JButton nextStepButton;
-    private final JButton previousStepButton;
-    private Runnable onNext = null;
-    private Runnable onPrevious = null;
 
     private Consumer<String> onSourceCodeChangeEventHandler = null;
     
-    public SketchSelectorPanel(final Stepper stepper) {
+    public SketchSelectorPanel() {
         super(new BorderLayout());
         final JLabel selectedSketchTitle = new JLabel("<html><strong>Sketch to install</strong></html>");
         this.pathLabel = new JLabel("No sketch selected.");
@@ -53,7 +47,7 @@ public class SketchSelectorPanel extends JPanel {
         leftPanel.add(pathLabel);
         leftPanel.add(sketchSelectorButton);
 
-        this.codeArea = new JCodeEditor();
+        this.codeArea = new JCodeEditorPanel();
         this.codeArea.setEditable(false);
         
         this.dropZone.setOnDroppedFileEventHandler(file -> {
@@ -74,31 +68,7 @@ public class SketchSelectorPanel extends JPanel {
 
         this.add(leftPanel, BorderLayout.WEST);
 
-        
-
         this.add(new JScrollPane(this.codeArea), BorderLayout.CENTER);
-
-        this.previousStepButton = new JButton("Previous");
-        this.previousStepButton.addActionListener(event -> {
-            stepper.selectPreviousStep();
-            if (Objects.nonNull(this.onPrevious)) {
-                this.onPrevious.run();
-            }
-        });
-
-        this.nextStepButton = new JButton("Next");
-        this.nextStepButton.addActionListener(event -> {
-            stepper.selectNextStep();
-            if (Objects.nonNull(this.onNext)) {
-                this.onNext.run();
-            }
-        });
-
-
-        final JPanel navigatorPanel = new JPanel(new GridLayout(1, 2));
-        navigatorPanel.add(this.previousStepButton);
-        navigatorPanel.add(this.nextStepButton);
-        this.add(navigatorPanel, BorderLayout.SOUTH);
 
     }
 
@@ -116,22 +86,6 @@ public class SketchSelectorPanel extends JPanel {
             e.printStackTrace();
         }
     }
-
-
-    /**
-     * @param onNext the onNext to set
-     */
-    public void setOnNextEventHandler(Runnable onNext) {
-        this.onNext = onNext;
-    }
-
-    /**
-     * @param onNext the onNext to set
-     */
-    public void setOnPreviousEventHandler(Runnable onPrevious) {
-        this.onPrevious = onPrevious;
-    }
-
 
     public void addOnSourceCodeChangedEventListener(Consumer<String> callback) {
         onSourceCodeChangeEventHandler = callback;

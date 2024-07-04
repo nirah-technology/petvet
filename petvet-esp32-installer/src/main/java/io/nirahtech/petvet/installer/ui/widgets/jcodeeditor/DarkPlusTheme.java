@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.installer.ui.components.codeeditor;
+package io.nirahtech.petvet.installer.ui.widgets.jcodeeditor;
 
 import java.awt.Color;
 

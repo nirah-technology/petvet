@@ -3,12 +3,10 @@ package io.nirahtech.petvet.installer.ui.panels;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,13 +20,10 @@ import io.nirahtech.petvet.installer.domain.ESP32;
 import io.nirahtech.petvet.installer.infrastructure.out.ports.USB;
 import io.nirahtech.petvet.installer.ui.components.AvailableEsp32UsbTable;
 import io.nirahtech.petvet.installer.ui.components.SelectedEsp32UsbTable;
-import io.nirahtech.petvet.installer.ui.components.stepper.Stepper;
 
 public class Esp32SelectorPanel extends JPanel {
 
     private final USB<ESP32> usb;
-    private final JButton nextStepButton;
-    private Runnable onNext = null;
     private ScheduledExecutorService scheduledExecutorService;
 
     private final AvailableEsp32UsbTable availableEsp32UsbTable;
@@ -37,7 +32,7 @@ public class Esp32SelectorPanel extends JPanel {
     private final List<ESP32> esp32sAvailable = new ArrayList<>();
     private final List<ESP32> esp32sToConfigure = new ArrayList<>();
 
-    public Esp32SelectorPanel(final USB<ESP32> usb, final Stepper stepper) {
+    public Esp32SelectorPanel(final USB<ESP32> usb) {
         super(new BorderLayout());
         this.usb = usb;
 
@@ -92,17 +87,6 @@ public class Esp32SelectorPanel extends JPanel {
 
         this.add(panel, BorderLayout.CENTER);
 
-        this.nextStepButton = new JButton("Next");
-        this.nextStepButton.addActionListener(event -> {
-            stepper.selectNextStep();
-            if (Objects.nonNull(this.onNext)) {
-                this.onNext.run();
-            }
-        });
-
-        final JPanel navigatorPanel = new JPanel(new GridLayout(1, 2));
-        navigatorPanel.add(this.nextStepButton);
-        this.add(navigatorPanel, BorderLayout.SOUTH);
 
         addToInstall.addActionListener((event) -> {
             this.availableEsp32UsbTable.getSelection().ifPresent(esp -> {
@@ -127,10 +111,4 @@ public class Esp32SelectorPanel extends JPanel {
         }, 0, 1, TimeUnit.SECONDS);
     }
 
-    /**
-     * @param onNext the onNext to set
-     */
-    public void setOnNextEventHandler(Runnable onNext) {
-        this.onNext = onNext;
-    }
 }
