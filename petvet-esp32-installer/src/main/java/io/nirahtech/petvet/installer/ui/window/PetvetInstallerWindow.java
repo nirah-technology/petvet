@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import io.nirahtech.petvet.installer.infrastructure.out.adapters.ESP32Usb;
 import io.nirahtech.petvet.installer.infrastructure.out.ports.USB;
@@ -55,15 +54,11 @@ public class PetvetInstallerWindow extends JFrame {
         this.stepPanel.addStep("Installation", "Install Sketch on ESP32s", this.installationPanel);
         this.stepPanel.addStep("Resume", "Installation resume", this.resumeAfterInstallationPanel);
         this.add(this.stepPanel, BorderLayout.CENTER);
-        final JPanel mainPanel = new JPanel(new BorderLayout());
-
-        
-
+    
         this.sketchSelectorPanel.addOnSourceCodeChangedEventListener(sourceCode -> {
             this.configureInstallationPanel.setSourceCode(sourceCode);
         });
 
-        this.add(mainPanel, BorderLayout.CENTER);
 
     }
 }
