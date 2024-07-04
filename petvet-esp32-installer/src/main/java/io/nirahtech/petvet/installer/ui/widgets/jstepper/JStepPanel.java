@@ -16,7 +16,7 @@ public class JStepPanel extends JPanel {
         this.setLayout(new BorderLayout());
         this.stepper = new Stepper();
         this.jStepperMenuPanel = new JStepperMenuPanel();
-        this.jStepperNavigationPanel = new JStepperNavigationPanel();
+        this.jStepperNavigationPanel = new JStepperNavigationPanel(this.stepper);
 
         
         final JPanel stepPanel = new JPanel(new BorderLayout());
