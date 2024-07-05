@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.io.IOException;
 import java.util.Map;
 
 import javax.swing.JLabel;
@@ -59,13 +60,19 @@ public class JInstallCard extends JPanel {
     private final class Installer implements Runnable {
         @Override
         public void run() {            
-            final ArduinoCli arduinoCli = new ArduinoCli();
-            arduinoCli.createNewSketch();
-            arduinoCli.installCoreForESP32();
-            arduinoCli.add3rdPartsCore();
-            arduinoCli.updateSketch(null);
-            arduinoCli.compile();
-            arduinoCli.upload();
+            ArduinoCli arduinoCli;
+            try {
+                arduinoCli = ArduinoCli.newInstance(esp);
+                arduinoCli.createNewSketch();
+                arduinoCli.installCoreForESP32();
+                arduinoCli.add3rdPartsCore();
+                arduinoCli.updateSketch(null);
+                arduinoCli.compile();
+                arduinoCli.upload();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
  }
