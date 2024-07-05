@@ -12,6 +12,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
 import io.nirahtech.petvet.installer.domain.ESP32;
+import io.nirahtech.petvet.installer.infrastructure.tools.ArduinoCli;
 
 public class JInstallCard extends JPanel {
 
@@ -50,5 +51,21 @@ public class JInstallCard extends JPanel {
 
     public void install() {
         this.installProgressBar.setIndeterminate(true);
+        final Installer installer = new Installer();
+        installer.run();
+        this.installProgressBar.setIndeterminate(false);
     }
-}
+
+    private final class Installer implements Runnable {
+        @Override
+        public void run() {            
+            final ArduinoCli arduinoCli = new ArduinoCli();
+            arduinoCli.createNewSketch();
+            arduinoCli.installCoreForESP32();
+            arduinoCli.add3rdPartsCore();
+            arduinoCli.updateSketch(null);
+            arduinoCli.compile();
+            arduinoCli.upload();
+        }
+    }
+ }
