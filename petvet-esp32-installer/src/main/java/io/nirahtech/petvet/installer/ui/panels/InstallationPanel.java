@@ -1,20 +1,17 @@
 package io.nirahtech.petvet.installer.ui.panels;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 import io.nirahtech.petvet.installer.domain.ESP32;
+import io.nirahtech.petvet.installer.ui.widgets.jinstallacard.JInstallCard;
 
 public class InstallationPanel extends JPanel {
     
@@ -23,22 +20,12 @@ public class InstallationPanel extends JPanel {
     private final JPanel espsPanel;
 
     private final Map<ESP32, Map<String, String>> configurationsPerESP = new HashMap<>();
+    private final Set<JInstallCard> installCards = new HashSet<>();
 
 
-    private JPanel addESP(ESP32 esp, Map<String, String> configuration) {
-        final JPanel panel = new JPanel(new GridLayout(4, 1));
-        final Dimension dimension = new Dimension(250, 150);
-        panel.setPreferredSize(dimension);
-        final JLabel port = new JLabel(esp.getUsbPort().toString());
-        final JTable evolutionTable = new JTable();
-        final JProgressBar installProcess = new JProgressBar(0, 100);
-        installProcess.setIndeterminate(true);
-        final JLabel status = new JLabel("Installation in progress...");
-        panel.add(port);
-        panel.add(new JScrollPane(evolutionTable));
-        panel.add(installProcess);
-        panel.add(status);
-        return panel;
+    private JInstallCard addESP(ESP32 esp, Map<String, String> configuration) {
+        final JInstallCard installCard = new JInstallCard(esp, configuration);
+        return installCard;
     }
 
     public InstallationPanel() {
@@ -46,6 +33,11 @@ public class InstallationPanel extends JPanel {
         this.espsPanel = new JPanel(new FlowLayout());
         this.add(this.espsPanel, BorderLayout.CENTER);
         this.launchInstallBatchButton = new JButton("Install");
+        this.launchInstallBatchButton.addActionListener((event) -> {
+            this.installCards.forEach(card -> {
+                card.install();
+            });
+        });
         this.add(launchInstallBatchButton, BorderLayout.SOUTH);
     }
 
@@ -54,7 +46,9 @@ public class InstallationPanel extends JPanel {
         this.configurationsPerESP.clear();
         this.configurationsPerESP.putAll(configurationsPerESP);
         this.configurationsPerESP.entrySet().forEach(esp -> {
-            this.espsPanel.add(this.addESP(esp.getKey(), esp.getValue()));
+            JInstallCard card = this.addESP(esp.getKey(), esp.getValue());
+            this.installCards.add(card);
+            this.espsPanel.add(card);
         });
         repaint();
     }
