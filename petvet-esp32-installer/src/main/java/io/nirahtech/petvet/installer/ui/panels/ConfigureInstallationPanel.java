@@ -2,15 +2,16 @@ package io.nirahtech.petvet.installer.ui.panels;
 
 import java.awt.BorderLayout;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 
-import io.nirahtech.petvet.installer.ui.widgets.jtemplatetable.JTemplateTable;
+import io.nirahtech.petvet.installer.domain.ESP32;
+import io.nirahtech.petvet.installer.ui.widgets.jmultipletablesconfigurationpanel.JMultipleTablesConfigurationPanel;
 import io.nirahtech.templateprocessor.JinjaEngine;
 import io.nirahtech.templateprocessor.TemplateEngine;
 
@@ -19,7 +20,11 @@ public class ConfigureInstallationPanel extends JPanel {
     private final TemplateEngine templateEngine = new JinjaEngine();
 
     private final JPanel basePanel = new JPanel();
-    private final JTemplateTable templateTable;
+    
+
+    private final JMultipleTablesConfigurationPanel jMultipleTablesConfigurationPanel;
+
+    private final Set<ESP32> espsToConfigure = new HashSet<>();
 
     private String sourceCode;
     private final Map<String, Object> configurationTokens = new HashMap<>();
@@ -28,8 +33,8 @@ public class ConfigureInstallationPanel extends JPanel {
         super(new BorderLayout());
         basePanel.setLayout(new BorderLayout());
         basePanel.add(new JLabel("No template file parsed."), BorderLayout.CENTER);
-        this.templateTable = new JTemplateTable();
-        this.add(new JScrollPane(basePanel), BorderLayout.CENTER);
+        this.jMultipleTablesConfigurationPanel = new JMultipleTablesConfigurationPanel();
+        this.add(basePanel, BorderLayout.CENTER);
     }
 
     private void updateTemplateTokensFromSourceCode() {
@@ -37,27 +42,37 @@ public class ConfigureInstallationPanel extends JPanel {
         basePanel.removeAll(); // Clear previous content
         if (Objects.nonNull(this.sourceCode)) {
             this.templateEngine.retrieveTokens(this.sourceCode).forEach(tokenFound -> {
-                this.templateTable.addTokenName(tokenFound);
+                this.jMultipleTablesConfigurationPanel.addTokenName(tokenFound);
             });
         }
-        SwingUtilities.invokeLater(() -> {
-            basePanel.add(new JScrollPane(this.templateTable), BorderLayout.CENTER);
-            basePanel.revalidate();
-            basePanel.repaint();
-        });
-
-        // Revalidate and repaint the parent container of basePanel
-        JScrollPane scrollPane = (JScrollPane) basePanel.getParent().getParent();
-        SwingUtilities.invokeLater(() -> {
-            scrollPane.revalidate();
-            scrollPane.repaint();
-        });
+        basePanel.add(jMultipleTablesConfigurationPanel, BorderLayout.CENTER);
+        this.repaint();
 
     }
 
     public void setSourceCode(String sourceCode) {
         this.sourceCode = sourceCode;
         this.updateTemplateTokensFromSourceCode();
+    }
+
+	public void setEsp32s(Set<ESP32> esps) {
+        this.espsToConfigure.clear();
+        if (Objects.nonNull(esps)) {
+            this.espsToConfigure.addAll(esps);
+            this.jMultipleTablesConfigurationPanel.setESP32s(esps);
+        }
+	}
+
+    public void synchronizeConfigurations() {
+        this.jMultipleTablesConfigurationPanel.synchronizeConfigurations();
+    }
+
+    public final Map<ESP32, Map<String, String>> getESP32sConfigurations() {
+        return this.jMultipleTablesConfigurationPanel.getESP32sConfigurations();
+    }
+
+    public void addOnConfigurationChanged(Runnable onConfigurationChanged) {
+        this.jMultipleTablesConfigurationPanel.setOnChanged(onConfigurationChanged);
     }
 
 }

@@ -22,6 +22,7 @@
     <module>petvet-phytotanica</module>
     <module>petvet-geopulsetracker</module>
     <module>petvet-esp32-installer</module>
+    <module>template-processor</module>
 </modules>
 
   <description></description>

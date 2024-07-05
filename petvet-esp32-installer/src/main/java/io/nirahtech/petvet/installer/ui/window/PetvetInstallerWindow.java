@@ -47,6 +47,11 @@ public class PetvetInstallerWindow extends JFrame {
         this.installationPanel = new InstallationPanel();
         this.resumeAfterInstallationPanel = new ResumeAfterInstallationPanel(this.usb);
 
+        this.esp32SelectorPanel.onSelectedESP32s((esps) -> {
+            this.configureInstallationPanel.setEsp32s(esps);
+            this.configureInstallationPanel.synchronizeConfigurations();
+        });
+
 
         this.stepPanel = new JStepPanel(); 
         this.stepPanel.addStep("Devices", "Select the ESP32s to setup", this.esp32SelectorPanel);
@@ -58,6 +63,11 @@ public class PetvetInstallerWindow extends JFrame {
     
         this.sketchSelectorPanel.addOnSourceCodeChangedEventListener(sourceCode -> {
             this.configureInstallationPanel.setSourceCode(sourceCode);
+            this.configureInstallationPanel.synchronizeConfigurations();
+        });
+
+        this.configureInstallationPanel.addOnConfigurationChanged(() -> {
+            this.installationPanel.setESPs(this.configureInstallationPanel.getESP32sConfigurations());
         });
 
 

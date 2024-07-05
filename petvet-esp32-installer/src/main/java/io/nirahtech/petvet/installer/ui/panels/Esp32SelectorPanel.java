@@ -7,10 +7,12 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -18,16 +20,17 @@ import javax.swing.JScrollPane;
 
 import io.nirahtech.petvet.installer.domain.ESP32;
 import io.nirahtech.petvet.installer.infrastructure.out.ports.USB;
-import io.nirahtech.petvet.installer.ui.components.AvailableEsp32UsbTable;
-import io.nirahtech.petvet.installer.ui.components.SelectedEsp32UsbTable;
+import io.nirahtech.petvet.installer.ui.components.JEsp32UsbTable;
 
 public class Esp32SelectorPanel extends JPanel {
 
     private final USB<ESP32> usb;
     private ScheduledExecutorService scheduledExecutorService;
 
-    private final AvailableEsp32UsbTable availableEsp32UsbTable;
-    private final SelectedEsp32UsbTable selectedesp32UsbTable ;
+    private final JEsp32UsbTable availableEsp32UsbTable;
+    private final JEsp32UsbTable selectedesp32UsbTable;
+
+    private Consumer<Set<ESP32>> onSelectedESP32s = null;
 
     private final List<ESP32> esp32sAvailable = new ArrayList<>();
     private final List<ESP32> esp32sToConfigure = new ArrayList<>();
@@ -41,8 +44,8 @@ public class Esp32SelectorPanel extends JPanel {
         final JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        this.availableEsp32UsbTable = new AvailableEsp32UsbTable(esp32sAvailable);
-        this.selectedesp32UsbTable = new SelectedEsp32UsbTable(esp32sToConfigure);
+        this.availableEsp32UsbTable = new JEsp32UsbTable(esp32sAvailable);
+        this.selectedesp32UsbTable = new JEsp32UsbTable(esp32sToConfigure);
 
         // Panneau de gauche (availableEsp32UsbTable)
         gbc.gridx = 0;
@@ -56,7 +59,8 @@ public class Esp32SelectorPanel extends JPanel {
         // Panneau du milieu (controlPanel)
         final JPanel controlPanel = new JPanel(new GridBagLayout());
         final JButton addToInstall = new JButton("Add");
-        final JButton cancelToInstall = new JButton("Remove");
+        final JButton removeToInstall = new JButton("Remove");
+        final JButton clearToInstall = new JButton("Clear");
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -65,8 +69,13 @@ public class Esp32SelectorPanel extends JPanel {
         controlPanel.add(addToInstall, gbc);
 
         gbc.gridy = 1;
-        gbc.insets = new Insets(5, 0, 0, 0); // espace entre les boutons
-        controlPanel.add(cancelToInstall, gbc);
+        gbc.insets = new Insets(2, 0, 0, 0); // espace entre les boutons
+        controlPanel.add(removeToInstall, gbc);
+
+
+        gbc.gridy = 2;
+        gbc.insets = new Insets(2, 0, 0, 0); // espace entre les boutons
+        controlPanel.add(clearToInstall, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -92,9 +101,23 @@ public class Esp32SelectorPanel extends JPanel {
             this.availableEsp32UsbTable.getSelection().ifPresent(esp -> {
                 if (!this.esp32sToConfigure.contains(esp)) {
                     this.esp32sToConfigure.add(esp);
+                    if (Objects.nonNull(onSelectedESP32s)) {
+                        onSelectedESP32s.accept(new HashSet<>(this.esp32sToConfigure));
+                    }
                     selectedesp32UsbTable.refresh();
                 }
+            });
+        });
 
+        removeToInstall.addActionListener((event) -> {
+            this.selectedesp32UsbTable.getSelection().ifPresent(esp -> {
+                if (this.esp32sToConfigure.contains(esp)) {
+                    this.esp32sToConfigure.remove(esp);
+                    if (Objects.nonNull(onSelectedESP32s)) {
+                        onSelectedESP32s.accept(new HashSet<>(this.esp32sToConfigure));
+                    }
+                    selectedesp32UsbTable.refresh();
+                }
             });
         });
 
@@ -109,6 +132,10 @@ public class Esp32SelectorPanel extends JPanel {
             esp32sAvailable.addAll(connectedESP32AsUSB);
             availableEsp32UsbTable.refresh();
         }, 0, 1, TimeUnit.SECONDS);
+    }
+
+    public void onSelectedESP32s(final Consumer<Set<ESP32>> onSelectedESP32s) {
+        this.onSelectedESP32s = onSelectedESP32s;
     }
 
 }

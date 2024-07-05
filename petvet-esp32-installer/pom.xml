@@ -11,10 +11,10 @@
   </parent>
 
   <groupId>io.nirahtech</groupId>
-  <artifactId>petvet-cluster-monitor</artifactId>
+  <artifactId>petvet-esp32-installer</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>petvet-cluster-monitor</name>
+  <name>petvet-esp32-installer</name>
   <url>http://www.example.com</url>
 
   <properties>

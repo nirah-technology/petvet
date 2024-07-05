@@ -80,7 +80,6 @@ public class JDropZone extends JPanel {
                         List<File> droppedFiles = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                         if (!droppedFiles.isEmpty()) {
                             file = droppedFiles.get(0);
-                            System.out.println(file.getName());
                             if (file.getName().endsWith(".ino")) {
                                 if (Objects.nonNull(onDroppedFileEventHandler)) {
                                     onDroppedFileEventHandler.accept(file);

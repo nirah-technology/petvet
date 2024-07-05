@@ -18,7 +18,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 
-import io.nirahtech.petvet.argparse.ArgumentParser;
+import io.nirahtech.argparse.ArgumentParser;
 import io.nirahtech.petvet.messaging.util.EmitterMode;
 import io.nirahtech.petvet.simulator.electronicalcard.gui.PetvetClusterSimumatorWindow;
 
