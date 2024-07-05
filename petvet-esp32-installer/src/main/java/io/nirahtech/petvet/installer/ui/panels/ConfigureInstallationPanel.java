@@ -12,12 +12,11 @@ import javax.swing.JPanel;
 
 import io.nirahtech.petvet.installer.domain.ESP32;
 import io.nirahtech.petvet.installer.ui.widgets.jmultipletablesconfigurationpanel.JMultipleTablesConfigurationPanel;
-import io.nirahtech.templateprocessor.JinjaEngine;
 import io.nirahtech.templateprocessor.TemplateEngine;
 
 public class ConfigureInstallationPanel extends JPanel {
 
-    private final TemplateEngine templateEngine = new JinjaEngine();
+    private final TemplateEngine templateEngine;
 
     private final JPanel basePanel = new JPanel();
     
@@ -29,12 +28,13 @@ public class ConfigureInstallationPanel extends JPanel {
     private String sourceCode;
     private final Map<String, Object> configurationTokens = new HashMap<>();
 
-    public ConfigureInstallationPanel() {
+    public ConfigureInstallationPanel(final TemplateEngine templateEngine) {
         super(new BorderLayout());
         basePanel.setLayout(new BorderLayout());
         basePanel.add(new JLabel("No template file parsed."), BorderLayout.CENTER);
-        this.jMultipleTablesConfigurationPanel = new JMultipleTablesConfigurationPanel();
+        this.jMultipleTablesConfigurationPanel = new JMultipleTablesConfigurationPanel(templateEngine);
         this.add(basePanel, BorderLayout.CENTER);
+        this.templateEngine = templateEngine;
     }
 
     private void updateTemplateTokensFromSourceCode() {

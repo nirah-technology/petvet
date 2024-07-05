@@ -7,7 +7,7 @@ import com.formdev.flatlaf.FlatDarkLaf;
 
 import io.nirahtech.petvet.installer.ui.window.PetvetInstallerWindow;
 
-public final class Program {
+public final class PetvetESP32InstallerApplication {
 
     public static final void main(final String[] cliArguments) throws UnsupportedLookAndFeelException {
         UIManager.setLookAndFeel(new FlatDarkLaf()); // NimbusLookAndFeel

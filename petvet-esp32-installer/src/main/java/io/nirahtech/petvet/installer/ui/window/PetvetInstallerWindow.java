@@ -14,6 +14,8 @@ import io.nirahtech.petvet.installer.ui.panels.InstallationPanel;
 import io.nirahtech.petvet.installer.ui.panels.ResumeAfterInstallationPanel;
 import io.nirahtech.petvet.installer.ui.panels.SketchSelectorPanel;
 import io.nirahtech.petvet.installer.ui.widgets.jstepper.JStepPanel;
+import io.nirahtech.templateprocessor.JinjaEngine;
+import io.nirahtech.templateprocessor.TemplateEngine;
 
 public class PetvetInstallerWindow extends JFrame {
     
@@ -40,11 +42,12 @@ public class PetvetInstallerWindow extends JFrame {
 
         this.setLayout(new BorderLayout());
 
+        final TemplateEngine templateEngine = new JinjaEngine();
         
         this.esp32SelectorPanel = new Esp32SelectorPanel(this.usb);
         this.sketchSelectorPanel = new SketchSelectorPanel();
-        this.configureInstallationPanel = new ConfigureInstallationPanel();
-        this.installationPanel = new InstallationPanel();
+        this.configureInstallationPanel = new ConfigureInstallationPanel(templateEngine);
+        this.installationPanel = new InstallationPanel(templateEngine);
         this.resumeAfterInstallationPanel = new ResumeAfterInstallationPanel(this.usb);
 
         this.esp32SelectorPanel.onSelectedESP32s((esps) -> {
@@ -61,15 +64,17 @@ public class PetvetInstallerWindow extends JFrame {
         this.stepPanel.addStep("Resume", "Installation resume", this.resumeAfterInstallationPanel);
         this.add(this.stepPanel, BorderLayout.CENTER);
     
-        this.sketchSelectorPanel.addOnSourceCodeChangedEventListener(sourceCode -> {
+        this.sketchSelectorPanel.addOnSourceCodeChangedEventListener((sketch, sourceCode) -> {
             this.configureInstallationPanel.setSourceCode(sourceCode);
             this.configureInstallationPanel.synchronizeConfigurations();
+            this.installationPanel.setSketch(sketch);
         });
 
         this.configureInstallationPanel.addOnConfigurationChanged(() -> {
             this.installationPanel.setESPs(this.configureInstallationPanel.getESP32sConfigurations());
         });
 
+        
 
     }
 }

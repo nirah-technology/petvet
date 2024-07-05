@@ -16,6 +16,7 @@ import javax.swing.event.TableModelListener;
 
 import io.nirahtech.petvet.installer.domain.ESP32;
 import io.nirahtech.petvet.installer.ui.widgets.jtemplatetable.JTemplateTable;
+import io.nirahtech.templateprocessor.TemplateEngine;
 
 public final class JMultipleTablesConfigurationPanel extends JPanel {
 
@@ -26,7 +27,7 @@ public final class JMultipleTablesConfigurationPanel extends JPanel {
 
     private Runnable onChanged = null;
 
-    public JMultipleTablesConfigurationPanel() {
+    public JMultipleTablesConfigurationPanel(final TemplateEngine templateEngine) {
         super();
         this.setLayout(new GridLayout(2, 1));
 
@@ -51,6 +52,7 @@ public final class JMultipleTablesConfigurationPanel extends JPanel {
                     if (column == 1) { // Only value column changes are propagated
                         String token = (String) globalTemplateConfigurationTable.getValueAt(row, 0);
                         String newValue = (String) globalTemplateConfigurationTable.getValueAt(row, column);
+                        templateEngine.put(token, newValue);
                         updateSpecificTables(token, newValue);
                         if (Objects.nonNull(onChanged)) {
                             onChanged.run();

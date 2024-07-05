@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ public class SketchSelectorPanel extends JPanel {
     private final JCodeEditorPanel codeArea;
 
 
-    private Consumer<String> onSourceCodeChangeEventHandler = null;
+    private BiConsumer<File, String> onSourceCodeChangeEventHandler = null;
     
     public SketchSelectorPanel() {
         super(new BorderLayout());
@@ -75,7 +76,7 @@ public class SketchSelectorPanel extends JPanel {
             final String sourceCode = reader.lines().collect(Collectors.joining("\n"));
             this.codeArea.setSourceCode(sourceCode);
             if (Objects.nonNull(onSourceCodeChangeEventHandler)) {
-                onSourceCodeChangeEventHandler.accept(sourceCode);
+                onSourceCodeChangeEventHandler.accept(selectedFile, sourceCode);
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -83,7 +84,7 @@ public class SketchSelectorPanel extends JPanel {
         }
     }
 
-    public void addOnSourceCodeChangedEventListener(Consumer<String> callback) {
+    public void addOnSourceCodeChangedEventListener(BiConsumer<File, String> callback) {
         onSourceCodeChangeEventHandler = callback;
     }
 }

@@ -17,7 +17,7 @@ abstract class AbstractTemplateEngine implements TemplateEngine {
     protected abstract String endTokenCharacters();
 
     private String getTokenPattern(final String token) {
-        return String.format("%s %s %s", this.beginTokenCharacters(), "%s", this.endTokenCharacters());
+        return String.format("%s %s %s", this.beginTokenCharacters(), token, this.endTokenCharacters());
     }
     
     @Override
