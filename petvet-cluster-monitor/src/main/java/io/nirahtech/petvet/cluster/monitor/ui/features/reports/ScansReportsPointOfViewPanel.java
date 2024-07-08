@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import javax.swing.JScrollPane;
 
 import io.nirahtech.petvet.cluster.monitor.data.Device;
 import io.nirahtech.petvet.cluster.monitor.data.ElectronicalCard;
+import io.nirahtech.petvet.cluster.monitor.data.ScanNow;
 import io.nirahtech.petvet.cluster.monitor.data.ScanReport;
 import io.nirahtech.petvet.messaging.util.MacAddress;
 
@@ -27,7 +29,7 @@ public class ScansReportsPointOfViewPanel extends JPanel {
     private final DefaultListModel<UUID> scanRequestsIdentifierListModel;
     private final DefaultListModel<MacAddress> effectiveScannersListModel;
     private final SortedSet<ElectronicalCard> esps;
-    private final SortedSet<ScanReport> scanReports;
+    private final Map<ScanNow, SortedSet<ScanReport>> scanReports;
     private final List<ScanReport> selectedScanReports = new ArrayList<>();
     private final List<UUID> effectivesScanners = new ArrayList<>();
     private final Set<Device> detectedDevicesForSelectedScanId = new HashSet<>();
@@ -39,7 +41,7 @@ public class ScansReportsPointOfViewPanel extends JPanel {
     private final JLabel scanersCount = new JLabel();
     private final JLabel scanDuration = new JLabel();
 
-    public ScansReportsPointOfViewPanel(SortedSet<ElectronicalCard> esps, SortedSet<ScanReport> scanReports) {
+    public ScansReportsPointOfViewPanel(SortedSet<ElectronicalCard> esps, Map<ScanNow, SortedSet<ScanReport>> scanReports) {
         super(new GridLayout(1, 5));
         this.esps = esps;
         this.scanReports = scanReports;
@@ -54,7 +56,9 @@ public class ScansReportsPointOfViewPanel extends JPanel {
                     this.selectedScanReports.clear();
                     this.selectedScanReports.addAll(
                         this.scanReports
+                                .values()
                                 .stream()
+                                .flatMap(list -> list.stream())
                                 .filter(report -> report.scanId().equals(this.selectScanId))
                                 .toList()
                     );
@@ -127,7 +131,7 @@ public class ScansReportsPointOfViewPanel extends JPanel {
     }
 
     public final void refresh() {
-        scanReports.forEach(report -> {
+        scanReports.values().stream().flatMap(list -> list.stream()).forEach(report -> {
             if (!this.scanRequestsIdentifierListModel.contains(report.scanId())) {
                 this.scanRequestsIdentifierListModel.addElement(report.scanId());
             }

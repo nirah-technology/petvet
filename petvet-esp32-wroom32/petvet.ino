@@ -6,7 +6,18 @@
 #include "BluetoothScanner.h"
 
 ModeType mode = ModeType::NATIVE_NODE;
+const String ID = "{{ esp.id }}"
+const Scanner scanner;
+const String mulsticastGroup;
+const unsigned int multicastPort;
+const String macAddress;
+const MessageBroker messageBorker;
 
+unsigned long uptime;
+unsigned long lastScanExecutionOrder;
+unsigned long lastReceivedOrchestratorAvailabilityResponse;
+unsigned long lastReceivedScanExecutionOrder;
+unsigned long lastSendedHeartBeat;
 
 void connectToWifFi(const char* ssid, const char* password) {
     WiFi.mode(WIFI_STA);

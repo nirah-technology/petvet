@@ -32,6 +32,7 @@ import io.nirahtech.petvet.cluster.monitor.MonitorTask;
 import io.nirahtech.petvet.cluster.monitor.data.Device;
 import io.nirahtech.petvet.cluster.monitor.data.ElectronicalCard;
 import io.nirahtech.petvet.cluster.monitor.data.HeartBeat;
+import io.nirahtech.petvet.cluster.monitor.data.ScanNow;
 import io.nirahtech.petvet.cluster.monitor.data.ScanReport;
 import io.nirahtech.petvet.cluster.monitor.ui.features.networking.NetworkInterfaceComboBoxRenderer;
 import io.nirahtech.petvet.messaging.brokers.MessageBroker;
@@ -55,7 +56,7 @@ public class PetvetClusterConnectionWindow extends JFrame {
 
     public PetvetClusterConnectionWindow(final MessageBroker messageBroker, final InetAddress multicastGroup,
             final int multicastPort, final List<Message> receivedMessages, final SortedSet<ElectronicalCard> esps,
-            final SortedSet<ScanReport> scanReports, final SortedSet<Device> detectedDevices,
+            final Map<ScanNow, SortedSet<ScanReport>> scanReports, final SortedSet<Device> detectedDevices,
             final Map<MacAddress, Set<HeartBeat>> heartBeats, final MonitorTask monitorTask) {
         super("NIRAH-TECHNOLOGY : PetVet Monitor - Access Panel");
         this.messageBroker = messageBroker;

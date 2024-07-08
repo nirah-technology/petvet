@@ -1,6 +1,5 @@
 package io.nirahtech.petvet.cluster.monitor;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,7 @@ import java.util.function.Consumer;
 import io.nirahtech.petvet.cluster.monitor.data.Device;
 import io.nirahtech.petvet.cluster.monitor.data.ElectronicalCard;
 import io.nirahtech.petvet.cluster.monitor.data.HeartBeat;
+import io.nirahtech.petvet.cluster.monitor.data.ScanNow;
 import io.nirahtech.petvet.cluster.monitor.data.ScanReport;
 import io.nirahtech.petvet.messaging.brokers.MessageBroker;
 import io.nirahtech.petvet.messaging.messages.Message;
@@ -24,14 +24,14 @@ public class MonitorTask implements Runnable {
     private final List<Message> receivedMessages;
     private final SortedSet<ElectronicalCard> esps;
     private final Map<MacAddress, Set<HeartBeat>> heartBeats;
-    private final SortedSet<ScanReport> scanReports;
+    private final Map<ScanNow, SortedSet<ScanReport>> scanReports;
     private final SortedSet<Device> detectedDevices;
 
     private boolean isRunning = false;
     private Set<Consumer<Message>> onNewMessageHandlers = new HashSet<>();
 
     public MonitorTask(MessageBroker messageBroker, List<Message> receivedMessages, SortedSet<ElectronicalCard> esps,
-            Map<MacAddress, Set<HeartBeat>> heartBeats, SortedSet<ScanReport> scanReports, SortedSet<Device> detectedDevices) {
+            Map<MacAddress, Set<HeartBeat>> heartBeats, Map<ScanNow, SortedSet<ScanReport>> scanReports, SortedSet<Device> detectedDevices) {
         this.messageBroker = messageBroker;
         this.receivedMessages = receivedMessages;
         this.esps = esps;

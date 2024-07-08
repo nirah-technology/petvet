@@ -27,6 +27,7 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import io.nirahtech.petvet.cluster.monitor.data.Device;
 import io.nirahtech.petvet.cluster.monitor.data.ElectronicalCard;
 import io.nirahtech.petvet.cluster.monitor.data.HeartBeat;
+import io.nirahtech.petvet.cluster.monitor.data.ScanNow;
 import io.nirahtech.petvet.cluster.monitor.data.ScanReport;
 import io.nirahtech.petvet.cluster.monitor.ui.windows.PetvetClusterConnectionWindow;
 import io.nirahtech.petvet.messaging.brokers.MessageBroker;
@@ -95,7 +96,7 @@ public class App {
             final Map<MacAddress, Set<HeartBeat>> heartBeats = new HashMap<>();
             final List<Message> receivedMessages = new ArrayList<>();
             final SortedSet<ElectronicalCard> esps = new TreeSet<>();
-            final SortedSet<ScanReport> scanReports = new TreeSet<>();
+            final Map<ScanNow, SortedSet<ScanReport>> scanReports = new HashMap<>();
             final SortedSet<Device> detectedDevices = new TreeSet<>();
     
             final MessageBroker messageBroker = UDPMessageBroker.newInstance();

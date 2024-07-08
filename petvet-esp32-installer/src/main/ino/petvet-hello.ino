@@ -1,3 +1,5 @@
+#include <WiFi.h>
+
 const String ID = "{{ esp.id }}";
 const String SOTFWARE_NAME = "{{esp.software.name}}";
 const String SOTFWARE_VERSION = "{{esp.software.version}}";
@@ -20,7 +22,7 @@ bool isAllowedToSendHello() {
 }
 
 void sendHelloToSerial() {
-  Serial.println("<id="+ID+";softwareName="+SOTFWARE_NAME+";softwareVersion="+SOTFWARE_VERSION+">");
+  Serial.println("<id="+ID+";softwareName="+SOTFWARE_NAME+";softwareVersion="+SOTFWARE_VERSION+";macAddress="+WiFi.macAddress()+">");
 }
 
 void loop() {

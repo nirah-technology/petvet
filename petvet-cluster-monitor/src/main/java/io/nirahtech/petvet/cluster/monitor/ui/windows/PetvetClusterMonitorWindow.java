@@ -23,6 +23,7 @@ import io.nirahtech.petvet.cluster.monitor.MonitorTask;
 import io.nirahtech.petvet.cluster.monitor.data.Device;
 import io.nirahtech.petvet.cluster.monitor.data.ElectronicalCard;
 import io.nirahtech.petvet.cluster.monitor.data.HeartBeat;
+import io.nirahtech.petvet.cluster.monitor.data.ScanNow;
 import io.nirahtech.petvet.cluster.monitor.data.ScanReport;
 import io.nirahtech.petvet.cluster.monitor.ui.features.cluster.ClusterPanel;
 import io.nirahtech.petvet.cluster.monitor.ui.features.messages.ReceivedMessagesPanel;
@@ -36,7 +37,7 @@ public class PetvetClusterMonitorWindow extends JFrame {
     private final List<Message> receivedMessages;
     private final Map<MacAddress, Set<HeartBeat>> heartBeats;
     private final SortedSet<ElectronicalCard> esps;
-    private final SortedSet<ScanReport> scanReports;
+    private final Map<ScanNow, SortedSet<ScanReport>> scanReports;
     private final SortedSet<Device> detectedDevices;
     private final MonitorTask monitorTask;
 
@@ -50,7 +51,7 @@ public class PetvetClusterMonitorWindow extends JFrame {
 
     public PetvetClusterMonitorWindow(final MessageBroker messageBroker, final InetAddress multicastGroup,
             final int multicastPort, final List<Message> receivedMessages, final SortedSet<ElectronicalCard> esps,
-            final SortedSet<ScanReport> scanReports, final SortedSet<Device> detectedDevices,
+            final Map<ScanNow, SortedSet<ScanReport>> scanReports, final SortedSet<Device> detectedDevices,
             final Map<MacAddress, Set<HeartBeat>> heartBeats, final MonitorTask monitorTask) {
         super("NIRAH-TECHNOLOGY : PetVet Monitor - Control Panel");
         this.messageBroker = messageBroker;
