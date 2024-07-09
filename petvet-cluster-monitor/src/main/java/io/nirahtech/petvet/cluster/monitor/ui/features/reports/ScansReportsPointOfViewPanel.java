@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.UUID;
@@ -33,6 +34,8 @@ public class ScansReportsPointOfViewPanel extends JPanel {
     private final List<ScanReport> selectedScanReports = new ArrayList<>();
     private final List<UUID> effectivesScanners = new ArrayList<>();
     private final Set<Device> detectedDevicesForSelectedScanId = new HashSet<>();
+
+    private ScanNow selectedScanNow = null;
 
     private UUID selectScanId = null;
 
@@ -136,6 +139,14 @@ public class ScansReportsPointOfViewPanel extends JPanel {
                 this.scanRequestsIdentifierListModel.addElement(report.scanId());
             }
         });
+        if (Objects.nonNull(this.selectedScanNow)) {
+            this.scanID.setText(this.selectedScanNow.scanId().toString());
+            this.date.setText(this.selectedScanNow.sendedAt().toString());
+        }
         this.repaint();
+    }
+
+    public void setScanNow(ScanNow scanNow) {
+        this.selectedScanNow = scanNow;
     }
 }
