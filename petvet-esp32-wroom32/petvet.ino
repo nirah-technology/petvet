@@ -4,6 +4,8 @@
 #include "Scanner.h"
 #include "WiFiScanner.h"
 #include "BluetoothScanner.h"
+#include "Network.h"
+#include "MessageBroker.h"
 
 ModeType mode = ModeType::NATIVE_NODE;
 const String ID = "{{ esp.id }}"
@@ -19,8 +21,10 @@ unsigned long lastReceivedOrchestratorAvailabilityResponse;
 unsigned long lastReceivedScanExecutionOrder;
 unsigned long lastSendedHeartBeat;
 
+const Network network;
+
 void connectToWifFi(const char* ssid, const char* password) {
-    WiFi.mode(WIFI_STA);
+    WiFi.mode(WIFI_AP_STA);
     WiFi.begin(ssid, password);
 
     while (WiFi.status() != WL_CONNECTED) {
@@ -40,6 +44,9 @@ void setup() {
 
     const char* ssid = "";
     const char* password = "";
+
+    network.connect()
+
     connectToWifFi(ssid, password);
 }
 
