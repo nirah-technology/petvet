@@ -4,14 +4,21 @@
 #include "Scanner.h"
 #include "WiFiScanner.h"
 #include "BluetoothScanner.h"
-#include "Network.h"
+#include "WirelessNetwork.h"
 #include "MessageBroker.h"
+#include "UdpMessageBroker.h"
+
+// Specific configuration
+
+const String ESP_ID = "{{ esp.id }}";
+const String WIFI_SSID = "{{ wifi.ssid }}";
+const String WIFI_WPA = "{{ wifi.wpa }}";
+const String MULTICAST_GROUP = "{{ multicast.group }}";
+const unsigned int MULTICAST_PORT = {{ multicast.port }};
 
 ModeType mode = ModeType::NATIVE_NODE;
-const String ID = "{{ esp.id }}"
+
 const Scanner scanner;
-const String mulsticastGroup;
-const unsigned int multicastPort;
 const String macAddress;
 const MessageBroker messageBorker;
 
@@ -21,18 +28,25 @@ unsigned long lastReceivedOrchestratorAvailabilityResponse;
 unsigned long lastReceivedScanExecutionOrder;
 unsigned long lastSendedHeartBeat;
 
-const Network network;
+const WirelessNetwork network;
 
 void connectToWifFi(const char* ssid, const char* password) {
-    WiFi.mode(WIFI_AP_STA);
-    WiFi.begin(ssid, password);
-
-    while (WiFi.status() != WL_CONNECTED) {
+    network = WirelessNetwork();
+    network.connect(ssid, password);
+    while (!network.isConnected()) {
         delay(1000);
         Serial.println("Connecting to WiFi...");
     }
-
     Serial.println("Connected to WiFi.");
+    Serial.println("Extending WiFi...");
+    network.extend(ssid, password);
+    Serial.println("WiFi extended.");
+}
+
+void connectToMessageBroker(const char* group, const unsigned int port) {
+    messageBorker = UdpMessageBroker();
+    messageBorker.connect(group, port);
+    Serial.println("Connected to UDP Message Broker.");
 }
 
 void askIfOrchestratorIsAvailable() {
@@ -41,13 +55,8 @@ void askIfOrchestratorIsAvailable() {
 
 void setup() {
     Serial.begin(115200);
-
-    const char* ssid = "";
-    const char* password = "";
-
-    network.connect()
-
-    connectToWifFi(ssid, password);
+    connectToWifFi(SSID, WPA);
+    connectToMessageBroker(GROUP, PORT);
 }
 
 void requestChallenge() {

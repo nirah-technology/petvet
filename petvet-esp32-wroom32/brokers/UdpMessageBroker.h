@@ -17,9 +17,12 @@ public:
     char* receive() override;
 
 private:
-    WiFiUDP udp = nullptr; // Pointeur vers le tableau des appareils scannés
+    WiFiUDP udp;
+    IPAddress group;
+    const unsigned port;
     const unsigned bufferSize = 256;
-    char incomingPacket[bufferSize];
+    char incomingPacket[this->bufferSize];
+    bool connected = false;
 };
 
 #endif // WIFI_SCANNER_H

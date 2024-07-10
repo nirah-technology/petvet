@@ -10,20 +10,22 @@
 
 class MessageBroker {
 public:
-    MessageBroker();
+    using Callback = std::function<void(const char*)>;
 
-    void connect(const char* group, const unsigned int port);
-    bool isConnected();
-    void disconnect();
-    void send(const char* message);
-    void publish(const char* eventType, const char* message);
-    void subscribe(const char* eventType, Callback callback);
-    const char* receive();
+    MessageBroker() = default;
+    virtual ~MessageBroker() = default;
+
+    virtual void connect(const char* group, const unsigned int port) = 0;
+    virtual bool isConnected() = 0;
+    virtual void disconnect() = 0;
+    virtual void send(const char* message) = 0;
+    virtual void publish(const char* eventType, const char* message) = 0;
+    virtual void subscribe(const char* eventType, Callback callback) = 0;
+    virtual char* receive() = 0;
 
 
-private:
-    WiFiUDP udp;
-    std::map<std::string, std::vector<Callback>> subscribers;
+protected:
+    std::map<std::string, std::vector<Callback>> eventHandlers;
 };
 
 

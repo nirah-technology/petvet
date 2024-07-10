@@ -62,6 +62,7 @@ dependencies {
 
     implementation(libs.petvet.core)
     implementation(libs.petvet.features)
+    implementation(libs.petvet.phytotanica)
     // implementation(libs.petvet.ai)
 
 }
