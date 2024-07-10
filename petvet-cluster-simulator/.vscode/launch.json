@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "io.nirahtech.petvet.simulator.land.App",
+            "projectName": "petvet-cluster-simulator"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
@@ -16,7 +23,7 @@
             "request": "launch",
             "mainClass": "io.nirahtech.petvet.simulator.electronicalcard.App",
             "projectName": "petvet-cluster-simulator",
-            "args": "-w true -n 192.168.20.0"
+            "args": "-w true -n 192.168.0.0"
         }
     ]
 }
