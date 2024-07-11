@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import javax.swing.JButton;
@@ -16,9 +17,14 @@ public class JLayersPanel extends JPanel {
     private final List<Layer> layers = new ArrayList<>();
     private final List<JLayerPanel> layersPanels = new ArrayList<>();
 
+    private final AtomicReference<Layer> selectedLayer = new AtomicReference<>(null);
+
+
     private final JButton createButton;
 
-    private Consumer<Layer> onSelectedLayerEventListerner = null; 
+    private Consumer<Layer> onSelectedLayerEventListerner = null;
+    private Consumer<Layer> onLockChangedOnLayerEventListener = null;
+    private Consumer<Layer> onVisibilityChangedOnLayerEventListener = null;
 
     public JLayersPanel() {
         super(new BorderLayout());
@@ -49,12 +55,32 @@ public class JLayersPanel extends JPanel {
     private final void propagateOnSelectedLayerEventListerner() {
         this.layersPanels.forEach(layerPanel -> {
             layerPanel.setOnSelectedLayerEventListerner(this.onSelectedLayerEventListerner);
+            layerPanel.setOnLockChangedOnLayerEventListener(this.onLockChangedOnLayerEventListener);
+            layerPanel.setOnVisibilityChangedOnLayerEventListener(this.onVisibilityChangedOnLayerEventListener);
         });
     }
 
     public void setOnSelectedLayerEventListerner(Consumer<Layer> onSelectedLayerEventListerner) {
         this.onSelectedLayerEventListerner = onSelectedLayerEventListerner;
         this.propagateOnSelectedLayerEventListerner();
+    }
+
+    public void setOnLockChangeOnLayer(Consumer<Layer> onLockChangedOnLayerEventListener) {
+        this.onLockChangedOnLayerEventListener = onLockChangedOnLayerEventListener;
+        this.propagateOnSelectedLayerEventListerner();
+    }
+    public void setOnVisibilityChangeOnLayer(Consumer<Layer> onVisibilityChangedOnLayerEventListener) {
+        this.onVisibilityChangedOnLayerEventListener = onVisibilityChangedOnLayerEventListener;
+        this.propagateOnSelectedLayerEventListerner();
+    }
+
+    public void setSelectedLayer(Layer layer) {
+        this.selectedLayer.set(layer);
+        this.layersPanels.forEach(layerPanel -> {
+            layerPanel.setSelectedLayer(layer);
+        });
+        this.revalidate();
+        this.repaint();
     }
 
 }

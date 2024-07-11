@@ -58,19 +58,23 @@ public class JDrawerPanel extends JPanel {
 
     private Optional<CornerSprite> retrievePotentialSelectedCornerOnClick(final Point mousePosition) {
         AtomicReference<CornerSprite> selectedCornerSpriteOnClick = new AtomicReference<>(null);
-        this.cornerSpritesByLayer.get(selectedLayer.get()).forEach(cornerSprite -> {
-            if (cornerSprite.isHover(mousePosition)) {
-                selectedCornerSpriteOnClick.set(cornerSprite);
-            }
-        });
+        if (Objects.nonNull(selectedLayer.get())) {
+            this.cornerSpritesByLayer.get(selectedLayer.get()).forEach(cornerSprite -> {
+                if (cornerSprite.isHover(mousePosition)) {
+                    selectedCornerSpriteOnClick.set(cornerSprite);
+                }
+            });
+        }
         return Optional.ofNullable(selectedCornerSpriteOnClick.get());
     }
 
     private final void createNewCorner(final Point point) {
-        this.selectedLayer.get().getPoints().add(point);
-        final CornerSprite newCornerSprite = new CornerSprite(point, this.selectedLayer.get());
-        this.cornerSpritesByLayer.get(selectedLayer.get()).add(newCornerSprite);
-        selectCornerSprite(newCornerSprite);
+        if (Objects.nonNull(this.selectedLayer.get())) {
+            this.selectedLayer.get().getPoints().add(point);
+            final CornerSprite newCornerSprite = new CornerSprite(point, this.selectedLayer.get());
+            this.cornerSpritesByLayer.get(selectedLayer.get()).add(newCornerSprite);
+            selectCornerSprite(newCornerSprite);
+        }
     }
 
     private final void selectCornerSprite(CornerSprite cornerSpriteToSelect) {
@@ -253,13 +257,15 @@ public class JDrawerPanel extends JPanel {
             final Layer layer = cornerSpriteByLayer.getKey();
             if (layer.isVisible()) {
                 this.drawLines(graphics, layer);
-                this.drawPoints(graphics, cornerSpriteByLayer.getValue());
+                if (!layer.isLocked()) {
+                    this.drawPoints(graphics, cornerSpriteByLayer.getValue());
+                }
                 this.fillIfRequired(graphics, layer);
-                this.drawAngles(graphics, layer.getPoints());
+                if (!layer.isLocked()) {
+                    this.drawAngles(graphics, layer.getPoints());
+                }
             }
         });
-
-
 
     }
 
@@ -268,22 +274,27 @@ public class JDrawerPanel extends JPanel {
         @Override
         public void mousePressed(MouseEvent event) {
             if (SwingUtilities.isLeftMouseButton(event)) {
-                final Point clickedPoint = event.getPoint();
-                retrievePotentialSelectedCornerOnClick(clickedPoint)
-                        .ifPresentOrElse((potentialSelectedCornerOnClick -> {
-                            if (cornerSpritesByLayer.get(selectedLayer.get()).getLast()
-                                    .equals(selectedCornerSprite.get())
-                                    && cornerSpritesByLayer.get(selectedLayer.get()).getFirst()
-                                            .equals(potentialSelectedCornerOnClick)) {
-                                createNewCorner(cornerSpritesByLayer.get(selectedLayer.get()).getFirst().getPoint());
-                            } else {
-                                selectCornerSprite(potentialSelectedCornerOnClick);
-                            }
-                        }), () -> {
-                            createNewCorner(clickedPoint);
-                        });
 
-                repaint();
+                final Layer layer = selectedLayer.get();
+                if (Objects.nonNull(layer) && layer.isVisible() && !layer.isLocked()) {
+                    final Point clickedPoint = event.getPoint();
+                    retrievePotentialSelectedCornerOnClick(clickedPoint)
+                            .ifPresentOrElse((potentialSelectedCornerOnClick -> {
+                                if (cornerSpritesByLayer.get(selectedLayer.get()).getLast()
+                                        .equals(selectedCornerSprite.get())
+                                        && cornerSpritesByLayer.get(selectedLayer.get()).getFirst()
+                                                .equals(potentialSelectedCornerOnClick)) {
+                                    createNewCorner(
+                                            cornerSpritesByLayer.get(selectedLayer.get()).getFirst().getPoint());
+                                } else {
+                                    selectCornerSprite(potentialSelectedCornerOnClick);
+                                }
+                            }), () -> {
+                                createNewCorner(clickedPoint);
+                            });
+
+                    repaint();
+                }
             }
         }
 
@@ -293,23 +304,32 @@ public class JDrawerPanel extends JPanel {
 
         @Override
         public void mouseMoved(MouseEvent event) {
-            final Point mousePosition = event.getPoint();
-            cornerSpritesByLayer.get(selectedLayer.get()).forEach(cornerSprite -> {
-                if (cornerSprite.isHover(mousePosition)) {
-                    cornerSprite.displayOverlayDisk();
-                } else {
-                    cornerSprite.hideOverlayDisk();
+            if (Objects.nonNull(selectedLayer.get())) {
+                final Layer layer = selectedLayer.get();
+                if (layer.isVisible() && !layer.isLocked()) {
+                    final Point mousePosition = event.getPoint();
+                    cornerSpritesByLayer.get(selectedLayer.get()).forEach(cornerSprite -> {
+                        if (cornerSprite.isHover(mousePosition)) {
+                            cornerSprite.displayOverlayDisk();
+                        } else {
+                            cornerSprite.hideOverlayDisk();
+                        }
+                    });
+                    repaint();
                 }
-            });
-            repaint();
+            }
         }
 
         @Override
         public void mouseDragged(MouseEvent event) {
             final Point mousePosition = event.getPoint();
             if (Objects.nonNull(selectedCornerSprite.get())) {
-                selectedCornerSprite.get().getPoint().setLocation(mousePosition);
-                repaint();
+                final Layer layer = selectedLayer.get();
+                if (layer.isVisible() && !layer.isLocked()) {
+                    selectedCornerSprite.get().getPoint().setLocation(mousePosition);
+                    repaint();
+                }
+
             }
         }
 
@@ -320,22 +340,32 @@ public class JDrawerPanel extends JPanel {
         public void keyPressed(KeyEvent event) {
             if (event.getKeyCode() == KeyEvent.VK_DELETE) {
                 if (Objects.nonNull(selectedCornerSprite.get())) {
-                    final CornerSprite cornerSpriteToDelete = selectedCornerSprite.get();
-                    if (cornerSpritesByLayer.get(selectedLayer.get()).size() > 1) {
-                        final int indexToDelete = cornerSpritesByLayer.get(selectedLayer.get())
-                                .indexOf(cornerSpriteToDelete);
-                        cornerSpritesByLayer.get(selectedLayer.get()).remove(cornerSpriteToDelete);
-                        if (indexToDelete < cornerSpritesByLayer.get(selectedLayer.get()).size()) {
-                            selectCornerSprite(cornerSpritesByLayer.get(selectedLayer.get()).get(indexToDelete));
-                        } else {
-                            selectCornerSprite(cornerSpritesByLayer.get(selectedLayer.get()).get(indexToDelete - 1));
+                    final Layer layer = selectedLayer.get();
+                    if (layer.isVisible() && !layer.isLocked()) {
+                        final CornerSprite cornerSpriteToDelete = selectedCornerSprite.get();
+                        if (cornerSpritesByLayer.get(selectedLayer.get()).size() > 1) {
+                            final int indexToDelete = cornerSpritesByLayer.get(selectedLayer.get())
+                                    .indexOf(cornerSpriteToDelete);
+                            selectedLayer.get().getPoints().remove(selectedCornerSprite.get().getPoint());
+                            cornerSpritesByLayer.get(selectedLayer.get()).remove(cornerSpriteToDelete);
+                            if (indexToDelete < cornerSpritesByLayer.get(selectedLayer.get()).size()) {
+                                selectCornerSprite(cornerSpritesByLayer.get(selectedLayer.get()).get(indexToDelete));
+                            } else {
+                                selectCornerSprite(
+                                        cornerSpritesByLayer.get(selectedLayer.get()).get(indexToDelete - 1));
 
+                            }
+                            repaint();
                         }
-                        repaint();
                     }
                 }
             }
         }
+    }
+
+    public void redraw() {
+        this.revalidate();
+        this.repaint();
     }
 
 }

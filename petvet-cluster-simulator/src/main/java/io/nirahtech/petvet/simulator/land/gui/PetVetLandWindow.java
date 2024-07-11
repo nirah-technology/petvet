@@ -22,6 +22,16 @@ public class PetVetLandWindow extends JFrame {
 
         this.layersPanel.setOnSelectedLayerEventListerner(layer -> {
             this.drawerPanel.setSelectedLayer(layer);
+            this.layersPanel.setSelectedLayer(layer);
+
+        });
+
+        this.layersPanel.setOnLockChangeOnLayer(layer -> {
+            this.drawerPanel.redraw();
+        });
+
+        this.layersPanel.setOnVisibilityChangeOnLayer(layer -> {
+            this.drawerPanel.redraw();
         });
 
 

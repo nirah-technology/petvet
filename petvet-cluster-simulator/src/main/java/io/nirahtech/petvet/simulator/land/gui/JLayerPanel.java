@@ -1,24 +1,29 @@
 package io.nirahtech.petvet.simulator.land.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Insets;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URL;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import javax.swing.JCheckBox;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public final class JLayerPanel extends JPanel {
 
     private Consumer<Layer> onSelectedLayerEventListerner = null;
+    private Consumer<Layer> onLockChangedOnLayerEventListener = null;
+    private Consumer<Layer> onVisibilityChangedOnLayerEventListener = null;
+    
 
     private static final String HIDE_TEXT = "Hide";
     private static final String DISPLAY_TEXT = "Display";
@@ -36,43 +41,56 @@ public final class JLayerPanel extends JPanel {
     private boolean isLocked = false;
 
 
-    final JCheckBox visibilityCheckBox = new JCheckBox("Is visible", isVisible);
-    final JCheckBox lockedCheckBox = new JCheckBox("Is locked", isLocked);
+    final JButton visibilityButton;
+    final JButton lockedButton;
+
+    private final AtomicReference<Layer> selectedLayer = new AtomicReference<>(null);
 
 
     public JLayerPanel(final Layer layer) {
         super(new BorderLayout());
         this.layer = layer;
         this.setFocusable(true);
-        this.setBackground(layer.getFillColor());
-        final Dimension dimension = new Dimension(200, 50);
-        final JPanel actionsPanel = new JPanel(new GridLayout(1, 2));
-        this.add(new JLabel(this.layer.getClass().getSimpleName()), BorderLayout.NORTH);
-        actionsPanel.add(this.visibilityCheckBox);
+        this.setBackground(new Color(50,50,50));
+        final Dimension dimension = new Dimension(200, this.getPreferredSize().height+10);
+        final JPanel actionsPanel = new JPanel(new BorderLayout());
+        this.add(new JLabel(this.layer.getClass().getSimpleName()), BorderLayout.CENTER);
 
-        this.visibilityCheckBox.addItemListener(new ItemListener() {    
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == 1) {
-                    layer.display();
-                } else {
-                    layer.hide();
-                }
+        this.visibilityButton = this.createButton("Visibility", "display.png");
+        this.lockedButton = this.createButton("Lock", "unlock.png");
+        
+
+        this.add(this.visibilityButton, BorderLayout.WEST);
+
+        this.visibilityButton.addActionListener(event -> {
+            if (layer.isVisible()) {
+                layer.hide();
+                setButtonIcon(this.visibilityButton, "hidden.png");
+            } else {
+                layer.display();
+                setButtonIcon(this.visibilityButton, "display.png");
             }
-         });
-
-        this.lockedCheckBox.addItemListener(new ItemListener() {    
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == 1) {
-                    layer.lock();
-                } else {
-                    layer.unlock();
-                }
+            if (Objects.nonNull(onVisibilityChangedOnLayerEventListener)) {
+                onVisibilityChangedOnLayerEventListener.accept(layer);
             }
-         });
+        });
+
+        this.lockedButton.addActionListener(event -> {
+            if (layer.isLocked()) {
+                layer.unlock();
+                setButtonIcon(this.lockedButton, "unlock.png");
+            } else {
+                layer.lock();
+                setButtonIcon(this.lockedButton, "lock.png");
+            }
+            if (Objects.nonNull(onLockChangedOnLayerEventListener)) {
+                onLockChangedOnLayerEventListener.accept(layer);
+            }
+        });
 
 
-        actionsPanel.add(this.lockedCheckBox);
-        this.add(actionsPanel, BorderLayout.SOUTH);
+        this.add(this.lockedButton, BorderLayout.EAST);
+        // this.add(actionsPanel, BorderLayout.SOUTH);
         this.setPreferredSize(dimension);
 
         this.addMouseListener(new MouseListener() {
@@ -80,6 +98,7 @@ public final class JLayerPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (Objects.nonNull(onSelectedLayerEventListerner)) {
                     onSelectedLayerEventListerner.accept(layer);
+
                 }                
             }
 
@@ -107,13 +126,46 @@ public final class JLayerPanel extends JPanel {
 
     }
 
+    private final void setButtonIcon(final JButton button, final String iconName) {
+        URL iconUrl = getClass().getClassLoader().getResource("icons/"+iconName);
+        if (iconUrl != null) {
+
+            int desiredWidth = 20;
+            int desiredHeight = desiredWidth;
+
+            final Dimension dimension = new Dimension(desiredWidth+10, desiredHeight+10);
+            button.setPreferredSize(dimension);
+            button.setSize(dimension);
+
+            // Redimensionner l'image
+            final ImageIcon imageIcon = new ImageIcon(iconUrl);
+            final Image originalImage = imageIcon.getImage();
+            final Image resizedImage = originalImage.getScaledInstance(desiredWidth, desiredHeight, Image.SCALE_SMOOTH);
+            final ImageIcon resizedIcon = new ImageIcon(resizedImage);
+            button.setIcon(resizedIcon);
+        }
+    }
+
+    private JButton createButton(final String text, final String iconName) {
+        final JButton button = new JButton();
+        button.setToolTipText(text);
+        this.setButtonIcon(button, iconName);
+        return button;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         // Dessiner le fond avec les marges intérieures
         Insets insets = this.getInsets();
-        g.setColor(getBackground());
+        if (this.selectedLayer.get() == this.layer) {
+            this.setBackground(this.layer.getFillColor());
+            g.setColor(this.getBackground());
+        } else {
+            this.setBackground(new Color(50,50,50));
+        }
+        g.setColor(this.getBackground());
         g.fillRect(insets.left + leftPadding, insets.top + topPadding,
                 getWidth() - insets.left - insets.right - leftPadding - rightPadding,
                 getHeight() - insets.top - insets.bottom - topPadding - bottomPadding);
@@ -150,4 +202,17 @@ public final class JLayerPanel extends JPanel {
     public void setOnSelectedLayerEventListerner(Consumer<Layer> onSelectedLayerEventListerner) {
         this.onSelectedLayerEventListerner = onSelectedLayerEventListerner;
     }
+
+    public void setOnLockChangedOnLayerEventListener(Consumer<Layer> onLockChangedOnLayerEventListener) {
+        this.onLockChangedOnLayerEventListener = onLockChangedOnLayerEventListener;
+    }
+    public void setOnVisibilityChangedOnLayerEventListener(Consumer<Layer> onVisibilityChangedOnLayerEventListener) {
+        this.onVisibilityChangedOnLayerEventListener = onVisibilityChangedOnLayerEventListener;
+    }
+
+
+    public void setSelectedLayer(Layer layer) {
+        this.selectedLayer.set(layer);
+    }
+    
 }
