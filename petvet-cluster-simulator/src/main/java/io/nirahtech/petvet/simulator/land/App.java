@@ -1,0 +1,22 @@
+package io.nirahtech.petvet.simulator.land;
+
+import java.io.IOException;
+
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import com.formdev.flatlaf.FlatDarkLaf;
+
+import io.nirahtech.petvet.simulator.land.gui.PetVetLandWindow;
+
+public class App {
+
+    public static void main(String[] args) throws IOException, UnsupportedLookAndFeelException {
+
+        UIManager.setLookAndFeel(new FlatDarkLaf()); // NimbusLookAndFeel
+        PetVetLandWindow window = new PetVetLandWindow();
+        window.setVisible(true);
+
+    }
+
+}

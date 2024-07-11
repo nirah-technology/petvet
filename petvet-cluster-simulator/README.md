@@ -26,6 +26,13 @@ Le but des MC du cluster est de détecter et de localiser la présence d'animaux
 
 
 
+## Fonctionnalitées à venir:
+- Désinner un cadastre (mise à l'echelle), mettre des calcques (terrain, batiments)
+- Positionner des animaux
+- Animer les animaux (directions, vitesse)
+- Détecter les animaux
+
+
 ## **Actions d'un microcontrôleur (MC)**
 
 Un microcontrôleur peut :

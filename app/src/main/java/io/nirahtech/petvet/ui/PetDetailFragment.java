@@ -1,13 +1,12 @@
 package io.nirahtech.petvet.ui;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -16,7 +15,7 @@ import java.util.Objects;
 
 import io.nirahtech.petvet.R;
 import io.nirahtech.petvet.core.base.Pet;
-import io.nirahtech.petvet.core.base.PetIdentifier;
+import io.nirahtech.petvet.core.util.identifier.Identifier;
 import io.nirahtech.petvet.features.FeaturesRegistry;
 import io.nirahtech.petvet.features.pets.RetrieveAnimalInformationSheetFeature;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
@@ -55,7 +54,7 @@ public class PetDetailFragment extends Fragment {
 
         if (Objects.nonNull(getArguments())) {
             final Pet pet = (Pet) getArguments().getSerializable(ARG_PET);
-            final PetIdentifier petIdentifier = (PetIdentifier) getArguments().getSerializable(ARG_PET);
+            final Identifier petIdentifier = (Identifier) getArguments().getSerializable(ARG_PET);
             try {
                 this.feature.retrieveAnimalInformationSheet(petIdentifier).ifPresent(petFound -> {
                     this.pet = petFound;

@@ -12,17 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
 
 import io.nirahtech.petvet.MainActivity;
 import io.nirahtech.petvet.R;
-import io.nirahtech.petvet.core.base.Farm;
 import io.nirahtech.petvet.core.base.House;
 import io.nirahtech.petvet.features.FeaturesRegistry;
 import io.nirahtech.petvet.features.boot.CreateNewHouseFeature;
@@ -30,10 +26,6 @@ import io.nirahtech.petvet.features.boot.DetectFirstBootFeature;
 import io.nirahtech.petvet.features.persistence.LoadHouseFeature;
 import io.nirahtech.petvet.features.persistence.SaveHouseFeature;
 import io.nirahtech.petvet.features.util.exceptions.FeatureExecutionException;
-import io.nirahtech.petvet.services.house.HouseService;
-import io.nirahtech.petvet.services.house.HouseServiceImpl;
-import io.nirahtech.petvet.services.storage.LocalStorageService;
-import io.nirahtech.petvet.services.storage.StorageService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,20 +34,16 @@ import io.nirahtech.petvet.services.storage.StorageService;
  */
 public class CreateNewHouseFragment extends Fragment {
 
-    private final File workspace = this.getContext().getFilesDir();
-    private final File dataFolder = new File(workspace, LoadHouseFeature.DATA_FOLDER_NAME);
-    private final File persistenceFile = new File(dataFolder, LoadHouseFeature.PERSISTENCE_FILE_NAME);
+    private File workspace;
+    private File dataFolder;
+    private File persistenceFile;
 
-    private final DetectFirstBootFeature detectFirstBootFeature = FeaturesRegistry.getInstance().detectFirstBootFeature(persistenceFile);
-    private final CreateNewHouseFeature createNewHouseFeature = FeaturesRegistry.getInstance().createNewHouseFeature();
-    private final SaveHouseFeature saveHouseFeature = FeaturesRegistry.getInstance().saveHouseFeature(persistenceFile);
-
+    private DetectFirstBootFeature detectFirstBootFeature;
+    private CreateNewHouseFeature createNewHouseFeature;
+    private SaveHouseFeature saveHouseFeature;
 
     private TextInputEditText houseNameEditText;
     private Button createButton;
-
-    // private HouseService houseService;
-
 
     private final void redirectoToMainActivuty() {
         Intent intent = new Intent();
@@ -68,14 +56,6 @@ public class CreateNewHouseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // this.houseService = HouseServiceImpl.getInstance(this.getContext());
-        try {
-            this.detectFirstBootFeature.detectFirstBootTryingToRetrieveHouse().ifPresent(house -> {
-                this.redirectoToMainActivuty();
-            });
-        } catch (FeatureExecutionException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private final void handleClick() {
@@ -96,7 +76,6 @@ public class CreateNewHouseFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int id) {
                             redirectoToMainActivuty();
                         }
-
                     })
                     .setIcon(android.R.drawable.ic_dialog_info)
                     .show();
@@ -108,6 +87,23 @@ public class CreateNewHouseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_new_house, container, false);
+
+        // Initialize files and features
+        this.workspace = requireContext().getFilesDir();
+        this.dataFolder = new File(workspace, LoadHouseFeature.DATA_FOLDER_NAME);
+        this.persistenceFile = new File(dataFolder, LoadHouseFeature.PERSISTENCE_FILE_NAME);
+
+        this.detectFirstBootFeature = FeaturesRegistry.getInstance().detectFirstBootFeature(persistenceFile);
+        this.createNewHouseFeature = FeaturesRegistry.getInstance().createNewHouseFeature();
+        this.saveHouseFeature = FeaturesRegistry.getInstance().saveHouseFeature(persistenceFile);
+
+        try {
+            this.detectFirstBootFeature.detectFirstBootTryingToRetrieveHouse().ifPresent(house -> {
+                this.redirectoToMainActivuty();
+            });
+        } catch (FeatureExecutionException e) {
+            throw new RuntimeException(e);
+        }
 
         // Find views by ID using the inflated view
         this.houseNameEditText = view.findViewById(R.id.editTextHouseName);
