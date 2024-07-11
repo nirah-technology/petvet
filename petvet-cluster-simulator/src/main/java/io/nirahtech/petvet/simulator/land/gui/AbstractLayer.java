@@ -2,11 +2,10 @@ package io.nirahtech.petvet.simulator.land.gui;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.LinkedList;
 
 abstract class AbstractLayer implements Layer {
-    protected final Collection<Point> points;
+    protected final LinkedList<Point> points;
     protected final Color borderColor;
     protected final Color fillColor;
 
@@ -17,7 +16,7 @@ abstract class AbstractLayer implements Layer {
     protected AbstractLayer(final Color borderColor, final Color fillColor) {
         this.borderColor = borderColor;
         this.fillColor = fillColor;
-        this.points = new ArrayList<>();
+        this.points = new LinkedList<>();
     }
 
     @Override
@@ -31,7 +30,7 @@ abstract class AbstractLayer implements Layer {
     }
 
     @Override
-    public Collection<Point> getPoints() {
+    public LinkedList<Point> getPoints() {
         return this.points;
     }
 

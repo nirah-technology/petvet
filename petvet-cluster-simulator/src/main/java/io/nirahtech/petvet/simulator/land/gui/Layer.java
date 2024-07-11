@@ -2,7 +2,7 @@ package io.nirahtech.petvet.simulator.land.gui;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.util.Collection;
+import java.util.LinkedList;
 
 public interface Layer {
     boolean isVisible();
@@ -16,6 +16,6 @@ public interface Layer {
 
     Color getBorderColor();
     Color getFillColor();
-    Collection<Point> getPoints();
+    LinkedList<Point> getPoints();
 
 }

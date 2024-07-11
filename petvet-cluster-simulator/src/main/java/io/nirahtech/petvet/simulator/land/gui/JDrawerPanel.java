@@ -83,24 +83,24 @@ public class JDrawerPanel extends JPanel {
         selectedCornerSprite.set(cornerSpriteToSelect);
     }
 
-    private final void drawLines(Graphics graphics) {
-        if (Objects.nonNull(this.selectedLayer.get())) {
-            graphics.setColor(this.selectedLayer.get().getBorderColor());
-            final LinkedList<CornerSprite> cornerSprites = this.cornerSpritesByLayer.get(selectedLayer.get());
-            if (cornerSprites.size() >= 2) {
+    private final void drawLines(Graphics graphics, Layer layer) {
+        final LinkedList<Point> points = layer.getPoints();
+        if (Objects.nonNull(points)) {
+            graphics.setColor(layer.getBorderColor());
+            if (points.size() >= 2) {
                 Graphics2D graphics2D = (Graphics2D) graphics;
-                for (int i = 0; i < cornerSprites.size(); i++) {
-                    final CornerSprite current = cornerSprites.get(i);
-                    CornerSprite other = null;
-                    if (i < cornerSprites.size() - 1) {
-                        other = cornerSprites.get(i + 1);
+                for (int i = 0; i < points.size(); i++) {
+                    final Point current = points.get(i);
+                    Point other = null;
+                    if (i < points.size() - 1) {
+                        other = points.get(i + 1);
                     } else {
                         // other = this.cornerSprites.get(0);
                     }
                     if (Objects.nonNull(other)) {
                         graphics2D.setStroke(new BasicStroke(5.0F));
-                        graphics2D.drawLine(current.getPoint().x, current.getPoint().y, other.getPoint().x,
-                                other.getPoint().y);
+                        graphics2D.drawLine(current.x, current.y, other.x,
+                                other.y);
                     }
                 }
 
@@ -109,24 +109,25 @@ public class JDrawerPanel extends JPanel {
         }
     }
 
-    private final void drawPoints(Graphics graphics) {
-        if (Objects.nonNull(selectedLayer.get())) {
-            this.cornerSpritesByLayer.get(selectedLayer.get()).forEach(cornerSprite -> {
+    private final void drawPoints(Graphics graphics, LinkedList<CornerSprite> points) {
+        if (Objects.nonNull(points)) {
+            points.forEach(cornerSprite -> {
                 cornerSprite.paintComponent(graphics);
             });
         }
     }
 
-    private final void fillIfRequired(Graphics graphics) {
-        if (Objects.nonNull(selectedLayer.get())) {
+    private final void fillIfRequired(Graphics graphics, final Layer layer) {
+        LinkedList<Point> points = layer.getPoints();
+        if (Objects.nonNull(points)) {
 
-            if (!this.cornerSpritesByLayer.get(selectedLayer.get()).isEmpty()
-                    && this.cornerSpritesByLayer.get(selectedLayer.get()).size() >= 3) {
-                if (this.cornerSpritesByLayer.get(selectedLayer.get()).getFirst().getPoint()
-                        .equals(this.cornerSpritesByLayer.get(selectedLayer.get()).getLast().getPoint())) {
-                    graphics.setColor(this.selectedLayer.get().getFillColor());
+            if (!points.isEmpty()
+                    && points.size() >= 3) {
+                if (points.getFirst()
+                        .equals(points.getLast())) {
+                    graphics.setColor(layer.getFillColor());
                     final Polygon polygon = new Polygon();
-                    this.cornerSpritesByLayer.get(selectedLayer.get()).stream().map(CornerSprite::getPoint)
+                    points.stream()
                             .forEach(point -> {
                                 polygon.addPoint(point.x, point.y);
                             });
@@ -136,19 +137,19 @@ public class JDrawerPanel extends JPanel {
         }
     }
 
-    private final void drawAngles(Graphics graphics) {
-        if (Objects.nonNull(selectedLayer.get())) {
+    private final void drawAngles(Graphics graphics, LinkedList<Point> points) {
+        if (Objects.nonNull(points)) {
 
-            if (this.cornerSpritesByLayer.get(selectedLayer.get()).size() >= 3) {
+            if (points.size() >= 3) {
                 Graphics2D graphics2d = (Graphics2D) graphics;
                 graphics2d.setColor(Color.WHITE);
 
                 final double arcRadius = 20.0; // Distance de l'arc de cercle
 
-                for (int index = 1; index < this.cornerSpritesByLayer.get(selectedLayer.get()).size() - 1; index++) {
-                    final Point a = this.cornerSpritesByLayer.get(selectedLayer.get()).get(index - 1).getPoint();
-                    final Point b = this.cornerSpritesByLayer.get(selectedLayer.get()).get(index).getPoint();
-                    final Point c = this.cornerSpritesByLayer.get(selectedLayer.get()).get(index + 1).getPoint();
+                for (int index = 1; index < points.size() - 1; index++) {
+                    final Point a = points.get(index - 1);
+                    final Point b = points.get(index);
+                    final Point c = points.get(index + 1);
 
                     final double innerAngleABCInDegrees = Mathematics.computeInnerAngleToDegrees(
                             new double[] { a.getX(), a.getY() },
@@ -248,16 +249,17 @@ public class JDrawerPanel extends JPanel {
         graphics.setColor(new Color(0, 0, 0));
         graphics.fillRect(0, 0, (int) this.getSize().getWidth(), (int) this.getSize().getHeight());
 
-        this.layers.forEach(layer -> {
+        this.cornerSpritesByLayer.entrySet().forEach(cornerSpriteByLayer -> {
+            final Layer layer = cornerSpriteByLayer.getKey();
             if (layer.isVisible()) {
-
+                this.drawLines(graphics, layer);
+                this.drawPoints(graphics, cornerSpriteByLayer.getValue());
+                this.fillIfRequired(graphics, layer);
+                this.drawAngles(graphics, layer.getPoints());
             }
         });
 
-        this.drawLines(graphics);
-        this.drawPoints(graphics);
-        this.fillIfRequired(graphics);
-        this.drawAngles(graphics);
+
 
     }
 
