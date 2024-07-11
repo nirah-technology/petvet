@@ -90,7 +90,6 @@ public class JDrawerPanel extends JPanel {
     private final void drawLines(Graphics graphics, Layer layer) {
         final LinkedList<Point> points = layer.getPoints();
         if (Objects.nonNull(points)) {
-            graphics.setColor(layer.getBorderColor());
             if (points.size() >= 2) {
                 Graphics2D graphics2D = (Graphics2D) graphics;
                 for (int i = 0; i < points.size(); i++) {
@@ -102,9 +101,15 @@ public class JDrawerPanel extends JPanel {
                         // other = this.cornerSprites.get(0);
                     }
                     if (Objects.nonNull(other)) {
+                        graphics.setColor(layer.getBorderColor());
                         graphics2D.setStroke(new BasicStroke(5.0F));
                         graphics2D.drawLine(current.x, current.y, other.x,
                                 other.y);
+
+                                graphics.setColor(Color.WHITE);
+                        double[] textPosition = Mathematics.computeMiddle(new double[] { current.getX(), current.getY() }, new double[] { other.getX(), other.getY() });
+                        double length = Mathematics.computeLength(new double[] { current.getX(), current.getY() }, new double[] { other.getX(), other.getY() } );
+                        graphics2D.drawString(String.format("%.2f", length), (int) textPosition[0], (int) textPosition[1]);
                     }
                 }
 
@@ -232,7 +237,7 @@ public class JDrawerPanel extends JPanel {
                     final double[] textPosition = Mathematics.computePoint(
                             new double[] { b.getX(), b.getY() },
                             acMiddle,
-                            50);
+                            10);
 
                     // graphics2d.drawString("A", a.x, a.y);
                     // graphics2d.drawString("B", b.x, b.y);
@@ -256,17 +261,22 @@ public class JDrawerPanel extends JPanel {
         this.cornerSpritesByLayer.entrySet().forEach(cornerSpriteByLayer -> {
             final Layer layer = cornerSpriteByLayer.getKey();
             if (layer.isVisible()) {
+                this.fillIfRequired(graphics, layer);
                 this.drawLines(graphics, layer);
                 if (!layer.isLocked()) {
                     this.drawPoints(graphics, cornerSpriteByLayer.getValue());
                 }
-                this.fillIfRequired(graphics, layer);
                 if (!layer.isLocked()) {
                     this.drawAngles(graphics, layer.getPoints());
                 }
             }
         });
 
+    }
+
+    public void redraw() {
+        this.revalidate();
+        this.repaint();
     }
 
     private final class DrawerMouseAdapter extends MouseAdapter {
@@ -355,17 +365,20 @@ public class JDrawerPanel extends JPanel {
                                         cornerSpritesByLayer.get(selectedLayer.get()).get(indexToDelete - 1));
 
                             }
-                            repaint();
+                            redraw();
                         }
                     }
+                }
+            } else if (event.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                selectedCornerSprite.set(null);
+                if (Objects.nonNull(selectedLayer.get())) {
+                    cornerSpritesByLayer.get(selectedLayer.get()).clear();
+                    selectedLayer.get().getPoints().clear();
+                    redraw();
                 }
             }
         }
     }
 
-    public void redraw() {
-        this.revalidate();
-        this.repaint();
-    }
 
 }

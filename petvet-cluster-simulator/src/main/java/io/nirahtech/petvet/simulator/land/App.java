@@ -8,6 +8,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import com.formdev.flatlaf.FlatDarkLaf;
 
 import io.nirahtech.petvet.simulator.land.gui.PetVetLandWindow;
+import io.nirahtech.petvet.simulator.land.infrastructure.out.adapters.CadastresDataGouvFrWebService;
 
 public class App {
 
