@@ -11,11 +11,13 @@ abstract class AbstractLayer implements Layer {
 
     private boolean isLocked = false;
     private boolean isVisible = true;
+    private int order;
 
 
-    protected AbstractLayer(final Color borderColor, final Color fillColor) {
+    protected AbstractLayer(int order, final Color borderColor, final Color fillColor) {
         this.borderColor = borderColor;
         this.fillColor = fillColor;
+        this.order = order;
         this.points = new LinkedList<>();
     }
 
@@ -62,6 +64,15 @@ abstract class AbstractLayer implements Layer {
     @Override
     public void unlock() {
         this.isLocked = false;
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
+    }
+    @Override
+    public void setOrder(int newOrder) {
+        this.order = newOrder;
     }
     
 }

@@ -10,13 +10,12 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.JPanel;
@@ -26,9 +25,9 @@ import io.nirahtech.petvet.simulator.land.domain.Mathematics;
 
 public class JDrawerPanel extends JPanel {
 
-    private final Map<Layer, LinkedList<CornerSprite>> cornerSpritesByLayer = new HashMap<>();
+    private final SortedMap<Layer, LinkedList<CornerSprite>> cornerSpritesByLayer = new TreeMap<>(
+            Comparator.comparingInt(Layer::getOrder));
     private AtomicReference<CornerSprite> selectedCornerSprite = new AtomicReference<>(null);
-    private final List<Layer> layers = new ArrayList<>();
 
     private final AtomicReference<Layer> selectedLayer = new AtomicReference<>(null);
 
@@ -47,7 +46,6 @@ public class JDrawerPanel extends JPanel {
     public void setSelectedLayer(Layer layer) {
         this.selectedLayer.set(layer);
         this.cornerSpritesByLayer.putIfAbsent(layer, new LinkedList<>());
-        // this.cornerSprites.clear();
         layer.getPoints().forEach(point -> {
             final CornerSprite cornerSprite = new CornerSprite(point, layer);
             this.cornerSpritesByLayer.get(layer).add(cornerSprite);
@@ -105,11 +103,16 @@ public class JDrawerPanel extends JPanel {
                         graphics2D.setStroke(new BasicStroke(5.0F));
                         graphics2D.drawLine(current.x, current.y, other.x,
                                 other.y);
-
-                                graphics.setColor(Color.WHITE);
-                        double[] textPosition = Mathematics.computeMiddle(new double[] { current.getX(), current.getY() }, new double[] { other.getX(), other.getY() });
-                        double length = Mathematics.computeLength(new double[] { current.getX(), current.getY() }, new double[] { other.getX(), other.getY() } );
-                        graphics2D.drawString(String.format("%.2f", length), (int) textPosition[0], (int) textPosition[1]);
+                        if (!layer.isLocked()) {
+                            graphics.setColor(Color.WHITE);
+                            double[] textPosition = Mathematics.computeMiddle(
+                                    new double[] { current.getX(), current.getY() },
+                                    new double[] { other.getX(), other.getY() });
+                            double length = Mathematics.computeLength(new double[] { current.getX(), current.getY() },
+                                    new double[] { other.getX(), other.getY() });
+                            graphics2D.drawString(String.format("%.2f", length), (int) textPosition[0],
+                                    (int) textPosition[1]);
+                        }
                     }
                 }
 
@@ -379,6 +382,5 @@ public class JDrawerPanel extends JPanel {
             }
         }
     }
-
 
 }

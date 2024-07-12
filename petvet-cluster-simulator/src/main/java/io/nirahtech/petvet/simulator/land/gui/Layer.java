@@ -18,4 +18,6 @@ public interface Layer {
     Color getFillColor();
     LinkedList<Point> getPoints();
 
+    int getOrder();
+    void setOrder(int newOrder);
 }
