@@ -110,6 +110,17 @@ public final class Cluster {
         }
     }
 
+    public boolean isRunning() {
+        boolean isRunning = false;
+        for (MicroController node : this.nodes) {
+            if (node.isRunning()) {
+                isRunning = true;
+                break;
+            }
+        }
+        return isRunning;
+    }
+
     public void startNode(ElectronicCard node) {
         if (Objects.nonNull(node)) {
             if (!this.executorsByNodes.containsKey(node)) {

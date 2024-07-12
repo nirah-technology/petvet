@@ -128,6 +128,8 @@ public class NodeDetailPanel extends JPanel {
             if (Objects.nonNull(this.electronicCard)) {
                 if (!this.electronicCard.isRunning()) {
                     this.cluster.startNode(this.electronicCard);
+                    this.powerOnButton.setEnabled(false);
+                    this.powerOffButton.setEnabled(true);
                 }
             }
         });
@@ -136,6 +138,8 @@ public class NodeDetailPanel extends JPanel {
             if (Objects.nonNull(this.electronicCard)) {
                 if (this.electronicCard.isRunning()) {
                     this.cluster.stopNode(this.electronicCard);
+                    this.powerOffButton.setEnabled(false);
+                    this.powerOnButton.setEnabled(true);
                 }
             }
         });

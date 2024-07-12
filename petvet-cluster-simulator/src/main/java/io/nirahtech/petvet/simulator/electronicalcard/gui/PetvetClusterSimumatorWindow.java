@@ -1,17 +1,19 @@
 package io.nirahtech.petvet.simulator.electronicalcard.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 
 import javax.swing.JFrame;
 
 import io.nirahtech.petvet.simulator.electronicalcard.Cluster;
 import io.nirahtech.petvet.simulator.electronicalcard.Configuration;
+import io.nirahtech.petvet.simulator.electronicalcard.ElectronicCard;
+import io.nirahtech.petvet.simulator.electronicalcard.gui.leftpanel.JTabbedMenuPanel;
 
 public class PetvetClusterSimumatorWindow extends JFrame {
 
-    private final ConfigurationPanel configurationPanel;
+    private final JTabbedMenuPanel tabbedMenuPanel;
     private final ClusterLandPanel clusterLandPanel;
     private final NodeDetailPanel nodeDetailPanel;
     private final Cluster cluster;
@@ -26,15 +28,12 @@ public class PetvetClusterSimumatorWindow extends JFrame {
         }
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        final Dimension dimesion = new Dimension(1420, 720);
-        this.setSize(dimesion);
-        this.setMinimumSize(dimesion);
-        this.setMaximumSize(dimesion);
-        this.setResizable(false);
+        this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
 
-        this.configurationPanel = new ConfigurationPanel(configuration, cluster);
+        this.tabbedMenuPanel = new JTabbedMenuPanel(configuration, cluster);
         this.clusterLandPanel = new ClusterLandPanel(this.cluster);
         this.nodeDetailPanel  = new NodeDetailPanel(this.cluster);
+        
 
         this.clusterLandPanel.setOnElectronicCardSelected((electronicCardSelected) -> {
             this.nodeDetailPanel.setElectronicCard(electronicCardSelected);
@@ -44,7 +43,16 @@ public class PetvetClusterSimumatorWindow extends JFrame {
             this.nodeDetailPanel.updateSignalsStrenghts();
         });
 
-        this.add(this.configurationPanel, BorderLayout.WEST);
+        this.tabbedMenuPanel.setOnSelectionChangedEventListener(microController -> {
+            this.nodeDetailPanel.setElectronicCard((ElectronicCard) microController);
+            this.clusterLandPanel.setSelectedMicroController(microController);
+        });
+
+        this.clusterLandPanel.setEventListerOnElectronicCarCreated(electronicCard -> {
+            this.tabbedMenuPanel.reload();
+        });
+
+        this.add(this.tabbedMenuPanel, BorderLayout.WEST);
         this.add(this.clusterLandPanel, BorderLayout.CENTER);
         this.add(this.nodeDetailPanel, BorderLayout.EAST);
         

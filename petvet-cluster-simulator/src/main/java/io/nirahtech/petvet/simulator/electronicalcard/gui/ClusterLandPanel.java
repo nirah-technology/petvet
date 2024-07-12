@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import io.nirahtech.petvet.messaging.messages.MessageType;
 import io.nirahtech.petvet.simulator.electronicalcard.Cluster;
 import io.nirahtech.petvet.simulator.electronicalcard.ElectronicCard;
+import io.nirahtech.petvet.simulator.electronicalcard.MicroController;
 
 public class ClusterLandPanel extends JPanel {
 
@@ -33,6 +34,7 @@ public class ClusterLandPanel extends JPanel {
     private boolean isMousePressedOnChipBoard = false;
     private Consumer<ElectronicCard> eventListerOnElectronicCarSelected = null;
     private Runnable eventListerOnElectronicCarMoved = null;
+    private Consumer<ElectronicCard> eventListerOnElectronicCarCreated = null;
     
     private final Map<ElectronicCardSprite, Map<ElectronicCardSprite, Float>> detectedSignalsStrenghtsBySprite = new HashMap<>();
     private final Cluster cluster;
@@ -76,6 +78,9 @@ public class ClusterLandPanel extends JPanel {
                     updateSignalStrengthsBetweenSprites();
                     if (Objects.nonNull(eventListerOnElectronicCarMoved)) {
                         eventListerOnElectronicCarMoved.run();
+                    }
+                    if (Objects.nonNull(eventListerOnElectronicCarCreated)) {
+                        eventListerOnElectronicCarCreated.accept(newNode);
                     }
                 } catch (UnknownHostException e) {
                     
@@ -230,6 +235,13 @@ public class ClusterLandPanel extends JPanel {
         }
     }
 
+    /**
+     * @param eventListerOnElectronicCarCreated the eventListerOnElectronicCarCreated to set
+     */
+    public void setEventListerOnElectronicCarCreated(Consumer<ElectronicCard> eventListerOnElectronicCarCreated) {
+        this.eventListerOnElectronicCarCreated = eventListerOnElectronicCarCreated;
+    }
+
     private Optional<ElectronicCardSprite> retriveSelectedChipBoard(Point clickedPoint) {
         Optional<ElectronicCardSprite> potentialSelectedChipBoard = Optional.empty();
         for (ElectronicCardSprite sprite : this.electronicCardSprites) {
@@ -258,17 +270,6 @@ public class ClusterLandPanel extends JPanel {
             sprite.draw(graphics2D);
         }
 
-        // for (Map.Entry<ElectronicCardSprite, Map<ElectronicCardSprite, Float>> entry : detectedSignalsStrenghtsBySprite.entrySet()) {
-        //     ElectronicCardSprite current = entry.getKey();
-        //     for (Map.Entry<ElectronicCardSprite, Float> neighborEntry : entry.getValue().entrySet()) {
-        //         ElectronicCardSprite other = neighborEntry.getKey();
-        //         float signalStrength = neighborEntry.getValue();
-    
-        //         graphics2D.setColor(SignalColor.getSignalColor(signalStrength));
-        //         graphics2D.drawLine(current.getCenter().x, current.getCenter().y, other.getCenter().x, other.getCenter().y);
-        //     }
-        // }
-
         graphics2D.dispose();
     }
 
@@ -279,6 +280,24 @@ public class ClusterLandPanel extends JPanel {
 
     public void setOnElectronicCardMoved(Runnable eventListerOnElectronicCarMoved) {
         this.eventListerOnElectronicCarMoved = eventListerOnElectronicCarMoved;
+    }
+
+
+    public void setSelectedMicroController(MicroController microController) {
+        if (Objects.nonNull(microController)) {
+            this.electronicCardSprites.stream().filter(sprite -> sprite.getElectronicalCard().equals(microController)).findFirst().ifPresent(sprite -> {
+                if (Objects.nonNull(selectedElectronicCardSprite)) {
+                    selectedElectronicCardSprite.setSelected(false);
+                }
+                selectedElectronicCardSprite = sprite;
+                selectedElectronicCardSprite.setSelected(true);
+                if (Objects.nonNull(eventListerOnElectronicCarSelected)) {
+                    eventListerOnElectronicCarSelected.accept(selectedElectronicCardSprite.getElectronicalCard());
+                }
+                this.revalidate();
+                this.repaint();
+            });
+        }
     }
 
 }
