@@ -130,4 +130,8 @@ public class JLayersPanel extends JPanel {
         this.repaint();
     }
 
+    public final void setOnCadastreCreatedEventLister(Consumer<Land> onCadastreCreatedEventLister) {
+        this.onCadastreCreatedEventLister = onCadastreCreatedEventLister;
+    }
+
 }

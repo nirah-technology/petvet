@@ -28,6 +28,7 @@ import io.nirahtech.petvet.simulator.electronicalcard.ElectronicCard;
 import io.nirahtech.petvet.simulator.electronicalcard.MicroController;
 import io.nirahtech.petvet.simulator.electronicalcard.gui.widgets.JCrossDirectionPanel;
 import io.nirahtech.petvet.simulator.electronicalcard.gui.widgets.JZoomPanel;
+import io.nirahtech.petvet.simulator.land.domain.Land;
 
 public class ClusterLandPanel extends JPanel {
 
@@ -38,6 +39,8 @@ public class ClusterLandPanel extends JPanel {
     private Consumer<ElectronicCard> eventListerOnElectronicCarSelected = null;
     private Runnable eventListerOnElectronicCarMoved = null;
     private Consumer<ElectronicCard> eventListerOnElectronicCarCreated = null;
+
+    private Land land = null;
     
     private final Map<ElectronicCardSprite, Map<ElectronicCardSprite, Float>> detectedSignalsStrenghtsBySprite = new HashMap<>();
     private final Cluster cluster;
@@ -325,6 +328,13 @@ public class ClusterLandPanel extends JPanel {
                 this.repaint();
             });
         }
+    }
+
+    /**
+     * @param land the land to set
+     */
+    public void setLand(Land land) {
+        this.land = land;
     }
 
 }
