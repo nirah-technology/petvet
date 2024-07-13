@@ -2,6 +2,7 @@ package io.nirahtech.petvet.simulator.electronicalcard.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -25,6 +26,8 @@ import io.nirahtech.petvet.messaging.messages.MessageType;
 import io.nirahtech.petvet.simulator.electronicalcard.Cluster;
 import io.nirahtech.petvet.simulator.electronicalcard.ElectronicCard;
 import io.nirahtech.petvet.simulator.electronicalcard.MicroController;
+import io.nirahtech.petvet.simulator.electronicalcard.gui.widgets.JCrossDirectionPanel;
+import io.nirahtech.petvet.simulator.electronicalcard.gui.widgets.JZoomPanel;
 
 public class ClusterLandPanel extends JPanel {
 
@@ -46,6 +49,30 @@ public class ClusterLandPanel extends JPanel {
         setADefaultRandomPositionForNodesInCluster();
         this.updateSignalStrengthsBetweenSprites();
         final Runnable repaintReference = this::repaint;
+
+
+
+
+
+        final JCrossDirectionPanel crossDirectionPanel = new JCrossDirectionPanel();
+        final JZoomPanel zoomPanel = new JZoomPanel();
+        JPanel bottomRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+        JPanel container = new JPanel(new BorderLayout());
+        container.setOpaque(false);
+        container.add(zoomPanel, BorderLayout.NORTH);
+        container.add(crossDirectionPanel, BorderLayout.SOUTH);
+        bottomRightPanel.add(container);
+        bottomRightPanel.setOpaque(false);
+        // bottomRightPanel.setBackground(new Color(0,0,0,0));
+        this.add(bottomRightPanel, BorderLayout.SOUTH);
+
+
+
+
+
+
+
 
         this.addMouseListener(new MouseAdapter() {
             @Override
