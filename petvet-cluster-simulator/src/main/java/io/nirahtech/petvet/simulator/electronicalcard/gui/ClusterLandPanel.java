@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -18,7 +19,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import javax.swing.JPanel;
 
@@ -31,6 +34,7 @@ import io.nirahtech.petvet.simulator.electronicalcard.gui.widgets.JZoomPanel;
 import io.nirahtech.petvet.simulator.land.domain.Land;
 
 public class ClusterLandPanel extends JPanel {
+    private static final int MOVE_STEP = 10;
 
     private final Set<ElectronicCardSprite> electronicCardSprites = new HashSet<>();
 
@@ -39,6 +43,9 @@ public class ClusterLandPanel extends JPanel {
     private Consumer<ElectronicCard> eventListerOnElectronicCarSelected = null;
     private Runnable eventListerOnElectronicCarMoved = null;
     private Consumer<ElectronicCard> eventListerOnElectronicCarCreated = null;
+
+    private AtomicInteger offsetX = new AtomicInteger(0);
+    private AtomicInteger offsetY = new AtomicInteger(0);
 
     private Land land = null;
     
@@ -58,6 +65,30 @@ public class ClusterLandPanel extends JPanel {
 
 
         final JCrossDirectionPanel crossDirectionPanel = new JCrossDirectionPanel();
+
+        crossDirectionPanel.setOnLeftButtonPressedEventListener(() -> {
+            this.offsetX.addAndGet(MOVE_STEP);
+            this.revalidate();
+            this.repaint();
+        });
+
+        crossDirectionPanel.setOnRightButtonPressedEventListener(() -> {
+            this.offsetX.addAndGet(-MOVE_STEP);
+            this.revalidate();
+            this.repaint();
+        });
+
+        crossDirectionPanel.setOnTopButtonPressedEventListener(() -> {
+            this.offsetY.addAndGet(MOVE_STEP);
+            this.revalidate();
+            this.repaint();
+        });
+
+        crossDirectionPanel.setOnBottomButtonPressedEventListener(() -> {
+            this.offsetY.addAndGet(-MOVE_STEP);
+            this.revalidate();
+            this.repaint();
+        });
         final JZoomPanel zoomPanel = new JZoomPanel();
         JPanel bottomRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
@@ -71,9 +102,7 @@ public class ClusterLandPanel extends JPanel {
         this.add(bottomRightPanel, BorderLayout.SOUTH);
 
 
-
-
-
+    
 
 
 
@@ -290,14 +319,39 @@ public class ClusterLandPanel extends JPanel {
         return potentialSelectedChipBoard;
     }
 
+
+    private final void drawLand(Graphics graphics) {
+        Polygon polygon = new Polygon();
+        Stream.of(this.land.points()).forEach(segment -> {
+            polygon.addPoint(segment.from().x + offsetX.get(), segment.from().y + offsetY.get());
+            polygon.addPoint(segment.to().x + offsetX.get(), segment.to().y + offsetY.get());
+        });
+        graphics.setColor(new Color(77 , 111 , 57));
+        graphics.fillPolygon(polygon);
+        graphics.setColor(new Color(145, 65, 47));
+        polygon.reset();
+        Stream.of(this.land.buildings()).forEach(building -> {
+            Stream.of(building.points()).forEach(segment -> {
+                polygon.addPoint(segment.from().x + offsetX.get(), segment.from().y + offsetY.get());
+                polygon.addPoint(segment.to().x + offsetX.get(), segment.to().y + offsetY.get());
+            });
+            graphics.fillPolygon(polygon);
+
+        });
+    }
+
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         setBackground(Color.BLACK);
 
+        if (Objects.nonNull(this.land)) {
+            this.drawLand(graphics);
+        }
+
         final Graphics2D graphics2D = (Graphics2D) graphics.create();
         for (ElectronicCardSprite sprite : this.electronicCardSprites) {
-            sprite.draw(graphics2D);
+            sprite.draw(graphics2D, offsetX.get(), offsetY.get());
         }
 
         graphics2D.dispose();
@@ -335,6 +389,8 @@ public class ClusterLandPanel extends JPanel {
      */
     public void setLand(Land land) {
         this.land = land;
+        this.revalidate();
+        this.repaint();
     }
 
 }

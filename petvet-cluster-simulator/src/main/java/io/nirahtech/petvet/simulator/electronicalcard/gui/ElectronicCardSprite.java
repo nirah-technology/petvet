@@ -78,9 +78,9 @@ public final class ElectronicCardSprite {
         this.isSelected = isSelected;
     }
 
-    private final void drawElectronicalChipBoard(final Graphics graphics) {
-        final int boardLeft = (int) ((center.x - (this.electronicCard.getWidth() / 2)) * zoomScale);
-        final int boardTop = (int) ((center.y - (this.electronicCard.getHeight() / 2)) * zoomScale);
+    private final void drawElectronicalChipBoard(final Graphics graphics, final int offsetX, final int offsetY) {
+        final int boardLeft = (int) ((center.x - (this.electronicCard.getWidth() / 2)) * zoomScale) + offsetX;
+        final int boardTop = (int) ((center.y - (this.electronicCard.getHeight() / 2)) * zoomScale) + offsetY;
         final int boardWidth = (int) (this.electronicCard.getWidth() * zoomScale);
         final int boardHeight = (int) (this.electronicCard.getHeight() * zoomScale);
         if (this.isSelected) {
@@ -91,9 +91,9 @@ public final class ElectronicCardSprite {
         graphics.fillRect(boardLeft, boardTop, boardWidth, boardHeight);
     }
 
-    private final void drawBluetoothSignal(final Graphics graphics) {
-        final int bluetoothLeft = (int) ((center.x - (Signal.BLUETOOTH_MAX_COVERAGE_IN_CENTIMETERS / 2)) * zoomScale);
-        final int bluetoothTop = (int) ((center.y - (Signal.BLUETOOTH_MAX_COVERAGE_IN_CENTIMETERS / 2)) * zoomScale);
+    private final void drawBluetoothSignal(final Graphics graphics, final int offsetX, final int offsetY) {
+        final int bluetoothLeft = (int) ((center.x - (Signal.BLUETOOTH_MAX_COVERAGE_IN_CENTIMETERS / 2)) * zoomScale) + offsetX;
+        final int bluetoothTop = (int) ((center.y - (Signal.BLUETOOTH_MAX_COVERAGE_IN_CENTIMETERS / 2)) * zoomScale) + offsetY;
         final int bluetoothDiameter = (int) (Signal.BLUETOOTH_MAX_COVERAGE_IN_CENTIMETERS * zoomScale);
         graphics.setColor(BLUETOOTH_COVERAGE_COLOR);
         graphics.fillOval(bluetoothLeft, bluetoothTop, bluetoothDiameter, bluetoothDiameter);
@@ -102,9 +102,9 @@ public final class ElectronicCardSprite {
         graphics.drawOval(bluetoothLeft, bluetoothTop, bluetoothDiameter, bluetoothDiameter);
     }
 
-    private final void drawWiFiSignal(final Graphics graphics) {
-        final int wifiLeft = (int) ((this.center.x - (Signal.WIFI_MAX_COVERAGE_IN_CENTIMETERS / 2)) * this.zoomScale);
-        final int wifiTop = (int) ((this.center.y - (Signal.WIFI_MAX_COVERAGE_IN_CENTIMETERS / 2)) * this.zoomScale);
+    private final void drawWiFiSignal(final Graphics graphics,  final int offsetX, final int offsetY) {
+        final int wifiLeft = (int) ((this.center.x - (Signal.WIFI_MAX_COVERAGE_IN_CENTIMETERS / 2)) * this.zoomScale) + offsetX;
+        final int wifiTop = (int) ((this.center.y - (Signal.WIFI_MAX_COVERAGE_IN_CENTIMETERS / 2)) * this.zoomScale) + offsetY;
         final int wifiDiameter = (int) (Signal.WIFI_MAX_COVERAGE_IN_CENTIMETERS * this.zoomScale);
         graphics.setColor(WIFI_COVERAGE_COLOR);
         graphics.fillOval(wifiLeft, wifiTop, wifiDiameter, wifiDiameter);
@@ -113,37 +113,37 @@ public final class ElectronicCardSprite {
         graphics.drawOval(wifiLeft, wifiTop, wifiDiameter, wifiDiameter);
     }
 
-    private final void drawOrchestratorMode(final Graphics graphics) {
-        final int modeLeft = (int) ((this.center.x - (10)) * this.zoomScale);
-        final int modeTop = (int) ((this.center.y - (10)) * this.zoomScale);
+    private final void drawOrchestratorMode(final Graphics graphics, final int offsetX, final int offsetY) {
+        final int modeLeft = (int) ((this.center.x - (10)) * this.zoomScale) + offsetX;
+        final int modeTop = (int) ((this.center.y - (10)) * this.zoomScale) + offsetY;
         final int modeDiameter = (int) (20 * this.zoomScale);
         graphics.setColor(ORCHESTRATOR_HALO_COLOR);
         graphics.drawOval(modeLeft, modeTop, modeDiameter, modeDiameter);
     }
 
-    public void draw(Graphics graphics) {
+    public void draw(Graphics graphics, final int offsetX, final int offsetY) {
 
         final Graphics2D graphics2D = (Graphics2D) graphics.create();
         if (Objects.nonNull(this.center)) {
             // Draw the WiFi
-            drawWiFiSignal(graphics2D);
+            drawWiFiSignal(graphics2D, offsetX, offsetY);
 
             // Draw the Bluetooth
-            drawBluetoothSignal(graphics2D);
+            drawBluetoothSignal(graphics2D, offsetX, offsetY);
 
             // Draw the board
-            drawElectronicalChipBoard(graphics2D);
+            drawElectronicalChipBoard(graphics2D, offsetX, offsetY);
 
             if (this.electronicCard.getProcess().getMode().isOrchestratorMode()) {
-                drawOrchestratorMode(graphics2D);
+                drawOrchestratorMode(graphics2D, offsetX, offsetY);
             }
 
             // Draw the radar echo
             if (Objects.nonNull(this.radarEcho)) {
-                this.radarEcho.draw(graphics2D);
+                this.radarEcho.draw(graphics2D, offsetX, offsetY);
             }
             if (Objects.nonNull(this.heartBeat)) {
-                this.heartBeat.draw(graphics2D);
+                this.heartBeat.draw(graphics2D, offsetX, offsetY);
             }
         }
 
@@ -210,9 +210,9 @@ public final class ElectronicCardSprite {
             animationTimer.scheduleAtFixedRate(animationTask, 0, 10);
         }
 
-        private void draw(final Graphics2D g2d) {
-            g2d.setColor(RADAR_ECHO_COLOR); // Vert translucide pour l'écho
-            g2d.drawOval(this.center.x - currentRadius, this.center.y - currentRadius, currentRadius * 2,
+        private void draw(final Graphics2D graphics2d, int offsetX, int offsetY) {
+            graphics2d.setColor(RADAR_ECHO_COLOR); // Vert translucide pour l'écho
+            graphics2d.drawOval((this.center.x - currentRadius) + offsetX, (this.center.y - currentRadius) + offsetY, currentRadius * 2,
                     currentRadius * 2);
         }
 
@@ -274,10 +274,10 @@ public final class ElectronicCardSprite {
             }
         }
 
-        public void draw(Graphics2D g2d) {
+        public void draw(Graphics2D g2d, int offsetX, int offsetY) {
             final Color currentColor = new Color(HEART_BEAT_COLOR.getRed(), HEART_BEAT_COLOR.getGreen(), HEART_BEAT_COLOR.getBlue(), colorAlpha);
             g2d.setColor(currentColor);
-            g2d.fillOval(center.x - maxRadius, center.y - maxRadius, maxRadius * 2, maxRadius * 2);
+            g2d.fillOval((center.x - maxRadius) + offsetX, (center.y - maxRadius) + offsetY, maxRadius * 2, maxRadius * 2);
         }
 
         public void stop() {

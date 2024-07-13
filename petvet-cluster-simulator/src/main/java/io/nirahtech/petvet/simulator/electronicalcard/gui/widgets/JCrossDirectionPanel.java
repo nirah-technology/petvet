@@ -2,10 +2,15 @@ package io.nirahtech.petvet.simulator.electronicalcard.gui.widgets;
 
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -13,7 +18,10 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+
 public class JCrossDirectionPanel extends JPanel {
+
+    private static final int MOVE_TASK_INTERVAL = 50;
 
     private static final int CROSS_WIDTH = 20;
     private static final int CROSS_HEIGHT = CROSS_WIDTH;
@@ -90,34 +98,79 @@ public class JCrossDirectionPanel extends JPanel {
     }
 
     public void setOnTopButtonPressedEventListener(final Runnable eventListener) {
-        this.topButton.addActionListener(event -> {
-            if (Objects.nonNull(eventListener)) {
-                eventListener.run();
+        final AtomicReference<Timer> timer = new AtomicReference<>();
+        this.topButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent event) {
+                timer.set(new Timer());
+                timer.get().scheduleAtFixedRate(new MoveTask(eventListener), 0, MOVE_TASK_INTERVAL);
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                timer.get().cancel();
             }
         });
     }
     
     public void setOnRightButtonPressedEventListener(final Runnable eventListener) {
-        this.rightButton.addActionListener(event -> {
-            if (Objects.nonNull(eventListener)) {
-                eventListener.run();
+        final AtomicReference<Timer> timer = new AtomicReference<>();
+        this.rightButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent event) {
+                timer.set(new Timer());
+                timer.get().scheduleAtFixedRate(new MoveTask(eventListener), 0, MOVE_TASK_INTERVAL);
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                timer.get().cancel();
             }
         });
     }
     
     public void setOnLeftButtonPressedEventListener(final Runnable eventListener) {
-        this.leftButton.addActionListener(event -> {
-            if (Objects.nonNull(eventListener)) {
-                eventListener.run();
+        final AtomicReference<Timer> timer = new AtomicReference<>();
+        this.leftButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent event) {
+                timer.set(new Timer());
+                timer.get().scheduleAtFixedRate(new MoveTask(eventListener), 0, MOVE_TASK_INTERVAL);
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                timer.get().cancel();
             }
         });
     }
     
     public void setOnBottomButtonPressedEventListener(final Runnable eventListener) {
-        this.bottomButton.addActionListener(event -> {
-            if (Objects.nonNull(eventListener)) {
-                eventListener.run();
+        final AtomicReference<Timer> timer = new AtomicReference<>();
+        this.bottomButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent event) {
+                timer.set(new Timer());
+                timer.get().scheduleAtFixedRate(new MoveTask(eventListener), 0, MOVE_TASK_INTERVAL);
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                timer.get().cancel();
             }
         });
+    }
+
+    private final class MoveTask extends TimerTask {
+
+        private final Runnable moveTaskToRun;
+
+        private MoveTask(final Runnable moveTaskToRun) {
+            this.moveTaskToRun = moveTaskToRun;
+        }
+
+        @Override
+        public void run() {
+            if (Objects.nonNull(this.moveTaskToRun)) {
+                moveTaskToRun.run();
+            }
+        }
+
     }
 }
