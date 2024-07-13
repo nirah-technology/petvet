@@ -11,6 +11,7 @@ import javax.swing.JTabbedPane;
 import io.nirahtech.petvet.simulator.electronicalcard.Cluster;
 import io.nirahtech.petvet.simulator.electronicalcard.Configuration;
 import io.nirahtech.petvet.simulator.electronicalcard.MicroController;
+import io.nirahtech.petvet.simulator.land.domain.Land;
 
 public final class JTabbedMenuPanel extends JPanel {
 
@@ -49,5 +50,13 @@ public final class JTabbedMenuPanel extends JPanel {
 
     public void reload() {
         this.clusterTabPanel.reload();
+    }
+
+
+    /**
+     * @param onPlotCreatedEventListener the onPlotCreatedEventListener to set
+     */
+    public void addOnPlotCreatedEventListener(Consumer<Land> onPlotCreatedEventListener) {
+        this.cadastreTabPanel.addOnPlotCreatedEventListener(onPlotCreatedEventListener);
     }
 }

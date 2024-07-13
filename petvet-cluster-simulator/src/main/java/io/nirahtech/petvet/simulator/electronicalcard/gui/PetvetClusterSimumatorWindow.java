@@ -52,7 +52,9 @@ public class PetvetClusterSimumatorWindow extends JFrame {
             this.tabbedMenuPanel.reload();
         });
 
-        this.cl
+        this.tabbedMenuPanel.addOnPlotCreatedEventListener(land -> {
+            this.clusterLandPanel.setLand(land);
+        });
 
         this.add(this.tabbedMenuPanel, BorderLayout.WEST);
         this.add(this.clusterLandPanel, BorderLayout.CENTER);
