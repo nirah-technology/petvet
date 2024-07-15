@@ -1,8 +1,9 @@
-package io.nirahtech.petvet.simulator.land.gui;
+package io.nirahtech.petvet.simulator.land.gui.widgets.layers;
 
 import java.awt.Color;
 import java.awt.Point;
 import java.util.LinkedList;
+import java.util.Optional;
 
 public interface Layer {
     boolean isVisible();
@@ -17,6 +18,10 @@ public interface Layer {
     Color getBorderColor();
     Color getFillColor();
     LinkedList<Point> getPoints();
+
+    void selectPoint(final Point point);
+    Optional<Point> getSelectedPoint();
+    void unselectPoint();
 
     int getOrder();
     void setOrder(int newOrder);

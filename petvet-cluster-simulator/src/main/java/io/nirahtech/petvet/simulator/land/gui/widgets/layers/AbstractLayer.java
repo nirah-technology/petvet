@@ -1,11 +1,15 @@
-package io.nirahtech.petvet.simulator.land.gui;
+package io.nirahtech.petvet.simulator.land.gui.widgets.layers;
 
 import java.awt.Color;
 import java.awt.Point;
 import java.util.LinkedList;
+import java.util.Optional;
+
+import javax.swing.text.html.Option;
 
 abstract class AbstractLayer implements Layer {
     protected final LinkedList<Point> points;
+    protected Point selectedPoint;
     protected final Color borderColor;
     protected final Color fillColor;
 
@@ -73,6 +77,23 @@ abstract class AbstractLayer implements Layer {
     @Override
     public void setOrder(int newOrder) {
         this.order = newOrder;
+    }
+
+    @Override
+    public void selectPoint(Point point) {
+        if (this.points.contains(point)) {
+            this.selectedPoint = point;
+        }
+    }
+
+    @Override
+    public void unselectPoint() {
+        this.selectedPoint = null;
+    }
+
+    @Override
+    public Optional<Point> getSelectedPoint() {
+        return Optional.ofNullable(this.selectedPoint);
     }
     
 }

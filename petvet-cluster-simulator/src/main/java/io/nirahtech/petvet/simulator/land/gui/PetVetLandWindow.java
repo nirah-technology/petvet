@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import javax.swing.JFrame;
 
 import io.nirahtech.petvet.simulator.land.domain.Land;
+import io.nirahtech.petvet.simulator.land.gui.widgets.layers.JLayersPanel;
 
 public class PetVetLandWindow extends JFrame {
 

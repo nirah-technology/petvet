@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import io.nirahtech.petvet.simulator.land.domain.Mathematics;
+import io.nirahtech.petvet.simulator.land.gui.widgets.layers.Layer;
 
 public class JDrawerPanel extends JPanel {
 
@@ -349,28 +350,32 @@ public class JDrawerPanel extends JPanel {
     }
 
     private final class DrawerKeyAdapter extends KeyAdapter {
+
+        private final void deleteSelectedPoint() {
+            final Layer layer = selectedLayer.get();
+            if (layer.isVisible() && !layer.isLocked()) {
+                final CornerSprite cornerSpriteToDelete = selectedCornerSprite.get();
+                if (cornerSpritesByLayer.get(layer).size() > 1) {
+                    final int indexToDelete = cornerSpritesByLayer.get(layer).indexOf(cornerSpriteToDelete);
+                    layer.getPoints().remove(cornerSpriteToDelete.getPoint());
+                    cornerSpritesByLayer.get(layer).remove(cornerSpriteToDelete);
+                    if (indexToDelete < cornerSpritesByLayer.get(layer).size()) {
+                        selectCornerSprite(cornerSpritesByLayer.get(layer).get(indexToDelete));
+                    } else {
+                        selectCornerSprite(
+                                cornerSpritesByLayer.get(layer).get(indexToDelete - 1));
+
+                    }
+                    redraw();
+                }
+            }
+        }
+
         @Override
         public void keyPressed(KeyEvent event) {
             if (event.getKeyCode() == KeyEvent.VK_DELETE) {
                 if (Objects.nonNull(selectedCornerSprite.get())) {
-                    final Layer layer = selectedLayer.get();
-                    if (layer.isVisible() && !layer.isLocked()) {
-                        final CornerSprite cornerSpriteToDelete = selectedCornerSprite.get();
-                        if (cornerSpritesByLayer.get(selectedLayer.get()).size() > 1) {
-                            final int indexToDelete = cornerSpritesByLayer.get(selectedLayer.get())
-                                    .indexOf(cornerSpriteToDelete);
-                            selectedLayer.get().getPoints().remove(selectedCornerSprite.get().getPoint());
-                            cornerSpritesByLayer.get(selectedLayer.get()).remove(cornerSpriteToDelete);
-                            if (indexToDelete < cornerSpritesByLayer.get(selectedLayer.get()).size()) {
-                                selectCornerSprite(cornerSpritesByLayer.get(selectedLayer.get()).get(indexToDelete));
-                            } else {
-                                selectCornerSprite(
-                                        cornerSpritesByLayer.get(selectedLayer.get()).get(indexToDelete - 1));
-
-                            }
-                            redraw();
-                        }
-                    }
+                    this.deleteSelectedPoint();
                 }
             } else if (event.getKeyCode() == KeyEvent.VK_ESCAPE) {
                 selectedCornerSprite.set(null);

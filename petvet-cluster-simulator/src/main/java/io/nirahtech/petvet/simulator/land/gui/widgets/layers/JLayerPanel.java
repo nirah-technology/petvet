@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.simulator.land.gui;
+package io.nirahtech.petvet.simulator.land.gui.widgets.layers;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
