@@ -1,10 +1,9 @@
-package io.nirahtech.petvet.simulator.cadastre.gui.widgets;
+package io.nirahtech.petvet.simulator.cadastre.gui.widgets.jcadastreplantree;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -19,7 +18,6 @@ import java.util.function.Consumer;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -63,6 +61,7 @@ public class JCadastrePlanTree extends JPanel {
         super();
         this.setLayout(new BorderLayout());
         this.cadastralPlan = cadastralPlan;
+        this.setPreferredSize(new Dimension(300, this.getPreferredSize().height));
 
         this.root = new DefaultMutableTreeNode("Cadastral Plan");
         this.model = new DefaultTreeModel(root);
@@ -259,16 +258,27 @@ public class JCadastrePlanTree extends JPanel {
                 this.parcelsNodes.put(parcel, parcelNode);
                 sectionNode.add(parcelNode);
 
-                DefaultMutableTreeNode landNode = new DefaultMutableTreeNode("Land");
-                this.landsNodes.put(parcel.land(), landNode);
-                this.layersBySurface.putIfAbsent(parcel.land(), new LandLayer(1));
-                parcelNode.add(landNode);
+                // DefaultMutableTreeNode landNode = new DefaultMutableTreeNode("Land");
+                final Layer layer = this.layersBySurface.computeIfAbsent(parcel.land(), p -> new LandLayer(1));
+                // parcelNode.add(landNode);
+                JCadastreLayerPanel cadastreLayerPanel = new JCadastreLayerPanel(parcel.land(), layer);
+                cadastreLayerPanel.addOnClickEventListener(clickedLayer -> {
+                    if (Objects.nonNull(this.onSelectedLayerChanged)) {
+                        this.onSelectedLayerChanged.accept(clickedLayer);
+                    }
+                });
+                JCadastreLayerTreeNode node = new JCadastreLayerTreeNode(cadastreLayerPanel);
+                this.landsNodes.put(parcel.land(), node);
+                parcelNode.add(node);
 
                 for (Building building : parcel.land().getBuildings()) {
-                    DefaultMutableTreeNode buildingNode = new DefaultMutableTreeNode("Building");
-                    this.buildingsNodes.put(building, buildingNode);
-                    this.layersBySurface.putIfAbsent(building, new BuildingLayer(parcel.land().getBuildings().size()+2));
-                    parcelNode.add(buildingNode);
+                    // DefaultMutableTreeNode buildingNode = new DefaultMutableTreeNode("Building");
+                    final Layer otherLayer = this.layersBySurface.computeIfAbsent(building, p -> new BuildingLayer(parcel.land().getBuildings().size()+2));
+                    
+                    JCadastreLayerTreeNode otherNode = new JCadastreLayerTreeNode(new JCadastreLayerPanel(building, otherLayer));
+                    this.buildingsNodes.put(building, otherNode);
+                    parcelNode.add(otherNode);
+                    // parcelNode.add(buildingNode);
                 }
             }
         }
@@ -314,200 +324,86 @@ public class JCadastrePlanTree extends JPanel {
         this.onSelectedLayerChanged = onSelectedLayerChanged;
     }
 
-    private final class JCadastrePlanTreeCellRenderer extends DefaultTreeCellRenderer {
+    // private final class JCadastrePlanTreeCellRenderer extends DefaultTreeCellRenderer {
 
-        private Icon leafIcon;
-        private Icon openIcon;
-        private Icon closedIcon;
+    //     private Icon leafIcon;
+    //     private Icon openIcon;
+    //     private Icon closedIcon;
 
-        private final Icon rootIcon;
-        private final Icon sectionIcon;
-        private final Icon parcelIcon;
-        private final Icon landIcon;
-        private final Icon buildingIcon;
+    //     private final Icon rootIcon;
+    //     private final Icon sectionIcon;
+    //     private final Icon parcelIcon;
+    //     private final Icon landIcon;
+    //     private final Icon buildingIcon;
 
-        public JCadastrePlanTreeCellRenderer() {
-            this.leafIcon = UIManager.getIcon("FileView.fileIcon");
-            this.openIcon = UIManager.getIcon("FileView.directoryIcon");
-            this.closedIcon = UIManager.getIcon("FileView.directoryIcon");
+    //     public JCadastrePlanTreeCellRenderer() {
+    //         this.leafIcon = UIManager.getIcon("FileView.fileIcon");
+    //         this.openIcon = UIManager.getIcon("FileView.directoryIcon");
+    //         this.closedIcon = UIManager.getIcon("FileView.directoryIcon");
 
-            this.rootIcon = loadIcon("icons/cadastre.png");
-            this.sectionIcon = loadIcon("icons/section.png");
-            this.parcelIcon = loadIcon("icons/parcel.png");
-            this.landIcon = loadIcon("icons/land.png");
-            this.buildingIcon = loadIcon("icons/building.png");
+    //         this.rootIcon = loadIcon("icons/cadastre.png");
+    //         this.sectionIcon = loadIcon("icons/section.png");
+    //         this.parcelIcon = loadIcon("icons/parcel.png");
+    //         this.landIcon = loadIcon("icons/land.png");
+    //         this.buildingIcon = loadIcon("icons/building.png");
 
-        }
+    //     }
 
-        private Icon loadIcon(String path) {
-            URL url = getClass().getClassLoader().getResource(path);
-            if (url == null) {
-                return null;
-            }
+    //     private Icon loadIcon(String path) {
+    //         URL url = getClass().getClassLoader().getResource(path);
+    //         if (url == null) {
+    //             return null;
+    //         }
 
-            ImageIcon icon = new ImageIcon(url);
-            Icon defaultIcon = UIManager.getIcon("FileView.fileIcon");
+    //         ImageIcon icon = new ImageIcon(url);
+    //         Icon defaultIcon = UIManager.getIcon("FileView.fileIcon");
 
-            if (defaultIcon != null) {
-                int width = defaultIcon.getIconWidth();
-                int height = defaultIcon.getIconHeight();
-                Image scaledImage = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-                return new ImageIcon(scaledImage);
-            } else {
-                return icon;
-            }
+    //         if (defaultIcon != null) {
+    //             int width = defaultIcon.getIconWidth();
+    //             int height = defaultIcon.getIconHeight();
+    //             Image scaledImage = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+    //             return new ImageIcon(scaledImage);
+    //         } else {
+    //             return icon;
+    //         }
 
-        }
+    //     }
 
-        @Override
-        public Component getTreeCellRendererComponent(JTree tree, Object value,
-                boolean selected, boolean expanded,
-                boolean leaf, int row, boolean hasFocus) {
-            super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+    //     @Override
+    //     public Component getTreeCellRendererComponent(JTree tree, Object value,
+    //             boolean selected, boolean expanded,
+    //             boolean leaf, int row, boolean hasFocus) {
+    //         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
-            // // Définir les icônes pour les feuilles, les nœuds ouverts et fermés
-            // if (leaf) {
-            // setIcon(leafIcon);
-            // } else if (expanded) {
-            // setIcon(openIcon);
-            // } else {
-            // setIcon(closedIcon);
-            // }
+    //         setForeground(Color.WHITE);
 
-            // // Changer la couleur de texte selon une condition
-            // if (value.toString().contains("Layer 2")) {
-            // setForeground(Color.RED);
-            // } else {
-            // setForeground(Color.BLACK);
-            // }
-            setForeground(Color.WHITE);
+    //         DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+    //         Object nodeInfo = node.getUserObject();
 
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-            Object nodeInfo = node.getUserObject();
+    //         if (nodeInfo.toString().equals("Cadastral Plan")) {
+    //             setIcon(rootIcon);
+    //         } else if (nodeInfo.toString().startsWith("Section")) {
+    //             setIcon(sectionIcon);
+    //         } else if (nodeInfo.toString().startsWith("Parcel")) {
+    //             setIcon(parcelIcon);
+    //         } else if (nodeInfo.toString().equals("Land")) {
+    //             setIcon(landIcon);
+    //         } else if (nodeInfo.toString().equals("Building")) {
+    //             setIcon(buildingIcon);
+    //         } else {
+    //             if (leaf) {
+    //                 setIcon(leafIcon);
+    //             } else if (expanded) {
+    //                 setIcon(openIcon);
+    //             } else {
+    //                 setIcon(closedIcon);
+    //             }
+    //         }
+    //         this.setForeground(Color.WHITE);
 
-            if (nodeInfo.toString().equals("Cadastral Plan")) {
-                setIcon(rootIcon);
-            } else if (nodeInfo.toString().startsWith("Section")) {
-                setIcon(sectionIcon);
-            } else if (nodeInfo.toString().startsWith("Parcel")) {
-                setIcon(parcelIcon);
-            } else if (nodeInfo.toString().equals("Land")) {
-                setIcon(landIcon);
-            } else if (nodeInfo.toString().equals("Building")) {
-                setIcon(buildingIcon);
-            } else {
-                if (leaf) {
-                    setIcon(leafIcon);
-                } else if (expanded) {
-                    setIcon(openIcon);
-                } else {
-                    setIcon(closedIcon);
-                }
-            }
-            this.setForeground(Color.WHITE);
+    //         return new JCadastrePlanItemPanel(this, node);
+    //     }
 
-            // Changer la couleur de texte selon une condition
-            if (nodeInfo.toString().contains("Layer 2")) {
-                setForeground(Color.RED);
-            } else {
-                setForeground(Color.BLACK);
-            }
-
-            return new JCadastrePlanItemPanel(this, node, null);
-        }
-
-    }
-
-    private final class JCadastrePlanItemPanel extends JPanel {
-
-        private boolean isVisible = true;
-        private boolean isLocked = false;
-
-        private final JButton visibilityButton;
-        private final JButton lockButton;
-
-        private Consumer<Layer> onLockChangedOnLayerEventListener = null;
-        private Consumer<Layer> onVisibilityChangedOnLayerEventListener = null;
-
-        private final Layer layer;
-
-        private JCadastrePlanItemPanel(DefaultTreeCellRenderer renderer, DefaultMutableTreeNode node, final Layer layer) {
-            super(new BorderLayout());
-            this.setFocusable(true);
-            this.layer = layer;
-            add(renderer, BorderLayout.CENTER);
-
-            this.visibilityButton = this.createButton("Visibility", "display.png");
-            this.visibilityButton.addActionListener(e -> {
-                if (Objects.nonNull(layer)) {
-                    if (layer.isVisible()) {
-                        layer.hide();
-                        this.isVisible = false;
-                        setButtonIcon(this.visibilityButton, "hidden.png");
-                    } else {
-                        this.isVisible = true;
-                        layer.display();
-                        setButtonIcon(this.visibilityButton, "display.png");
-                    }
-                    if (Objects.nonNull(onVisibilityChangedOnLayerEventListener)) {
-                        onVisibilityChangedOnLayerEventListener.accept(layer);
-                    }
-                }
-            });
-
-            this.lockButton = this.createButton("Lock", "unlock.png");
-            this.lockButton.addActionListener(e -> {
-                if (Objects.nonNull(layer)) {
-                    if (layer.isLocked()) {
-                        layer.unlock();
-                        this.isLocked = false;
-                        setButtonIcon(this.lockButton, "unlock.png");
-                    } else {
-                        layer.lock();
-                        this.isLocked = true;
-                        setButtonIcon(this.lockButton, "lock.png");
-                    }
-                    if (Objects.nonNull(onLockChangedOnLayerEventListener)) {
-                        onLockChangedOnLayerEventListener.accept(layer);
-                    }
-                }
-            });
-
-            final JPanel actionsPanel = new JPanel();
-            actionsPanel.setLayout(new GridLayout(1, 2));
-            actionsPanel.add(visibilityButton);
-            actionsPanel.add(lockButton);
-
-            add(actionsPanel, BorderLayout.EAST);
-        }
-
-        private JButton createButton(final String text, final String iconName) {
-            final JButton button = new JButton();
-            button.setToolTipText(text);
-            this.setButtonIcon(button, iconName);
-            return button;
-        }
-
-        private final void setButtonIcon(final JButton button, final String iconName) {
-            URL iconUrl = getClass().getClassLoader().getResource("icons/" + iconName);
-            if (iconUrl != null) {
-
-                int desiredWidth = 20;
-                int desiredHeight = desiredWidth;
-
-                final Dimension dimension = new Dimension(desiredWidth + 10, desiredHeight + 10);
-                button.setPreferredSize(dimension);
-                button.setSize(dimension);
-
-                // Redimensionner l'image
-                final ImageIcon imageIcon = new ImageIcon(iconUrl);
-                final Image originalImage = imageIcon.getImage();
-                final Image resizedImage = originalImage.getScaledInstance(desiredWidth, desiredHeight,
-                        Image.SCALE_SMOOTH);
-                final ImageIcon resizedIcon = new ImageIcon(resizedImage);
-                button.setIcon(resizedIcon);
-            }
-        }
-    }
+    // }
 
 }

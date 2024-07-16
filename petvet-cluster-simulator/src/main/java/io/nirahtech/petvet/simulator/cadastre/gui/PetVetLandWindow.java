@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import javax.swing.JFrame;
 
 import io.nirahtech.petvet.simulator.cadastre.domain.CadastralPlan;
-import io.nirahtech.petvet.simulator.cadastre.gui.widgets.JCadastrePlanTree;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.jcadastreplantree.JCadastrePlanTree;
 import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.JLayersPanel;
 
 public class PetVetLandWindow extends JFrame {
