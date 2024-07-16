@@ -21,8 +21,6 @@ import javax.swing.JPanel;
 public final class JLayerPanel extends JPanel {
 
     private Consumer<Layer> onSelectedLayerEventListerner = null;
-    private Consumer<Layer> onLockChangedOnLayerEventListener = null;
-    private Consumer<Layer> onVisibilityChangedOnLayerEventListener = null;
     
 
     private static final String HIDE_TEXT = "Hide";
@@ -39,6 +37,8 @@ public final class JLayerPanel extends JPanel {
 
     private boolean isVisible = true;
     private boolean isLocked = false;
+    private Consumer<Layer> onLockChangedOnLayerEventListener = null;
+    private Consumer<Layer> onVisibilityChangedOnLayerEventListener = null;
 
 
     final JButton visibilityButton;

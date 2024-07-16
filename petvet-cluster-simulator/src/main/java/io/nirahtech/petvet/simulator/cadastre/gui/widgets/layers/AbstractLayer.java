@@ -5,7 +5,7 @@ import java.awt.Point;
 import java.util.LinkedList;
 import java.util.Optional;
 
-import javax.swing.text.html.Option;
+import io.nirahtech.petvet.simulator.cadastre.domain.Surface;
 
 abstract class AbstractLayer implements Layer {
     protected final LinkedList<Point> points;
@@ -13,6 +13,8 @@ abstract class AbstractLayer implements Layer {
     protected final Color borderColor;
     protected final Color fillColor;
 
+    private Surface surface;
+    
     private boolean isLocked = false;
     private boolean isVisible = true;
     private int order;
@@ -94,6 +96,16 @@ abstract class AbstractLayer implements Layer {
     @Override
     public Optional<Point> getSelectedPoint() {
         return Optional.ofNullable(this.selectedPoint);
+    }
+
+    @Override
+    public Surface getSurface() {
+        return this.surface;
+    }
+
+    @Override
+    public void setSurface(Surface surface) {
+        this.surface = surface;
     }
     
 }

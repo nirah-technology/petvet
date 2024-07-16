@@ -61,10 +61,6 @@ public class JCartographyPanel extends JPanel {
         this.updateSignalStrengthsBetweenSprites();
         final Runnable repaintReference = this::repaint;
 
-
-
-
-
         final JCrossDirectionPanel crossDirectionPanel = new JCrossDirectionPanel();
 
         crossDirectionPanel.setOnLeftButtonPressedEventListener(() -> {
@@ -324,10 +320,10 @@ public class JCartographyPanel extends JPanel {
 
     private final void drawLands(Graphics graphics) {
         graphics.setColor(new Color(77 , 111 , 57));
-        this.cadastralPlan.sections().forEach(section -> {
-            section.parcels().forEach(parcel -> {
+        this.cadastralPlan.getSections().forEach(section -> {
+            section.getParcels().forEach(parcel -> {
                 Polygon polygon = new Polygon();
-                Stream.of(parcel.land().sides()).forEach(segment -> {
+                parcel.land().getSides().forEach(segment -> {
                     polygon.addPoint(segment.from().x + offsetX.get(), segment.from().y + offsetY.get());
                     polygon.addPoint(segment.to().x + offsetX.get(), segment.to().y + offsetY.get());
                 });
@@ -338,9 +334,9 @@ public class JCartographyPanel extends JPanel {
 
     private final void drawBuildings(Graphics graphics) {
         graphics.setColor(new Color(145, 65, 47));
-        this.cadastralPlan.sections().forEach(section -> {
-            section.parcels().forEach(parcel -> {
-                Stream.of(parcel.land().buildings()).forEach(building -> {
+        this.cadastralPlan.getSections().forEach(section -> {
+            section.getParcels().forEach(parcel -> {
+                parcel.land().getBuildings().forEach(building -> {
                     Polygon polygon = new Polygon();
                     Stream.of(building.sides()).forEach(segment -> {
                         polygon.addPoint(segment.from().x + offsetX.get(), segment.from().y + offsetY.get());

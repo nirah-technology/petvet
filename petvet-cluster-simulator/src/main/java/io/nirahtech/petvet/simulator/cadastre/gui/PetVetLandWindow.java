@@ -7,10 +7,12 @@ import java.util.function.Consumer;
 import javax.swing.JFrame;
 
 import io.nirahtech.petvet.simulator.cadastre.domain.CadastralPlan;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.JCadastrePlanTree;
 import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.JLayersPanel;
 
 public class PetVetLandWindow extends JFrame {
 
+    private final CadastralPlan cadastralPlan;
     private final JDrawerPanel drawerPanel;
     private final JLayersPanel layersPanel;
 
@@ -20,9 +22,11 @@ public class PetVetLandWindow extends JFrame {
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+
+        this.cadastralPlan = new CadastralPlan();
         
-        this.drawerPanel = new JDrawerPanel();
-        this.layersPanel = new JLayersPanel();
+        this.drawerPanel = new JDrawerPanel(this.cadastralPlan);
+        this.layersPanel = new JLayersPanel(this.cadastralPlan);
 
         this.layersPanel.setOnSelectedLayerEventListerner(layer -> {
             this.drawerPanel.setSelectedLayer(layer);
@@ -40,7 +44,7 @@ public class PetVetLandWindow extends JFrame {
 
 
         this.add(this.drawerPanel, BorderLayout.CENTER);
-        this.add(this.layersPanel, BorderLayout.EAST);
+        this.add(new JCadastrePlanTree(cadastralPlan), BorderLayout.EAST);
 
     }
 

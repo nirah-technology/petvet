@@ -1,7 +1,9 @@
 package io.nirahtech.petvet.simulator.cadastre.gui;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -10,8 +12,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedMap;
@@ -21,24 +25,44 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import io.nirahtech.petvet.simulator.cadastre.domain.Building;
+import io.nirahtech.petvet.simulator.cadastre.domain.CadastralPlan;
+import io.nirahtech.petvet.simulator.cadastre.domain.Land;
 import io.nirahtech.petvet.simulator.cadastre.domain.Mathematics;
+import io.nirahtech.petvet.simulator.cadastre.domain.Parcel;
+import io.nirahtech.petvet.simulator.cadastre.domain.Section;
+import io.nirahtech.petvet.simulator.cadastre.domain.Segment;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.JWindRoseCompassPanel;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.BuildingLayer;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.LandLayer;
 import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.Layer;
 
 public class JDrawerPanel extends JPanel {
 
-    private static final Color BACKGROUND_COLOR = new Color(200,200,200);
+    private static final Color BACKGROUND_COLOR = new Color(200, 200, 200);
 
     private final SortedMap<Layer, LinkedList<CornerSprite>> cornerSpritesByLayer = new TreeMap<>(
             Comparator.comparingInt(Layer::getOrder));
     private AtomicReference<CornerSprite> selectedCornerSprite = new AtomicReference<>(null);
 
     private final AtomicReference<Layer> selectedLayer = new AtomicReference<>(null);
+    private final CadastralPlan cadastralPlan;
+    private Parcel selectedParcel = null;
 
-    public JDrawerPanel() {
+    public JDrawerPanel(final CadastralPlan cadastralPlan) {
         super();
+        this.setLayout(new BorderLayout());
 
         this.setBackground(BACKGROUND_COLOR);
         this.setFocusable(true);
+
+        this.cadastralPlan = cadastralPlan;
+
+        JPanel bottomRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottomRightPanel.setOpaque(false);
+        bottomRightPanel.add(new JWindRoseCompassPanel());
+
+        this.add(bottomRightPanel, BorderLayout.SOUTH);
 
         this.addMouseListener(new DrawerMouseAdapter());
         this.addMouseMotionListener(new DrawerMouseMotionAdapter());
@@ -88,6 +112,25 @@ public class JDrawerPanel extends JPanel {
         selectedCornerSprite.set(cornerSpriteToSelect);
     }
 
+    private final Point calculatePolygonCenter(Polygon polygon) {
+        int numPoints = polygon.npoints;
+        int[] xPoints = polygon.xpoints;
+        int[] yPoints = polygon.ypoints;
+
+        double sumX = 0;
+        double sumY = 0;
+
+        for (int i = 0; i < numPoints; i++) {
+            sumX += xPoints[i];
+            sumY += yPoints[i];
+        }
+
+        double centerX = sumX / numPoints;
+        double centerY = sumY / numPoints;
+
+        return new Point((int) centerX, (int) centerY);
+    }
+
     private final void drawLines(Graphics graphics, Layer layer) {
         final LinkedList<Point> points = layer.getPoints();
         if (Objects.nonNull(points)) {
@@ -111,9 +154,8 @@ public class JDrawerPanel extends JPanel {
                             double[] textPosition = Mathematics.computeMiddle(
                                     new double[] { current.getX(), current.getY() },
                                     new double[] { other.getX(), other.getY() });
-                            double length = Mathematics.computeLength(new double[] { current.getX(), current.getY() },
-                                    new double[] { other.getX(), other.getY() });
-                            graphics2D.drawString(String.format("%.2f", length), (int) textPosition[0],
+                            double length = current.distance(other);
+                            graphics2D.drawString(String.format("%.2f m", length / 10), (int) textPosition[0],
                                     (int) textPosition[1]);
                         }
                     }
@@ -132,6 +174,18 @@ public class JDrawerPanel extends JPanel {
         }
     }
 
+    private final void displaySurfaceInfos(Graphics graphics, final Polygon polygon, final Layer layer) {
+        final Point center = this.calculatePolygonCenter(polygon);
+        StringBuilder stringBuilder = new StringBuilder()
+                .append("Perimeter: ")
+                .append(layer.getSurface().calculatePerimeter())
+                .append("<br/>")
+                .append("Area: ")
+                .append(layer.getSurface().calculateArea());
+
+        graphics.drawString(stringBuilder.toString(), center.x, center.y);
+    }
+
     private final void fillIfRequired(Graphics graphics, final Layer layer) {
         LinkedList<Point> points = layer.getPoints();
         if (Objects.nonNull(points)) {
@@ -147,6 +201,7 @@ public class JDrawerPanel extends JPanel {
                                 polygon.addPoint(point.x, point.y);
                             });
                     graphics.fillPolygon(polygon);
+                    this.displaySurfaceInfos(graphics, polygon, layer);
                 }
             }
         }
@@ -158,8 +213,6 @@ public class JDrawerPanel extends JPanel {
             if (points.size() >= 3) {
                 Graphics2D graphics2d = (Graphics2D) graphics;
                 graphics2d.setColor(Color.WHITE);
-
-                final double arcRadius = 20.0; // Distance de l'arc de cercle
 
                 for (int index = 1; index < points.size() - 1; index++) {
                     final Point a = points.get(index - 1);
@@ -176,78 +229,18 @@ public class JDrawerPanel extends JPanel {
                             new double[] { b.getX(), b.getY() },
                             new double[] { c.getX(), c.getY() });
 
-                    final double[] startArcPointBA = Mathematics.computePoint(
-                            new double[] { b.getX(), b.getY() },
-                            new double[] { a.getX(), a.getY() },
-                            arcRadius);
 
-                    final double[] stopArcPointBC = Mathematics.computePoint(
-                            new double[] { b.getX(), b.getY() },
-                            new double[] { c.getX(), c.getY() },
-                            arcRadius);
-
-                    // Calcul des angles pour dessiner l'arc
-                    double startAngle = Math
-                            .toDegrees(Math.atan2(startArcPointBA[1] - b.getY(), startArcPointBA[0] - b.getX()));
-                    double endAngle = Math
-                            .toDegrees(Math.atan2(stopArcPointBC[1] - b.getY(), stopArcPointBC[0] - b.getX()));
-
-                    // Ajustement des angles pour garantir un tracé anti-horaire
-                    if (startAngle < 0) {
-                        startAngle += 360;
-                    }
-                    if (endAngle < 0) {
-                        endAngle += 360;
-                    }
-
-                    double arcAngle;
-                    if (endAngle >= startAngle) {
-                        arcAngle = endAngle - startAngle;
-                    } else {
-                        arcAngle = 360 - (startAngle - endAngle);
-                    }
-
-                    System.out.println(String.format("%s, %s", startAngle, endAngle));
-
-                    // Norme du vecteur pour l'arc
-
-                    // final int size = 5;
-                    // graphics2d.setColor(new Color(0, 255, 255));
-                    // graphics2d.drawOval((int) (startArcPointBA[0] - (size / 2)), (int)
-                    // (startArcPointBA[1] - (size / 2)), size,
-                    // size);
-                    // graphics2d.setColor(new Color(255, 0, 255));
-                    // graphics2d.drawOval((int) (stopArcPointBC[0] - (size / 2)), (int)
-                    // (stopArcPointBC[1] - (size / 2)), size,
-                    // size);
-
-                    // Dessin de l'arc
-                    // graphics2d.setColor(new Color(255, 255, 255, 128));
-                    // graphics2d.setStroke(new BasicStroke(2));
-                    // graphics2d.fillArc(
-                    // (int) (b.getX() - arcRadius),
-                    // (int) (b.getY() - arcRadius),
-                    // (int) (2 * arcRadius),
-                    // (int) (2 * arcRadius),
-                    // (int) startAngle,
-                    // (int) arcAngle);
 
                     final double[] acMiddle = Mathematics.computeMiddle(
                             new double[] { a.getX(), a.getY() },
                             new double[] { c.getX(), c.getY() });
 
-                    // graphics2d.drawOval((int) (acMiddle[0] - (size / 2)), (int) (acMiddle[1] -
-                    // (size / 2)), size,
-                    // size);
 
                     final double[] textPosition = Mathematics.computePoint(
                             new double[] { b.getX(), b.getY() },
                             acMiddle,
                             10);
 
-                    // graphics2d.drawString("A", a.x, a.y);
-                    // graphics2d.drawString("B", b.x, b.y);
-                    // graphics2d.drawString("C", c.x, c.y);
 
                     graphics2d.drawString(
                             String.format("%.2f° / %.2f°", innerAngleABCInDegrees, outerAngleABCInDegrees),
@@ -296,12 +289,14 @@ public class JDrawerPanel extends JPanel {
                     final Point clickedPoint = event.getPoint();
                     retrievePotentialSelectedCornerOnClick(clickedPoint)
                             .ifPresentOrElse((potentialSelectedCornerOnClick -> {
-                                if (cornerSpritesByLayer.get(selectedLayer.get()).getLast()
+                                if (cornerSpritesByLayer.get(layer).getLast()
                                         .equals(selectedCornerSprite.get())
-                                        && cornerSpritesByLayer.get(selectedLayer.get()).getFirst()
+                                        && cornerSpritesByLayer.get(layer).getFirst()
                                                 .equals(potentialSelectedCornerOnClick)) {
                                     createNewCorner(
-                                            cornerSpritesByLayer.get(selectedLayer.get()).getFirst().getPoint());
+                                            cornerSpritesByLayer.get(layer).getFirst().getPoint());
+
+                                    updateCadastrePlan(layer);
                                 } else {
                                     selectCornerSprite(potentialSelectedCornerOnClick);
                                 }
@@ -314,6 +309,47 @@ public class JDrawerPanel extends JPanel {
             }
         }
 
+        private void updateCadastrePlan(final Layer layer) {
+            final List<Segment> landSegments = new ArrayList<>();
+            final List<List<Segment>> buildingsSegments = new ArrayList<>();
+            // final List<Building> buildings = new ArrayList<>();
+            final List<Point> landVertices = new ArrayList<>();
+
+            List<Segment> segments = createSegments(layer.getPoints());
+
+            if (layer instanceof LandLayer) {
+                landSegments.addAll(segments);
+                landVertices.addAll(layer.getPoints());
+                final Land land = new Land(segments.toArray(new Segment[0]), landVertices);
+                final Parcel parcel = new Parcel(0, land);
+                final Section section = new Section("DEFAULT", parcel);
+                cadastralPlan.addSection(section);
+                selectedParcel = parcel;
+                layer.setSurface(land);
+            } else if (layer instanceof BuildingLayer) {
+                buildingsSegments.add(segments);
+                if (Objects.nonNull(selectedParcel)) {
+                    final Building building = new Building(segments.toArray(new Segment[0]), layer.getPoints());
+                    selectedParcel.land().addBuilding(building);
+                    layer.setSurface(building);
+
+                }
+            }
+        }
+
+    }
+
+    private List<Segment> createSegments(List<Point> points) {
+        List<Segment> segments = new ArrayList<>();
+        int size = points.size();
+
+        for (int index = 0; index < size; index++) {
+            Point from = points.get(index);
+            Point to = points.get((index + 1) % size);
+            segments.add(new Segment(from, to));
+        }
+
+        return segments;
     }
 
     private final class DrawerMouseMotionAdapter extends MouseAdapter {

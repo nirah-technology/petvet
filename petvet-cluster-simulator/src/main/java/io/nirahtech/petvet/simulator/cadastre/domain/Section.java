@@ -1,19 +1,52 @@
 package io.nirahtech.petvet.simulator.cadastre.domain;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
-public record Section(
-    String identifier,
-    Collection<Parcel> parcels
-) implements Surface, BuiltSurface {
+public final class Section implements Surface, BuiltSurface {
+    private final String identifier;
+    private final Collection<Parcel> parcels;
+
+    public Section(final String identifier, final Parcel defaultParcel, final Parcel... othersParcels) {
+        this.identifier = identifier;
+        this.parcels = new HashSet<>();
+        Objects.requireNonNull(defaultParcel);
+        this.parcels.add(defaultParcel);
+        if (Objects.nonNull(othersParcels)) {
+            for (Parcel parcel : othersParcels) {
+                this.parcels.add(parcel);
+            }
+        }
+    }
+
+    public String identifier() {
+        return this.identifier;
+    }
+
+    public void addParcel(final Parcel parcel) {
+        if (Objects.nonNull(parcel)) {
+            this.parcels.add(parcel);
+        }
+    }
+
+    public void removeParcel(final Parcel parcel) {
+        if (Objects.nonNull(parcel)) {
+            this.parcels.remove(parcel);
+        }
+    }
+
+    public Collection<Parcel> getParcels() {
+        return Collections.unmodifiableCollection(this.parcels);
+    }
 
     @Override
     public double calculateArea() {
         return parcels.stream()
-                      .mapToDouble(Parcel::calculateArea)
-                      .sum();
+                .mapToDouble(Parcel::calculateArea)
+                .sum();
     }
 
     @Override
@@ -22,7 +55,7 @@ public record Section(
         Set<Segment> commonSegments = new HashSet<>();
 
         for (Parcel parcel : parcels) {
-            for (Segment segment : parcel.land().sides()) {
+            for (Segment segment : parcel.land().getSides()) {
                 if (!uniqueSegments.add(segment)) {
                     commonSegments.add(segment);
                 }
@@ -30,11 +63,11 @@ public record Section(
         }
 
         double totalPerimeter = uniqueSegments.stream()
-                                              .mapToDouble(Segment::length)
-                                              .sum();
+                .mapToDouble(Segment::length)
+                .sum();
         double commonPerimeter = commonSegments.stream()
-                                               .mapToDouble(Segment::length)
-                                               .sum();
+                .mapToDouble(Segment::length)
+                .sum();
 
         return totalPerimeter - commonPerimeter;
     }
@@ -56,7 +89,7 @@ public record Section(
 
         // Collecter les segments uniques et communs entre les parcelles
         for (Parcel parcel : parcels) {
-            for (Segment segment : parcel.land().sides()) {
+            for (Segment segment : parcel.land().getSides()) {
                 if (!uniqueSegments.add(segment)) {
                     commonSegments.add(segment);
                 }
@@ -69,5 +102,9 @@ public record Section(
         }
 
         return builtPerimeter;
+    }
+
+    public boolean has(Parcel parcel) {
+        return this.parcels.contains(parcel);
     }
 }

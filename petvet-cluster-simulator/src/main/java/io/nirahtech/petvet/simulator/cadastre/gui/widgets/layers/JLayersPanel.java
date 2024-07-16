@@ -3,6 +3,8 @@ package io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -13,7 +15,13 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import io.nirahtech.petvet.simulator.cadastre.domain.Building;
 import io.nirahtech.petvet.simulator.cadastre.domain.CadastralPlan;
@@ -28,19 +36,73 @@ public class JLayersPanel extends JPanel {
     private final List<JLayerPanel> layersPanels = new ArrayList<>();
 
     private final AtomicReference<Layer> selectedLayer = new AtomicReference<>(null);
+    private final CadastralPlan cadastrePlan;
 
     private final JButton createButton;
+
+    final List<DefaultMutableTreeNode> sectionsNodes = new ArrayList<>();
+    final List<DefaultMutableTreeNode> parcelsNodes = new ArrayList<>();
+
+    private final JTree cadastreTree;
 
     private Consumer<Layer> onSelectedLayerEventListerner = null;
     private Consumer<Layer> onLockChangedOnLayerEventListener = null;
     private Consumer<Layer> onVisibilityChangedOnLayerEventListener = null;
     private Consumer<CadastralPlan> onCadastreCreatedEventLister = null;
 
-    public JLayersPanel() {
+    public JLayersPanel(final CadastralPlan cadastralPlan) {
         super(new BorderLayout());
 
         this.layers.add(new LandLayer(1));
         this.layers.add(new BuildingLayer(2));
+
+        this.cadastrePlan = cadastralPlan;
+
+        final DefaultMutableTreeNode cadastreTreeNode = new DefaultMutableTreeNode("Cadastre");
+        final DefaultMutableTreeNode defaultSectionTreeNode = new DefaultMutableTreeNode("Default Section");
+        final DefaultMutableTreeNode defaultParcelTreeNode = new DefaultMutableTreeNode("Default Parcel");
+
+        cadastreTreeNode.add(defaultSectionTreeNode);
+        defaultSectionTreeNode.add(defaultParcelTreeNode);
+        this.cadastreTree = new JTree(cadastreTreeNode);
+
+        sectionsNodes.add(defaultSectionTreeNode);
+        parcelsNodes.add(defaultParcelTreeNode);
+
+        this.cadastreTree.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    // Récupérer le chemin du nœud sélectionné
+                    TreePath path = cadastreTree.getPathForLocation(e.getX(), e.getY());
+                    if (path != null) {
+                        // Sélectionner le nœud au clic droit
+                        cadastreTree.setSelectionPath(path);
+
+                        final DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+                        JPopupMenu popupMenu = null;
+
+                        if (selectedNode == cadastreTreeNode) {
+                            popupMenu = createPopupMenuForCadastreActions();
+                        } else if ( sectionsNodes.contains(selectedNode)) { // selectedNode == defaultSectionTreeNode
+                            if (selectedNode == defaultSectionTreeNode) {
+                                popupMenu = createPopupMenuForSectionActions(false);
+                            } else {
+                                popupMenu = createPopupMenuForSectionActions(true);
+                            }
+                        } else if (parcelsNodes.contains(selectedNode)) {
+                            if (selectedNode != defaultParcelTreeNode) {
+                                popupMenu = createPopupMenuForParcelsActions();
+                            }
+                        }
+                        if (Objects.nonNull(popupMenu)) {
+                            popupMenu.show(cadastreTree, e.getX(), e.getY());
+                        }
+                    }
+                }
+            }
+        });
+
 
         this.layers.forEach(layer -> {
             final JLayerPanel layerPanel = new JLayerPanel(layer);
@@ -57,35 +119,12 @@ public class JLayersPanel extends JPanel {
         this.createButton = new JButton("Create");
 
         this.createButton.addActionListener(event -> {
-            final List<Segment> landSegments = new ArrayList<>();
-            final List<List<Segment>> buildingsSegments = new ArrayList<>();
-            final List<Building> buildings = new ArrayList<>();
-            final List<Point> landVertices = new ArrayList<>();
-            
-
-            for (Layer layer : layers) {
-                List<Segment> segments = createSegments(layer.getPoints());
-
-                if (layer instanceof LandLayer) {
-                    landSegments.addAll(segments);
-                    landVertices.addAll(layer.getPoints());
-                } else if (layer instanceof BuildingLayer) {
-                    buildingsSegments.add(segments);
-                    buildings.add(new Building(segments.toArray(new Segment[0]), layer.getPoints()));
-                }
-            }
-
-            final Land land = new Land(
-                    landSegments.toArray(new Segment[0]),
-                    landVertices,
-                    buildings.toArray(new Building[0]));
-            final Parcel parcel = new Parcel(1, land);
-            final Section section = new Section("A", List.of(parcel));
-            final CadastralPlan cadastralPlan = new CadastralPlan(List.of(section));
             if (Objects.nonNull(onCadastreCreatedEventLister)) {
                 onCadastreCreatedEventLister.accept(cadastralPlan);
             }
         });
+
+        this.add(this.cadastreTree, BorderLayout.CENTER);
 
         this.add(this.createButton, BorderLayout.SOUTH);
         this.propagateOnSelectedLayerEventListerner();
@@ -93,6 +132,63 @@ public class JLayersPanel extends JPanel {
         layersListPanel.repaint();
 
     }
+
+    
+
+    private JPopupMenu createPopupMenuForCadastreActions() {
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem createSectionMenuItem = new JMenuItem("Create new Section");
+        createSectionMenuItem.addActionListener(e -> {
+            // Action à effectuer lorsque l'élément du menu est sélectionné
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.cadastreTree.getLastSelectedPathComponent();
+            if (selectedNode != null) {
+                System.out.println("Node selected: " + selectedNode.getUserObject());
+            }
+        });
+        popupMenu.add(createSectionMenuItem);
+        return popupMenu;
+    }
+
+    private JPopupMenu createPopupMenuForSectionActions(final boolean allowDeletion) {
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        if (allowDeletion) {
+            JMenuItem deleteSectionMenuItem = new JMenuItem("Delete Section");
+            deleteSectionMenuItem.addActionListener(e -> {
+                // Action à effectuer lorsque l'élément du menu est sélectionné
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.cadastreTree.getLastSelectedPathComponent();
+                if (selectedNode != null) {
+                    System.out.println("Node selected: " + selectedNode.getUserObject());
+                }
+            });
+            popupMenu.add(deleteSectionMenuItem);
+        }
+        JMenuItem createParcelMenuItem = new JMenuItem("Create new Parcel");
+        createParcelMenuItem.addActionListener(e -> {
+            // Action à effectuer lorsque l'élément du menu est sélectionné
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.cadastreTree.getLastSelectedPathComponent();
+            if (selectedNode != null) {
+                System.out.println("Node selected: " + selectedNode.getUserObject());
+            }
+        });
+        popupMenu.add(createParcelMenuItem);
+        return popupMenu;
+    }
+
+    private JPopupMenu createPopupMenuForParcelsActions() {
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem deleteParcelMenuItem = new JMenuItem("Delete Parcel");
+        deleteParcelMenuItem.addActionListener(e -> {
+            // Action à effectuer lorsque l'élément du menu est sélectionné
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.cadastreTree.getLastSelectedPathComponent();
+            if (selectedNode != null) {
+                System.out.println("Node selected: " + selectedNode.getUserObject());
+            }
+        });
+        popupMenu.add(deleteParcelMenuItem);
+        return popupMenu;
+    }
+
 
     private List<Segment> createSegments(List<Point> points) {
         List<Segment> segments = new ArrayList<>();

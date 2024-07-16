@@ -2,13 +2,62 @@ package io.nirahtech.petvet.simulator.cadastre.domain;
 
 import java.awt.Point;
 import java.util.Collection;
-import java.util.Set;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
-public record Land(
-        Segment[] sides,
-        Collection<Point> vertices,
-        Building... buildings) implements Surface, BuiltSurface {
+public final class Land implements Surface, BuiltSurface {
+
+    private final Collection<Segment> sides;
+    private final Collection<Point> vertices;
+    private final Collection<Building> buildings;
+
+    public Land() {
+        this.sides = new HashSet<>();
+        this.vertices = new HashSet<>();
+        this.buildings = new HashSet<>();
+    }
+
+    public Land(final Segment[] sides, final Collection<Point> vertices) {
+        this();
+        for (Segment side : sides) {
+            this.sides.add(side);
+        }
+        this.vertices.addAll(vertices);
+    }
+
+    public void setSides(Collection<Segment> sides) {
+        this.sides.addAll(sides);
+    }
+    public void setVertices(Collection<Point> vertices) {
+        this.vertices.addAll(vertices);
+    }
+
+    public Collection<Building> getBuildings() {
+        return Collections.unmodifiableCollection(this.buildings);
+    }
+
+    public Collection<Segment> getSides() {
+        return Collections.unmodifiableCollection(this.sides);
+    }
+
+    public Collection<Point> getVertices() {
+        return Collections.unmodifiableCollection(this.vertices);
+    }
+
+
+    public void addBuilding(final Building building) {
+        if (Objects.nonNull(building)) {
+            this.buildings.add(building);
+        }
+    }
+
+    public void removeBuilding(final Building building) {
+        if (Objects.nonNull(building) && this.buildings.contains(building)) {
+            this.buildings.remove(building);
+        }
+    }
 
     @Override
     public double calculateArea() {

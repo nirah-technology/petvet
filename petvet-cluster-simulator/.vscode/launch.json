@@ -8,6 +8,13 @@
             "type": "java",
             "name": "App",
             "request": "launch",
+            "mainClass": "io.nirahtech.petvet.simulator.cadastre.App",
+            "projectName": "petvet-cluster-simulator"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
             "mainClass": "io.nirahtech.petvet.simulator.land.App",
             "projectName": "petvet-cluster-simulator"
         },

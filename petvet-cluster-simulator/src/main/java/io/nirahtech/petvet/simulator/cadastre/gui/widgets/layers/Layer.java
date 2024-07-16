@@ -5,6 +5,8 @@ import java.awt.Point;
 import java.util.LinkedList;
 import java.util.Optional;
 
+import io.nirahtech.petvet.simulator.cadastre.domain.Surface;
+
 public interface Layer {
     boolean isVisible();
     void hide();
@@ -25,4 +27,7 @@ public interface Layer {
 
     int getOrder();
     void setOrder(int newOrder);
+
+    Surface getSurface();
+    void setSurface(Surface surface);
 }
