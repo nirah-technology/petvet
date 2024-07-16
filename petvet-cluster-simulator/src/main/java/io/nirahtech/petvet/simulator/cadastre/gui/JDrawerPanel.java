@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.simulator.land.gui;
+package io.nirahtech.petvet.simulator.cadastre.gui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -21,10 +21,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import io.nirahtech.petvet.simulator.land.domain.Mathematics;
-import io.nirahtech.petvet.simulator.land.gui.widgets.layers.Layer;
+import io.nirahtech.petvet.simulator.cadastre.domain.Mathematics;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.Layer;
 
 public class JDrawerPanel extends JPanel {
+
+    private static final Color BACKGROUND_COLOR = new Color(200,200,200);
 
     private final SortedMap<Layer, LinkedList<CornerSprite>> cornerSpritesByLayer = new TreeMap<>(
             Comparator.comparingInt(Layer::getOrder));
@@ -35,7 +37,7 @@ public class JDrawerPanel extends JPanel {
     public JDrawerPanel() {
         super();
 
-        this.setBackground(new Color(0, 0, 0));
+        this.setBackground(BACKGROUND_COLOR);
         this.setFocusable(true);
 
         this.addMouseListener(new DrawerMouseAdapter());
@@ -259,7 +261,7 @@ public class JDrawerPanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics graphics) {
-        graphics.setColor(new Color(0, 0, 0));
+        graphics.setColor(BACKGROUND_COLOR);
         graphics.fillRect(0, 0, (int) this.getSize().getWidth(), (int) this.getSize().getHeight());
 
         this.cornerSpritesByLayer.entrySet().forEach(cornerSpriteByLayer -> {

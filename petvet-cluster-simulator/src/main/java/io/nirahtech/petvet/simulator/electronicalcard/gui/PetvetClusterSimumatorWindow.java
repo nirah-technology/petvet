@@ -14,7 +14,7 @@ import io.nirahtech.petvet.simulator.electronicalcard.gui.leftpanel.JTabbedMenuP
 public class PetvetClusterSimumatorWindow extends JFrame {
 
     private final JTabbedMenuPanel tabbedMenuPanel;
-    private final ClusterLandPanel clusterLandPanel;
+    private final JCartographyPanel cartographyPanel;
     private final NodeDetailPanel nodeDetailPanel;
     private final Cluster cluster;
 
@@ -31,33 +31,33 @@ public class PetvetClusterSimumatorWindow extends JFrame {
         this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
 
         this.tabbedMenuPanel = new JTabbedMenuPanel(configuration, cluster);
-        this.clusterLandPanel = new ClusterLandPanel(this.cluster);
+        this.cartographyPanel = new JCartographyPanel(this.cluster);
         this.nodeDetailPanel  = new NodeDetailPanel(this.cluster);
         
 
-        this.clusterLandPanel.setOnElectronicCardSelected((electronicCardSelected) -> {
+        this.cartographyPanel.setOnElectronicCardSelected((electronicCardSelected) -> {
             this.nodeDetailPanel.setElectronicCard(electronicCardSelected);
         });
 
-        this.clusterLandPanel.setOnElectronicCardMoved(() -> {
+        this.cartographyPanel.setOnElectronicCardMoved(() -> {
             this.nodeDetailPanel.updateSignalsStrenghts();
         });
 
         this.tabbedMenuPanel.setOnSelectionChangedEventListener(microController -> {
             this.nodeDetailPanel.setElectronicCard((ElectronicCard) microController);
-            this.clusterLandPanel.setSelectedMicroController(microController);
+            this.cartographyPanel.setSelectedMicroController(microController);
         });
 
-        this.clusterLandPanel.setEventListerOnElectronicCarCreated(electronicCard -> {
+        this.cartographyPanel.setEventListerOnElectronicCarCreated(electronicCard -> {
             this.tabbedMenuPanel.reload();
         });
 
-        this.tabbedMenuPanel.addOnPlotCreatedEventListener(land -> {
-            this.clusterLandPanel.setLand(land);
+        this.tabbedMenuPanel.addOnPlotCreatedEventListener(cadastralPlan -> {
+            this.cartographyPanel.setCadastralPlan(cadastralPlan);
         });
 
         this.add(this.tabbedMenuPanel, BorderLayout.WEST);
-        this.add(this.clusterLandPanel, BorderLayout.CENTER);
+        this.add(this.cartographyPanel, BorderLayout.CENTER);
         this.add(this.nodeDetailPanel, BorderLayout.EAST);
         
     }

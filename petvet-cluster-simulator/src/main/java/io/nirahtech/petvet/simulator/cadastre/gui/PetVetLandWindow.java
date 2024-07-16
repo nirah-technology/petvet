@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.simulator.land.gui;
+package io.nirahtech.petvet.simulator.cadastre.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 
 import javax.swing.JFrame;
 
-import io.nirahtech.petvet.simulator.land.domain.Land;
-import io.nirahtech.petvet.simulator.land.gui.widgets.layers.JLayersPanel;
+import io.nirahtech.petvet.simulator.cadastre.domain.CadastralPlan;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.JLayersPanel;
 
 public class PetVetLandWindow extends JFrame {
 
@@ -45,7 +45,7 @@ public class PetVetLandWindow extends JFrame {
     }
 
 
-    public final void setOnCadastreCreatedEventLister(Consumer<Land> onCadastreCreatedEventLister) {
+    public final void setOnCadastreCreatedEventLister(Consumer<CadastralPlan> onCadastreCreatedEventLister) {
         this.layersPanel.setOnCadastreCreatedEventLister(onCadastreCreatedEventLister);
     }
 }

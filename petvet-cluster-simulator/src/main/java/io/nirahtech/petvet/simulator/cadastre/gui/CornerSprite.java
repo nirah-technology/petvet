@@ -1,11 +1,11 @@
-package io.nirahtech.petvet.simulator.land.gui;
+package io.nirahtech.petvet.simulator.cadastre.gui;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import io.nirahtech.petvet.simulator.land.gui.widgets.layers.Layer;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.Layer;
 
 public final class CornerSprite {
     private static final int CORNER_RADIUS = 10;

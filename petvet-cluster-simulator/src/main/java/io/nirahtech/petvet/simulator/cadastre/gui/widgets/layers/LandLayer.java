@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.simulator.land.gui.widgets.layers;
+package io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers;
 
 import java.awt.Color;
 

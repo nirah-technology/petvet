@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.simulator.land.gui;
+package io.nirahtech.petvet.simulator.cadastre.gui;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;

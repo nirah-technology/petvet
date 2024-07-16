@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.simulator.land.infrastructure.out.adapters;
+package io.nirahtech.petvet.simulator.cadastre.infrastructure.out.adapters;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import io.nirahtech.petvet.simulator.land.infrastructure.out.ports.CadastresWebService;
+import io.nirahtech.petvet.simulator.cadastre.infrastructure.out.ports.CadastresWebService;
 
 public class CadastresDataGouvFrWebService implements CadastresWebService {
 

@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.simulator.land;
+package io.nirahtech.petvet.simulator.cadastre;
 
 import java.io.IOException;
 
@@ -7,8 +7,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 
-import io.nirahtech.petvet.simulator.land.gui.PetVetLandWindow;
-import io.nirahtech.petvet.simulator.land.infrastructure.out.adapters.CadastresDataGouvFrWebService;
+import io.nirahtech.petvet.simulator.cadastre.gui.PetVetLandWindow;
+import io.nirahtech.petvet.simulator.cadastre.infrastructure.out.adapters.CadastresDataGouvFrWebService;
 
 public class App {
 

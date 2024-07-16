@@ -8,10 +8,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
+import io.nirahtech.petvet.simulator.cadastre.domain.CadastralPlan;
 import io.nirahtech.petvet.simulator.electronicalcard.Cluster;
 import io.nirahtech.petvet.simulator.electronicalcard.Configuration;
 import io.nirahtech.petvet.simulator.electronicalcard.MicroController;
-import io.nirahtech.petvet.simulator.land.domain.Land;
 
 public final class JTabbedMenuPanel extends JPanel {
 
@@ -54,9 +54,9 @@ public final class JTabbedMenuPanel extends JPanel {
 
 
     /**
-     * @param onPlotCreatedEventListener the onPlotCreatedEventListener to set
+     * @param onCadastralPlanCreatedEventListener the onCadastralPlanCreatedEventListener to set
      */
-    public void addOnPlotCreatedEventListener(Consumer<Land> onPlotCreatedEventListener) {
-        this.cadastreTabPanel.addOnPlotCreatedEventListener(onPlotCreatedEventListener);
+    public void addOnPlotCreatedEventListener(Consumer<CadastralPlan> onCadastralPlanCreatedEventListener) {
+        this.cadastreTabPanel.addOnCadastralPlanCreatedEventListener(onCadastralPlanCreatedEventListener);
     }
 }

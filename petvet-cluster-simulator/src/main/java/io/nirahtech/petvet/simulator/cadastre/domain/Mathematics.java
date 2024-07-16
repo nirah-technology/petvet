@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.simulator.land.domain;
+package io.nirahtech.petvet.simulator.cadastre.domain;
 
 public final class Mathematics {
     private Mathematics() {

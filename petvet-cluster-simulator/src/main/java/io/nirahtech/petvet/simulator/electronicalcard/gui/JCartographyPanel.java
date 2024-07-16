@@ -26,14 +26,15 @@ import java.util.stream.Stream;
 import javax.swing.JPanel;
 
 import io.nirahtech.petvet.messaging.messages.MessageType;
+import io.nirahtech.petvet.simulator.cadastre.domain.CadastralPlan;
+import io.nirahtech.petvet.simulator.cadastre.domain.Land;
 import io.nirahtech.petvet.simulator.electronicalcard.Cluster;
 import io.nirahtech.petvet.simulator.electronicalcard.ElectronicCard;
 import io.nirahtech.petvet.simulator.electronicalcard.MicroController;
 import io.nirahtech.petvet.simulator.electronicalcard.gui.widgets.JCrossDirectionPanel;
 import io.nirahtech.petvet.simulator.electronicalcard.gui.widgets.JZoomPanel;
-import io.nirahtech.petvet.simulator.land.domain.Land;
 
-public class ClusterLandPanel extends JPanel {
+public class JCartographyPanel extends JPanel {
     private static final int MOVE_STEP = 10;
 
     private final Set<ElectronicCardSprite> electronicCardSprites = new HashSet<>();
@@ -47,12 +48,12 @@ public class ClusterLandPanel extends JPanel {
     private AtomicInteger offsetX = new AtomicInteger(0);
     private AtomicInteger offsetY = new AtomicInteger(0);
 
-    private Land land = null;
+    private CadastralPlan cadastralPlan = null;
     
     private final Map<ElectronicCardSprite, Map<ElectronicCardSprite, Float>> detectedSignalsStrenghtsBySprite = new HashMap<>();
     private final Cluster cluster;
 
-    ClusterLandPanel(final Cluster cluster) {
+    JCartographyPanel(final Cluster cluster) {
         super(new BorderLayout());
         this.setBackground(Color.BLACK);
         this.cluster = cluster;
@@ -68,6 +69,8 @@ public class ClusterLandPanel extends JPanel {
 
         crossDirectionPanel.setOnLeftButtonPressedEventListener(() -> {
             this.offsetX.addAndGet(MOVE_STEP);
+
+
             this.revalidate();
             this.repaint();
         });
@@ -319,25 +322,39 @@ public class ClusterLandPanel extends JPanel {
         return potentialSelectedChipBoard;
     }
 
-
-    private final void drawLand(Graphics graphics) {
-        Polygon polygon = new Polygon();
-        Stream.of(this.land.points()).forEach(segment -> {
-            polygon.addPoint(segment.from().x + offsetX.get(), segment.from().y + offsetY.get());
-            polygon.addPoint(segment.to().x + offsetX.get(), segment.to().y + offsetY.get());
-        });
+    private final void drawLands(Graphics graphics) {
         graphics.setColor(new Color(77 , 111 , 57));
-        graphics.fillPolygon(polygon);
-        graphics.setColor(new Color(145, 65, 47));
-        polygon.reset();
-        Stream.of(this.land.buildings()).forEach(building -> {
-            Stream.of(building.points()).forEach(segment -> {
-                polygon.addPoint(segment.from().x + offsetX.get(), segment.from().y + offsetY.get());
-                polygon.addPoint(segment.to().x + offsetX.get(), segment.to().y + offsetY.get());
+        this.cadastralPlan.sections().forEach(section -> {
+            section.parcels().forEach(parcel -> {
+                Polygon polygon = new Polygon();
+                Stream.of(parcel.land().sides()).forEach(segment -> {
+                    polygon.addPoint(segment.from().x + offsetX.get(), segment.from().y + offsetY.get());
+                    polygon.addPoint(segment.to().x + offsetX.get(), segment.to().y + offsetY.get());
+                });
+                graphics.fillPolygon(polygon);
             });
-            graphics.fillPolygon(polygon);
-
         });
+    }
+
+    private final void drawBuildings(Graphics graphics) {
+        graphics.setColor(new Color(145, 65, 47));
+        this.cadastralPlan.sections().forEach(section -> {
+            section.parcels().forEach(parcel -> {
+                Stream.of(parcel.land().buildings()).forEach(building -> {
+                    Polygon polygon = new Polygon();
+                    Stream.of(building.sides()).forEach(segment -> {
+                        polygon.addPoint(segment.from().x + offsetX.get(), segment.from().y + offsetY.get());
+                        polygon.addPoint(segment.to().x + offsetX.get(), segment.to().y + offsetY.get());
+                    });
+                    graphics.fillPolygon(polygon);
+                });
+            });
+        });
+    }
+
+    private final void drawCadastralPlan(Graphics graphics) {
+        this.drawLands(graphics);
+        this.drawBuildings(graphics);
     }
 
     @Override
@@ -345,8 +362,8 @@ public class ClusterLandPanel extends JPanel {
         super.paintComponent(graphics);
         setBackground(Color.BLACK);
 
-        if (Objects.nonNull(this.land)) {
-            this.drawLand(graphics);
+        if (Objects.nonNull(this.cadastralPlan)) {
+            this.drawCadastralPlan(graphics);
         }
 
         final Graphics2D graphics2D = (Graphics2D) graphics.create();
@@ -384,11 +401,9 @@ public class ClusterLandPanel extends JPanel {
         }
     }
 
-    /**
-     * @param land the land to set
-     */
-    public void setLand(Land land) {
-        this.land = land;
+    
+    public void setCadastralPlan(CadastralPlan cadastralPlan) {
+        this.cadastralPlan = cadastralPlan;
         this.revalidate();
         this.repaint();
     }

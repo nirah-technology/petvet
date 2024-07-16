@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.simulator.land.infrastructure.out.ports;
+package io.nirahtech.petvet.simulator.cadastre.infrastructure.out.ports;
 
 import java.io.IOException;
 import java.util.Map;

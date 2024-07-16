@@ -9,15 +9,15 @@ import java.util.function.Consumer;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import io.nirahtech.petvet.simulator.land.domain.Land;
-import io.nirahtech.petvet.simulator.land.gui.PetVetLandWindow;
+import io.nirahtech.petvet.simulator.cadastre.domain.CadastralPlan;
+import io.nirahtech.petvet.simulator.cadastre.gui.PetVetLandWindow;
 
 final class JCadastreTabPanel extends JPanel {
 
     private final JButton createCadastreButton;
-    private final AtomicReference<Land> landReference = new AtomicReference<>();
+    private final AtomicReference<CadastralPlan> cadastralPlanReference = new AtomicReference<>();
 
-    private Consumer<Land> onPlotCreatedEventListener = null;
+    private Consumer<CadastralPlan> onCadastralPlanCreatedEventListener = null;
 
     JCadastreTabPanel() {
         super();
@@ -27,12 +27,12 @@ final class JCadastreTabPanel extends JPanel {
         this.createCadastreButton.addActionListener(event -> {
             final PetVetLandWindow petvetLandWindow = new PetVetLandWindow();
             petvetLandWindow.setVisible(true);
-            petvetLandWindow.setOnCadastreCreatedEventLister(land -> {
+            petvetLandWindow.setOnCadastreCreatedEventLister(cadastralPlan -> {
                 petvetLandWindow.setVisible(false);
                 petvetLandWindow.dispose();
-                landReference.set(land);
-                if (Objects.nonNull(onPlotCreatedEventListener)) {
-                    onPlotCreatedEventListener.accept(land);
+                cadastralPlanReference.set(cadastralPlan);
+                if (Objects.nonNull(onCadastralPlanCreatedEventListener)) {
+                    onCadastralPlanCreatedEventListener.accept(cadastralPlan);
                 }
             });
         });
@@ -40,14 +40,14 @@ final class JCadastreTabPanel extends JPanel {
         this.add(this.createCadastreButton, BorderLayout.NORTH);
     }
 
-    public Optional<Land> getLand() {
-        return Optional.ofNullable(this.landReference.get());
+    public Optional<CadastralPlan> getLand() {
+        return Optional.ofNullable(this.cadastralPlanReference.get());
     }
 
     /**
      * @param onPlotCreatedEventListener the onPlotCreatedEventListener to set
      */
-    public void addOnPlotCreatedEventListener(Consumer<Land> onPlotCreatedEventListener) {
-        this.onPlotCreatedEventListener = onPlotCreatedEventListener;
+    public void addOnCadastralPlanCreatedEventListener(Consumer<CadastralPlan> onCadastralPlanCreatedEventListener) {
+        this.onCadastralPlanCreatedEventListener = onCadastralPlanCreatedEventListener;
     }
 }

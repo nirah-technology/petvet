@@ -1,4 +1,4 @@
-package io.nirahtech.petvet.simulator.land.gui.widgets.layers;
+package io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -15,9 +15,12 @@ import java.util.function.Consumer;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import io.nirahtech.petvet.simulator.land.domain.Building;
-import io.nirahtech.petvet.simulator.land.domain.Land;
-import io.nirahtech.petvet.simulator.land.domain.Segment;
+import io.nirahtech.petvet.simulator.cadastre.domain.Building;
+import io.nirahtech.petvet.simulator.cadastre.domain.CadastralPlan;
+import io.nirahtech.petvet.simulator.cadastre.domain.Land;
+import io.nirahtech.petvet.simulator.cadastre.domain.Parcel;
+import io.nirahtech.petvet.simulator.cadastre.domain.Section;
+import io.nirahtech.petvet.simulator.cadastre.domain.Segment;
 
 public class JLayersPanel extends JPanel {
 
@@ -31,7 +34,7 @@ public class JLayersPanel extends JPanel {
     private Consumer<Layer> onSelectedLayerEventListerner = null;
     private Consumer<Layer> onLockChangedOnLayerEventListener = null;
     private Consumer<Layer> onVisibilityChangedOnLayerEventListener = null;
-    private Consumer<Land> onCadastreCreatedEventLister = null;
+    private Consumer<CadastralPlan> onCadastreCreatedEventLister = null;
 
     public JLayersPanel() {
         super(new BorderLayout());
@@ -57,24 +60,30 @@ public class JLayersPanel extends JPanel {
             final List<Segment> landSegments = new ArrayList<>();
             final List<List<Segment>> buildingsSegments = new ArrayList<>();
             final List<Building> buildings = new ArrayList<>();
+            final List<Point> landVertices = new ArrayList<>();
+            
 
             for (Layer layer : layers) {
                 List<Segment> segments = createSegments(layer.getPoints());
 
                 if (layer instanceof LandLayer) {
                     landSegments.addAll(segments);
+                    landVertices.addAll(layer.getPoints());
                 } else if (layer instanceof BuildingLayer) {
                     buildingsSegments.add(segments);
-                    buildings.add(new Building(segments.toArray(new Segment[0])));
+                    buildings.add(new Building(segments.toArray(new Segment[0]), layer.getPoints()));
                 }
             }
 
             final Land land = new Land(
                     landSegments.toArray(new Segment[0]),
+                    landVertices,
                     buildings.toArray(new Building[0]));
-
+            final Parcel parcel = new Parcel(1, land);
+            final Section section = new Section("A", List.of(parcel));
+            final CadastralPlan cadastralPlan = new CadastralPlan(List.of(section));
             if (Objects.nonNull(onCadastreCreatedEventLister)) {
-                onCadastreCreatedEventLister.accept(land);
+                onCadastreCreatedEventLister.accept(cadastralPlan);
             }
         });
 
@@ -130,7 +139,7 @@ public class JLayersPanel extends JPanel {
         this.repaint();
     }
 
-    public final void setOnCadastreCreatedEventLister(Consumer<Land> onCadastreCreatedEventLister) {
+    public final void setOnCadastreCreatedEventLister(Consumer<CadastralPlan> onCadastreCreatedEventLister) {
         this.onCadastreCreatedEventLister = onCadastreCreatedEventLister;
     }
 
