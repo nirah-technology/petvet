@@ -72,11 +72,13 @@ public class JDrawerPanel extends JPanel {
 
     public void setSelectedLayer(Layer layer) {
         this.selectedLayer.set(layer);
-        this.cornerSpritesByLayer.putIfAbsent(layer, new LinkedList<>());
-        layer.getPoints().forEach(point -> {
-            final CornerSprite cornerSprite = new CornerSprite(point, layer);
-            this.cornerSpritesByLayer.get(layer).add(cornerSprite);
-        });
+        if (Objects.nonNull(layer)) {
+            this.cornerSpritesByLayer.putIfAbsent(layer, new LinkedList<>());
+            layer.getPoints().forEach(point -> {
+                final CornerSprite cornerSprite = new CornerSprite(point, layer);
+                this.cornerSpritesByLayer.get(layer).add(cornerSprite);
+            });
+        }
         revalidate();
         repaint();
     }
@@ -329,7 +331,9 @@ public class JDrawerPanel extends JPanel {
             } else if (layer instanceof BuildingLayer) {
                 buildingsSegments.add(segments);
                 if (Objects.nonNull(selectedParcel)) {
-                    final Building building = new Building(segments.toArray(new Segment[0]), layer.getPoints());
+                    final Building building = new Building();
+                    building.setSides(segments);
+                    building.setVertices(layer.getPoints());
                     selectedParcel.land().addBuilding(building);
                     layer.setSurface(building);
 
@@ -377,7 +381,7 @@ public class JDrawerPanel extends JPanel {
             final Point mousePosition = event.getPoint();
             if (Objects.nonNull(selectedCornerSprite.get())) {
                 final Layer layer = selectedLayer.get();
-                if (layer.isVisible() && !layer.isLocked()) {
+                if (Objects.nonNull(layer) && layer.isVisible() && !layer.isLocked()) {
                     selectedCornerSprite.get().getPoint().setLocation(mousePosition);
                     repaint();
                 }
@@ -391,7 +395,7 @@ public class JDrawerPanel extends JPanel {
 
         private final void deleteSelectedPoint() {
             final Layer layer = selectedLayer.get();
-            if (layer.isVisible() && !layer.isLocked()) {
+            if (Objects.nonNull(layer) && layer.isVisible() && !layer.isLocked()) {
                 final CornerSprite cornerSpriteToDelete = selectedCornerSprite.get();
                 if (cornerSpritesByLayer.get(layer).size() > 1) {
                     final int indexToDelete = cornerSpritesByLayer.get(layer).indexOf(cornerSpriteToDelete);

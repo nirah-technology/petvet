@@ -12,7 +12,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import javax.swing.Icon;
@@ -30,11 +32,14 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import io.nirahtech.petvet.simulator.cadastre.domain.Building;
 import io.nirahtech.petvet.simulator.cadastre.domain.CadastralPlan;
 import io.nirahtech.petvet.simulator.cadastre.domain.Land;
 import io.nirahtech.petvet.simulator.cadastre.domain.Parcel;
 import io.nirahtech.petvet.simulator.cadastre.domain.Section;
 import io.nirahtech.petvet.simulator.cadastre.domain.Surface;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.BuildingLayer;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.LandLayer;
 import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.Layer;
 
 public class JCadastrePlanTree extends JPanel {
@@ -43,12 +48,16 @@ public class JCadastrePlanTree extends JPanel {
 
     private final Map<Section, DefaultMutableTreeNode> sectionsNodes = new HashMap<>();
     private final Map<Parcel, DefaultMutableTreeNode> parcelsNodes = new HashMap<>();
+    private final Map<Land, DefaultMutableTreeNode> landsNodes = new HashMap<>();
+    private final Map<Building, DefaultMutableTreeNode> buildingsNodes = new HashMap<>();
 
     private final DefaultMutableTreeNode root;
     private final DefaultTreeModel model;
     private final JTree tree;
 
     private final Map<Surface, Layer> layersBySurface = new HashMap<>();
+
+    private Consumer<Layer> onSelectedLayerChanged = null;
 
     public JCadastrePlanTree(final CadastralPlan cadastralPlan) {
         super();
@@ -72,7 +81,7 @@ public class JCadastrePlanTree extends JPanel {
             public void mousePressed(MouseEvent e) {
                 if (SwingUtilities.isRightMouseButton(e)) {
                     // Récupérer le chemin du nœud sélectionné
-                    TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+                    final TreePath path = tree.getPathForLocation(e.getX(), e.getY());
                     if (path != null) {
                         // Sélectionner le nœud au clic droit
                         tree.setSelectionPath(path);
@@ -83,21 +92,31 @@ public class JCadastrePlanTree extends JPanel {
 
                         if (selectedNode == root) {
                             popupMenu = createPopupMenuForCadastreActions();
-                        } else if (sectionsNodes.containsValue(selectedNode)) { // selectedNode ==
-                                                                                // defaultSectionTreeNode
-                            // if (selectedNode == defaultSectionTreeNode) {
-                            // popupMenu = createPopupMenuForSectionActions(false);
-                            // } else {
-                            // }
+                        } else if (sectionsNodes.containsValue(selectedNode)) {
                             popupMenu = createPopupMenuForSectionActions(true);
                         } else if (parcelsNodes.containsValue(selectedNode)) {
-                            // if (selectedNode != defaultParcelTreeNode) {
-                            // }
                             popupMenu = createPopupMenuForParcelsActions();
+                        } else if (buildingsNodes.containsValue(selectedNode)) {
+                            popupMenu = createPopupMenuForBuildingActions();
                         }
                         if (Objects.nonNull(popupMenu)) {
                             popupMenu.show(tree, e.getX(), e.getY());
                         }
+                    }
+                } else if (SwingUtilities.isLeftMouseButton(e)) {
+                    final TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+                    if (path != null) {
+                        final DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+                        retriveLayerByTreeNode(selectedNode).ifPresentOrElse(layer -> {
+                            if (Objects.nonNull(onSelectedLayerChanged)) {
+                                onSelectedLayerChanged.accept(layer);
+                            }
+                        }, () -> {
+                            if (Objects.nonNull(onSelectedLayerChanged)) {
+                                onSelectedLayerChanged.accept(null);
+                            }
+                        });
+                        
                     }
                 }
             }
@@ -116,10 +135,36 @@ public class JCadastrePlanTree extends JPanel {
                 final Section section = new Section(UUID.randomUUID().toString().split("-")[0], parcel);
                 this.cadastralPlan.addSection(section);
                 this.reloadTree();
-                System.out.println("Node selected: " + selectedNode.getUserObject());
             }
         });
         popupMenu.add(createSectionMenuItem);
+        return popupMenu;
+    }
+
+    private JPopupMenu createPopupMenuForBuildingActions() {
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem deleteBuildingMenuItem = new JMenuItem("Delete Building");
+        deleteBuildingMenuItem.addActionListener(e -> {
+            // Action à effectuer lorsque l'élément du menu est sélectionné
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
+            if (selectedNode != null) {
+                this.buildingsNodes.entrySet().stream().filter(set -> set.getValue().equals(selectedNode))
+                            .findFirst().ifPresent(pair -> {
+                                final Building buildingToDestroy = pair.getKey();
+                                cadastralPlan.getSections().forEach(section -> {
+                                    section.getParcels().forEach(parcel -> {
+                                        parcel.land().getBuildings().forEach(building -> {
+                                            if (building == buildingToDestroy) {
+                                                parcel.land().removeBuilding(buildingToDestroy);
+                                            }
+                                        });
+                                    });
+                                });
+                            });
+                this.reloadTree();
+            }
+        });
+        popupMenu.add(deleteBuildingMenuItem);
         return popupMenu;
     }
 
@@ -177,7 +222,22 @@ public class JCadastrePlanTree extends JPanel {
                 this.reloadTree();
             }
         });
+        JMenuItem addBuildingMenuItem = new JMenuItem("Add Building");
+        addBuildingMenuItem.addActionListener(e -> {
+            // Action à effectuer lorsque l'élément du menu est sélectionné
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
+            if (selectedNode != null) {
+                this.parcelsNodes.entrySet().stream().filter(set -> set.getValue().equals(selectedNode)).findFirst()
+                        .ifPresent(pair -> {
+                            final Parcel parcel = pair.getKey();
+                            final Building building = new Building();
+                            parcel.land().addBuilding(building);
+                        });
+                this.reloadTree();
+            }
+        });
         popupMenu.add(deleteParcelMenuItem);
+        popupMenu.add(addBuildingMenuItem);
         return popupMenu;
     }
 
@@ -185,10 +245,11 @@ public class JCadastrePlanTree extends JPanel {
         this.root.removeAllChildren();
         this.sectionsNodes.clear();
         this.parcelsNodes.clear();
+        this.landsNodes.clear();
+        this.buildingsNodes.clear();
 
         // Ajouter toutes les sections et leurs parcelles
         for (Section section : this.cadastralPlan.getSections()) {
-            System.out.println("Section to add in tree: " + section.identifier());
             DefaultMutableTreeNode sectionNode = new DefaultMutableTreeNode("Section " + section.identifier());
             this.sectionsNodes.put(section, sectionNode);
             root.add(sectionNode);
@@ -198,18 +259,17 @@ public class JCadastrePlanTree extends JPanel {
                 this.parcelsNodes.put(parcel, parcelNode);
                 sectionNode.add(parcelNode);
 
-                // Ceci représente un calque.
-                DefaultMutableTreeNode buildingNode = new DefaultMutableTreeNode("Building");
-                parcelNode.add(buildingNode);
-
-                // Ceci représente un calque.
                 DefaultMutableTreeNode landNode = new DefaultMutableTreeNode("Land");
+                this.landsNodes.put(parcel.land(), landNode);
+                this.layersBySurface.putIfAbsent(parcel.land(), new LandLayer(1));
                 parcelNode.add(landNode);
 
-                // for (Building building : parcel.land().getBuildings()) {
-                // DefaultMutableTreeNode buildingNode = new DefaultMutableTreeNode("Building");
-                // parcelNode.add(buildingNode);
-                // }
+                for (Building building : parcel.land().getBuildings()) {
+                    DefaultMutableTreeNode buildingNode = new DefaultMutableTreeNode("Building");
+                    this.buildingsNodes.put(building, buildingNode);
+                    this.layersBySurface.putIfAbsent(building, new BuildingLayer(parcel.land().getBuildings().size()+2));
+                    parcelNode.add(buildingNode);
+                }
             }
         }
         this.model.reload();
@@ -218,10 +278,40 @@ public class JCadastrePlanTree extends JPanel {
         this.expandAllNodes();
     }
 
+    private final Optional<Layer> retriveLayerByTreeNode(DefaultMutableTreeNode treeNode) {
+        final AtomicReference<Layer> layerFound = new AtomicReference<>(null);
+
+        landsNodes.entrySet()
+                .stream()
+                .filter(treeNodeInCache -> treeNodeInCache.getValue() == treeNode)
+                .findFirst()
+                .ifPresentOrElse(treeNodeFound -> {
+                    if (this.layersBySurface.containsKey(treeNodeFound.getKey())) {
+                        layerFound.set(this.layersBySurface.get(treeNodeFound.getKey()));
+                    }
+        }, () -> {
+            buildingsNodes.entrySet()
+                    .stream()
+                    .filter(treeNodeInCache -> treeNodeInCache.getValue() == treeNode)
+                    .findFirst()
+                    .ifPresent(treeNodeFound -> {
+                        if (this.layersBySurface.containsKey(treeNodeFound.getKey())) {
+                            layerFound.set(this.layersBySurface.get(treeNodeFound.getKey()));
+                        }
+                    });
+        });
+
+        return Optional.ofNullable(layerFound.get());
+    }
+
     private final void expandAllNodes() {
         for (int i = 0; i < this.tree.getRowCount(); i++) {
             this.tree.expandRow(i);
         }
+    }
+
+    public final void addOnSelectedLayerChanged(final Consumer<Layer> onSelectedLayerChanged) {
+        this.onSelectedLayerChanged = onSelectedLayerChanged;
     }
 
     private final class JCadastrePlanTreeCellRenderer extends DefaultTreeCellRenderer {
@@ -323,7 +413,7 @@ public class JCadastrePlanTree extends JPanel {
                 setForeground(Color.BLACK);
             }
 
-            return new JCadastrePlanItemPanel(this, value, null);
+            return new JCadastrePlanItemPanel(this, node, null);
         }
 
     }
@@ -341,7 +431,7 @@ public class JCadastrePlanTree extends JPanel {
 
         private final Layer layer;
 
-        private JCadastrePlanItemPanel(DefaultTreeCellRenderer renderer, Object value, final Layer layer) {
+        private JCadastrePlanItemPanel(DefaultTreeCellRenderer renderer, DefaultMutableTreeNode node, final Layer layer) {
             super(new BorderLayout());
             this.setFocusable(true);
             this.layer = layer;

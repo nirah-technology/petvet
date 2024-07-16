@@ -21,13 +21,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import javax.swing.JPanel;
 
 import io.nirahtech.petvet.messaging.messages.MessageType;
 import io.nirahtech.petvet.simulator.cadastre.domain.CadastralPlan;
-import io.nirahtech.petvet.simulator.cadastre.domain.Land;
 import io.nirahtech.petvet.simulator.electronicalcard.Cluster;
 import io.nirahtech.petvet.simulator.electronicalcard.ElectronicCard;
 import io.nirahtech.petvet.simulator.electronicalcard.MicroController;
@@ -338,7 +336,7 @@ public class JCartographyPanel extends JPanel {
             section.getParcels().forEach(parcel -> {
                 parcel.land().getBuildings().forEach(building -> {
                     Polygon polygon = new Polygon();
-                    Stream.of(building.sides()).forEach(segment -> {
+                    building.getSides().forEach(segment -> {
                         polygon.addPoint(segment.from().x + offsetX.get(), segment.from().y + offsetY.get());
                         polygon.addPoint(segment.to().x + offsetX.get(), segment.to().y + offsetY.get());
                     });

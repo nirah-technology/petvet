@@ -105,7 +105,7 @@ public final class Land implements Surface, BuiltSurface {
 
             // Vérifier si le segment appartient à un des bâtiments
             for (Building building : buildings) {
-                for (Segment buildingSegment : building.sides()) {
+                for (Segment buildingSegment : building.getSides()) {
                     if (segment.equals(buildingSegment) && !countedSegments.contains(segment)) {
                         segmentBelongsToBuilding = true;
                         countedSegments.add(segment);

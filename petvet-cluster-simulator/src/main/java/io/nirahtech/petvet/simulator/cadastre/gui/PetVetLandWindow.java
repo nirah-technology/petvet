@@ -20,7 +20,6 @@ public class PetVetLandWindow extends JFrame {
         super("PetVet : Land Simulator");
         this.setLayout(new BorderLayout());
         this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
 
         this.cadastralPlan = new CadastralPlan();
@@ -44,7 +43,14 @@ public class PetVetLandWindow extends JFrame {
 
 
         this.add(this.drawerPanel, BorderLayout.CENTER);
-        this.add(new JCadastrePlanTree(cadastralPlan), BorderLayout.EAST);
+
+        final JCadastrePlanTree cadastrePlanTree =new JCadastrePlanTree(cadastralPlan);
+        cadastrePlanTree.addOnSelectedLayerChanged(layer -> {
+            this.drawerPanel.setSelectedLayer(layer);
+            this.layersPanel.setSelectedLayer(layer);
+        });
+
+        this.add(cadastrePlanTree, BorderLayout.EAST);
 
     }
 
