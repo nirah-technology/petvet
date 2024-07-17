@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 public final class Section implements Surface, BuiltSurface {
     private final String identifier;
@@ -30,6 +31,12 @@ public final class Section implements Surface, BuiltSurface {
         if (Objects.nonNull(parcel)) {
             this.parcels.add(parcel);
         }
+    }
+
+    public Parcel createNewParcel() {
+        final Parcel parcel = new Parcel(0, new Land());
+        this.addParcel(parcel);
+        return parcel;
     }
 
     public void removeParcel(final Parcel parcel) {

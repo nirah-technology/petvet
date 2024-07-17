@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.UUID;
 
 public final class CadastralPlan implements Surface, BuiltSurface {
     private final Collection<Section> sections;
@@ -16,6 +17,13 @@ public final class CadastralPlan implements Surface, BuiltSurface {
         if (Objects.nonNull(section)) {
             this.sections.add(section);
         }
+    }
+
+    public Section createNewSection() {
+        final Parcel parcel = new Parcel(0, new Land());
+        final Section section = new Section(UUID.randomUUID().toString().split("-")[0], parcel);
+        this.addSection(section);
+        return section;
     }
 
     public void removeSection(final Section section) {

@@ -54,7 +54,7 @@ final class JCadastreLayerPanel extends JPanel {
         this.setBackground(Color.RED);
 
         final JPanel thumbnailAndNamePanel = new JPanel(new BorderLayout());
-        this.thumbnailPanel.setPreferredSize(new Dimension(64, 32));
+        this.thumbnailPanel.setPreferredSize(new Dimension(32+16, 32));
         this.thumbnailPanel.setSize(this.thumbnailPanel.getPreferredSize());
         this.thumbnailPanel.setBackground(Color.WHITE);
         thumbnailAndNamePanel.add(this.thumbnailPanel, BorderLayout.WEST);
