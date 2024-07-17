@@ -18,12 +18,15 @@ public class JCadastrPlanGroupNodePanel extends JPanel {
 
     private final JLabel title;
     private final JButton visibilityButton;
-    private final JButton deleteButton;
     private final JButton lockButton;
 
     private final Collection<JCadastrPlanGroupNodePanel> nodes;
 
     private final JPanel panelForNodes;
+
+    private final JPanel headerPanel;
+    private final JPanel mainPanel;
+    private final JPanel footerPanel;
 
     private final Surface surface;
 
@@ -39,29 +42,28 @@ public class JCadastrPlanGroupNodePanel extends JPanel {
         this.title = new JLabel(text);
         
         this.lockButton = WidgetUtils.createSmallButton("Lock", "unlock.png");
-        this.deleteButton = WidgetUtils.createSmallButton("Delete", "delete.png");
 
-        final JPanel header = new JPanel(new BorderLayout());
-        final JPanel main = new JPanel(new BorderLayout());
-        final JPanel footer = new JPanel(new GridLayout(1, 2));
+        this.headerPanel = new JPanel(new BorderLayout());
+        this.mainPanel = new JPanel(new BorderLayout());
+        this.footerPanel = new JPanel(new GridLayout(1, 1));
 
-        header.add(this.visibilityButton, BorderLayout.WEST);
-        main.add(this.title, BorderLayout.CENTER);
-        footer.add(this.lockButton);
-        footer.add(this.deleteButton);
+        this.headerPanel.add(this.visibilityButton, BorderLayout.WEST);
+        this.mainPanel.add(this.title, BorderLayout.CENTER);
+        this.footerPanel.add(this.lockButton);
 
         this.setLayout(new BorderLayout());
 
         final JPanel container = new JPanel(new BorderLayout());
 
-        container.add(header, BorderLayout.WEST);
-        container.add(main, BorderLayout.CENTER);
-        container.add(footer, BorderLayout.EAST);
+        container.add(this.headerPanel, BorderLayout.WEST);
+        container.add(this.mainPanel, BorderLayout.CENTER);
+        container.add(this.footerPanel, BorderLayout.EAST);
 
         this.add(container, BorderLayout.NORTH);
         this.panelForNodes = new JPanel(new BorderLayout());
         this.add(this.panelForNodes, BorderLayout.CENTER);
         this.nodes = new LinkedList<>();
+
     }
 
     public void addNode(JCadastrPlanGroupNodePanel sectionNode) {
@@ -93,5 +95,11 @@ public class JCadastrPlanGroupNodePanel extends JPanel {
     
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
+        if (this.isSelected) {
+            this.mainPanel.setBackground(new Color(150,0,0));
+        } else {
+            this.mainPanel.setBackground(this.getBackground());
+        }
     }
+
 }

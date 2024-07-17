@@ -2,29 +2,41 @@ package io.nirahtech.petvet.simulator.cadastre.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 
 import io.nirahtech.petvet.simulator.cadastre.domain.Building;
 import io.nirahtech.petvet.simulator.cadastre.domain.CadastralPlan;
 import io.nirahtech.petvet.simulator.cadastre.domain.Land;
 import io.nirahtech.petvet.simulator.cadastre.domain.Parcel;
 import io.nirahtech.petvet.simulator.cadastre.domain.Section;
+import io.nirahtech.petvet.simulator.cadastre.domain.Surface;
 import io.nirahtech.petvet.simulator.cadastre.gui.widgets.jcadastreplanpanel.JCadastrPlanGroupNodePanel;
 import io.nirahtech.petvet.simulator.cadastre.gui.widgets.jcadastreplanpanel.JCadastrePlanPanel;
-import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.JLayersPanel;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.BuildingLayer;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.LandLayer;
+import io.nirahtech.petvet.simulator.cadastre.gui.widgets.layers.Layer;
 
 public class PetVetLandWindow extends JFrame {
 
+    private final Map<Surface, Layer> layersBySurface = new HashMap<>();
+
     private final CadastralPlan cadastralPlan;
     private final JDrawerPanel drawerPanel;
-    private final JLayersPanel layersPanel;
+    private final JCadastrePlanPanel cadastrePlanPanel;
+    private final JButton createButton;
+
 
     public PetVetLandWindow() {
         super("PetVet : Land Simulator");
@@ -35,30 +47,17 @@ public class PetVetLandWindow extends JFrame {
         this.cadastralPlan = new CadastralPlan();
 
         this.drawerPanel = new JDrawerPanel(this.cadastralPlan);
-        this.layersPanel = new JLayersPanel(this.cadastralPlan);
-
-        this.layersPanel.setOnSelectedLayerEventListerner(layer -> {
-            this.drawerPanel.setSelectedLayer(layer);
-            this.layersPanel.setSelectedLayer(layer);
-
-        });
-
-        this.layersPanel.setOnLockChangeOnLayer(layer -> {
-            this.drawerPanel.redraw();
-        });
-
-        this.layersPanel.setOnVisibilityChangeOnLayer(layer -> {
-            this.drawerPanel.redraw();
-        });
-
+        
         this.add(this.drawerPanel, BorderLayout.CENTER);
 
-        final JCadastrePlanPanel cadastrePlanTree = new JCadastrePlanPanel(cadastralPlan);
-        cadastrePlanTree.addOnLeftClickEventListener((node, event) -> {
-            System.out.println("Selected");
+        this.cadastrePlanPanel = new JCadastrePlanPanel(cadastralPlan);
+        this.cadastrePlanPanel.addOnLeftClickEventListener((node, event) -> {
+            this.cadastrePlanPanel.select(node);
+            Layer layer = this.layersBySurface.getOrDefault(node.getSurface(), null);
+            this.drawerPanel.setSelectedLayer(layer);
         });
 
-        cadastrePlanTree.addOnRightClickEventListener((node, event) -> {
+        this.cadastrePlanPanel.addOnRightClickEventListener((node, event) -> {
             JPopupMenu popupMenu = null;
             if (node.getSurface() instanceof CadastralPlan) {
                 popupMenu = createPopupMenuForCadastreActions(node);
@@ -73,26 +72,30 @@ public class PetVetLandWindow extends JFrame {
                 popupMenu.show(node, event.getX(), event.getY());
             }
         });
-        // cadastrePlanTree.addOnSelectedLayerChanged(layer -> {
-        // this.drawerPanel.setSelectedLayer(layer);
-        // this.layersPanel.setSelectedLayer(layer);
-        // });
+        
+        final JPanel rightPanel = new JPanel();
+        rightPanel.setLayout(new BorderLayout());
 
-        this.add(cadastrePlanTree, BorderLayout.EAST);
+        this.createButton = new JButton("Create");
+
+        rightPanel.add(new JScrollPane(this.cadastrePlanPanel), BorderLayout.CENTER);
+        rightPanel.add(this.createButton, BorderLayout.SOUTH);
+        this.add(rightPanel, BorderLayout.EAST);
 
     }
 
     private JPopupMenu createPopupMenuForCadastreActions(JCadastrPlanGroupNodePanel node) {
-        JPopupMenu popupMenu = new JPopupMenu();
-        JMenuItem createSectionMenuItem = new JMenuItem("Create new Section");
+        final JPopupMenu popupMenu = new JPopupMenu();
+        final JMenuItem createSectionMenuItem = new JMenuItem("Create new Section");
         createSectionMenuItem.addActionListener(e -> {
             if (node.getSurface() instanceof CadastralPlan) {
                 // // Action à effectuer lorsque l'élément du menu est sélectionné
                 final Land land = new Land();
+                this.layersBySurface.put(land, new LandLayer(1));
                 final Parcel parcel = new Parcel(0, land);
                 final Section section = new Section(UUID.randomUUID().toString().split("-")[0], parcel);
                 this.cadastralPlan.addSection(section);
-                // this.reloadTree();
+                this.cadastrePlanPanel.redraw();
             }
         });
         popupMenu.add(createSectionMenuItem);
@@ -117,7 +120,7 @@ public class PetVetLandWindow extends JFrame {
                 });
                 if (Objects.nonNull(landToManage.get())) {
                     landToManage.get().removeBuilding(buildingToDelete);
-                    //     this.reloadTree();
+                    this.cadastrePlanPanel.redraw();
                 }
             }
         });
@@ -132,7 +135,7 @@ public class PetVetLandWindow extends JFrame {
         deleteSectionMenuItem.addActionListener(e -> {
             if (node.getSurface() instanceof Section) {
                 cadastralPlan.removeSection((Section) node.getSurface());
-                //     this.reloadTree();
+                this.cadastrePlanPanel.redraw();
             }
         });
         popupMenu.add(deleteSectionMenuItem);
@@ -141,8 +144,9 @@ public class PetVetLandWindow extends JFrame {
         createParcelMenuItem.addActionListener(e -> {
             if (node.getSurface() instanceof Section) {
                 Section section = (Section) node.getSurface();
-                section.createNewParcel();
-                // this.reloadTree();
+                Parcel parcel = section.createNewParcel();
+                this.layersBySurface.put(parcel.land(), new LandLayer(1));
+                this.cadastrePlanPanel.redraw();
             }
         });
         popupMenu.add(createParcelMenuItem);
@@ -152,42 +156,31 @@ public class PetVetLandWindow extends JFrame {
     private JPopupMenu createPopupMenuForParcelsActions(JCadastrPlanGroupNodePanel node) {
         JPopupMenu popupMenu = new JPopupMenu();
         JMenuItem deleteParcelMenuItem = new JMenuItem("Delete Parcel");
+        AtomicReference<Section> sectionToManage = new AtomicReference<>();
         deleteParcelMenuItem.addActionListener(e -> {
             if (node.getSurface() instanceof Parcel) {
-                
+                this.cadastralPlan.getSections().forEach(section -> {
+                    section.getParcels().forEach(parcel -> {
+                        if (parcel == node.getSurface()) {
+                            sectionToManage.set(section);
+                        }
+                    });
+                });
+                if (Objects.nonNull(sectionToManage.get())) {
+                    sectionToManage.get().removeParcel((Parcel) node.getSurface());
+                    this.cadastrePlanPanel.redraw();
+                }
             }
-            // Action à effectuer lorsque l'élément du menu est sélectionné
-            // DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
-            // this.tree.getLastSelectedPathComponent();
-            // if (selectedNode != null) {
-            // this.parcelsNodes.entrySet().stream().filter(set ->
-            // set.getValue().equals(selectedNode)).findFirst()
-            // .ifPresent(pair -> {
-            // final Parcel parcel = pair.getKey();
-            // this.sectionsNodes.keySet().stream().filter(section ->
-            // section.has(parcel)).findFirst()
-            // .ifPresent(section -> {
-            // section.removeParcel(parcel);
-            // });
-            // });
-            // this.reloadTree();
-            // }
         });
         JMenuItem addBuildingMenuItem = new JMenuItem("Add Building");
         addBuildingMenuItem.addActionListener(e -> {
-            // Action à effectuer lorsque l'élément du menu est sélectionné
-            // DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)
-            // this.tree.getLastSelectedPathComponent();
-            // if (selectedNode != null) {
-            // this.parcelsNodes.entrySet().stream().filter(set ->
-            // set.getValue().equals(selectedNode)).findFirst()
-            // .ifPresent(pair -> {
-            // final Parcel parcel = pair.getKey();
-            // final Building building = new Building();
-            // parcel.land().addBuilding(building);
-            // });
-            // this.reloadTree();
-            // }
+            if (node.getSurface() instanceof Parcel) {
+                Parcel parcel = (Parcel) node.getSurface();
+                final Building building = new Building();
+                this.layersBySurface.put(building, new BuildingLayer(2));
+                parcel.land().addBuilding(building);
+                this.cadastrePlanPanel.redraw();
+            }
         });
         popupMenu.add(deleteParcelMenuItem);
         popupMenu.add(addBuildingMenuItem);
@@ -195,6 +188,10 @@ public class PetVetLandWindow extends JFrame {
     }
 
     public final void setOnCadastreCreatedEventLister(Consumer<CadastralPlan> onCadastreCreatedEventLister) {
-        this.layersPanel.setOnCadastreCreatedEventLister(onCadastreCreatedEventLister);
+        this.createButton.addActionListener(event -> {
+            if (Objects.nonNull(onCadastreCreatedEventLister)) {
+                onCadastreCreatedEventLister.accept(this.cadastralPlan);
+            }
+        });
     }
 }

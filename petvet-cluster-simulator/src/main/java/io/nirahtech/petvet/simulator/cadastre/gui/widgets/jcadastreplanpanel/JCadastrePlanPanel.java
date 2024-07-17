@@ -2,6 +2,7 @@ package io.nirahtech.petvet.simulator.cadastre.gui.widgets.jcadastreplanpanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Objects;
@@ -30,6 +31,7 @@ public class JCadastrePlanPanel extends JPanel {
         super();
         this.cadastralPlan = cadastralPlan;
         this.setLayout(new BorderLayout());
+        this.setPreferredSize(new Dimension(200, this.getPreferredSize().height));
         this.mapCadastralPlanAsPanels();
         this.attachEventListenerOnNode();
     }
@@ -140,6 +142,43 @@ public class JCadastrePlanPanel extends JPanel {
 
     public Optional<JCadastrPlanGroupNodePanel> getSelection() {
         return Optional.ofNullable(this.selectedNode.get());
+    }
+
+    private final void selectIfPreviousSelectedSurfaceExistsAgain(JCadastrPlanGroupNodePanel node) {
+        if (Objects.nonNull(selectedNode.get())) {
+            if (node.getSurface() == this.selectedNode.get().getSurface()) {
+                this.select(node);
+            }
+        }
+    }
+    
+    private final void drawPreviousSelectionBeforeRedraw() {
+        if (Objects.nonNull(selectedNode.get())) {
+            this.selectIfPreviousSelectedSurfaceExistsAgain(this.root);
+        }
+    }
+
+    public void redraw() {
+        this.mapCadastralPlanAsPanels();
+        this.attachEventListenerOnNode();
+        this.drawPreviousSelectionBeforeRedraw();
+        this.revalidate();
+        this.repaint();
+    }
+
+    private final void clearSelection(JCadastrPlanGroupNodePanel node) {
+        node.setSelected(false);
+        node.getNodes().forEach(childNode -> {
+            this.clearSelection(childNode);
+        });
+    }
+
+    public void select(JCadastrPlanGroupNodePanel node) {
+        this.clearSelection(this.root);
+        this.selectedNode.set(node);
+        node.setSelected(true);
+        this.revalidate();
+        this.repaint();
     }
     
 }

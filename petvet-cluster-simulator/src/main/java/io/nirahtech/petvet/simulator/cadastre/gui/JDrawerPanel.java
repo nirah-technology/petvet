@@ -3,11 +3,13 @@ package io.nirahtech.petvet.simulator.cadastre.gui;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.dnd.DragSource;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -340,6 +342,23 @@ public class JDrawerPanel extends JPanel {
                 }
             }
         }
+
+        @Override
+        public void mouseEntered(MouseEvent event) {
+            if (Objects.isNull(selectedLayer.get())) {
+                setCursor(DragSource.DefaultMoveNoDrop);
+                revalidate();
+                repaint();
+            }
+        }
+
+        @Override
+        public void mouseExited(MouseEvent event) {
+            setCursor(Cursor.getDefaultCursor());
+            revalidate();
+            repaint();
+        }
+
 
     }
 
